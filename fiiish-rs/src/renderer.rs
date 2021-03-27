@@ -75,7 +75,8 @@ impl Renderer {
 	pub fn end_frame( &mut self ) {
 		// just to avoid ghost
 		unsafe {
-			gl::Disable(gl::CULL_FACE);
+//			gl::Disable(gl::CULL_FACE);
+			gl::Enable(gl::CULL_FACE);
 			gl::Disable(gl::DEPTH_TEST);
 		}
 

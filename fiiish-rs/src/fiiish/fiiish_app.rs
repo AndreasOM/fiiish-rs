@@ -71,14 +71,23 @@ impl FiiishApp {
 				renderer.begin_frame();
 				let color = Color::from_rgba( 0.5 + 0.5*( self.total_time * 0.5 ).sin() as f32, 0.5, 0.5, 1.0 );
 				renderer.clear( &color );
-				let y = 0.2*self.total_time.sin() as f32;
-				let x = 0.2*(self.total_time*1.1).sin() as f32;
 
-				let v0 = renderer.add_vertex(  0.0 + x,  0.5 + y );
-				let v1 = renderer.add_vertex( -0.5 + x, -0.5 + y );
-				let v2 = renderer.add_vertex(  0.5 + x, -0.5 + y );
-				renderer.add_triangle( v0, v1, v2 );
+				for i in 0..100 {
+					let s = 0.125;
+					let fi = i as f32;
+					let t = self.total_time as f32 + fi*1.01;
+					let y = 0.2*t.sin() as f32;
+					let x = 0.2*(t + 3.14*0.5).sin() as f32;
+					let x = 2.0 * x;
+					let y = 2.0 * y;
 
+					let v0 = renderer.add_vertex( -s + x,  s + y ); // TopLeft
+					let v1 = renderer.add_vertex( -s + x, -s + y ); // BottomLeft
+					let v2 = renderer.add_vertex(  s + x, -s + y ); // BottomRight
+					let v3 = renderer.add_vertex(  s + x,  s + y ); // TopRight
+					renderer.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
+					renderer.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft
+				}
 //				dbg!( &renderer );
 				renderer.end_frame();
 			},
