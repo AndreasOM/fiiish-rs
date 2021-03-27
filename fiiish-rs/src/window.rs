@@ -51,6 +51,17 @@ impl Window {
 
 	}
 
+	pub fn get_proc_address(&self, addr: &str) -> *const core::ffi::c_void {
+		match &self.windowed_context {
+			Some( windowed_context ) => {
+		        windowed_context.get_proc_address(addr)
+			}
+			None => {
+				std::ptr::null()
+			},
+		}
+    }	
+
 	pub fn run<F: 'static>( &mut self, mut f: F )
 		where F: FnMut( &mut WindowUpdateContext ) -> bool
 	{

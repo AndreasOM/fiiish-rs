@@ -17,7 +17,7 @@ fn main() -> anyhow::Result<()>{
 	window.setup()?;
 	// window and context are active
 
-	app.setup();
+	app.setup( &mut window );
 
 	window.run(move |wuc|{
 //		dbg!(&wuc);

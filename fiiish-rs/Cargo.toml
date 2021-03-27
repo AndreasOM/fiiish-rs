@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Andreas Neukoetter <andreas@omni-mad.com>"]
 edition = "2018"
 
+build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
@@ -14,3 +15,6 @@ path="src/fiiish_main.rs"
 glutin = "0.26.0"
 anyhow = "1.0.40"
 chrono = "0.4.19"
+
+[build-dependencies]
+gl_generator = "0.14.0"
