@@ -24,11 +24,12 @@ impl FiiishApp {
 		}
 	}
 
-	pub fn setup( &mut self, window: &mut Window ) {
+	pub fn setup( &mut self, window: &mut Window ) -> anyhow::Result<()> {
 		window.set_title("Fiiish! RS");
 		let mut renderer = Renderer::new();
-		renderer.setup( window );
+		renderer.setup( window )?;
 		self.renderer = Some( renderer );
+		Ok(())
 	}
 
 	pub fn teardown( &mut self ) {
@@ -70,6 +71,15 @@ impl FiiishApp {
 				renderer.begin_frame();
 				let color = Color::from_rgba( 0.5 + 0.5*( self.total_time * 0.5 ).sin() as f32, 0.5, 0.5, 1.0 );
 				renderer.clear( &color );
+				let y = 0.2*self.total_time.sin() as f32;
+				let x = 0.2*(self.total_time*1.1).sin() as f32;
+
+				let v0 = renderer.add_vertex(  0.0 + x,  0.5 + y );
+				let v1 = renderer.add_vertex( -0.5 + x, -0.5 + y );
+				let v2 = renderer.add_vertex(  0.5 + x, -0.5 + y );
+				renderer.add_triangle( v0, v1, v2 );
+
+//				dbg!( &renderer );
 				renderer.end_frame();
 			},
 			None => {},

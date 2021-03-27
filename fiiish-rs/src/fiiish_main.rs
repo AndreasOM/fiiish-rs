@@ -1,7 +1,7 @@
 
 use fiiish_rs::fiiish::fiiish_app::FiiishApp;
 use fiiish_rs::window::Window;
-use fiiish_rs::window_update_context::WindowUpdateContext;
+//use fiiish_rs::window_update_context::WindowUpdateContext;
 
 fn main() -> anyhow::Result<()>{
 	println!("Fiiish!");
@@ -17,7 +17,7 @@ fn main() -> anyhow::Result<()>{
 	window.setup()?;
 	// window and context are active
 
-	app.setup( &mut window );
+	app.setup( &mut window )?;
 
 	window.run(move |wuc|{
 //		dbg!(&wuc);
