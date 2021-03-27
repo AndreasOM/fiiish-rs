@@ -3,10 +3,10 @@
 
 ## In Progress
 
+
 ## TODO
 
-- [ ] Accept keyboard input (exit via ESC)
-- [ ] Add time step to to update context
+- [ ] Add time step to update context
 - [ ] Create OpenGL context
 - [ ] Render untextured triangle
 - [ ] Render triangle with shader
@@ -18,6 +18,7 @@
 
 ## DONE
 
+- [x] Accept keyboard input (exit via ESC & SPACE)
 - [x] Open window on MacOS
 - [x] Create gitignore to reduce noise
 - [x] Create initial project

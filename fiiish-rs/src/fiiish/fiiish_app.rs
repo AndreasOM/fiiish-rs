@@ -1,3 +1,4 @@
+use crate::window_update_context::WindowUpdateContext;
 
 pub struct FiiishApp {
 	count: isize,
@@ -25,11 +26,15 @@ impl FiiishApp {
 		self.is_done
 	}
 
-	pub fn update( &mut self ) {
+	pub fn update( &mut self, wuc: &mut WindowUpdateContext ) {
 //		println!("Update {} - 1", &self.count );
 		self.count -= 1;
 		if self.count <= 0 {
 			// Note: Do all cleanup here
+//			self.is_done = true;
+		}
+
+		if wuc.is_escaped_pressed || wuc.is_space_pressed {
 			self.is_done = true;
 		}
 	}

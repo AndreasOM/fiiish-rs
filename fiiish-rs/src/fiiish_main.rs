@@ -1,6 +1,7 @@
 
 use fiiish_rs::fiiish::fiiish_app::FiiishApp;
 use fiiish_rs::window::Window;
+use fiiish_rs::window_update_context::WindowUpdateContext;
 
 fn main() -> anyhow::Result<()>{
 	println!("Fiiish!");
@@ -18,8 +19,9 @@ fn main() -> anyhow::Result<()>{
 
 	app.setup();
 
-	window.run(move ||{
-		app.update();
+	window.run(move |wuc|{
+//		dbg!(&wuc);
+		app.update( wuc );
 		app.render();
 		app.is_done()
 	});
