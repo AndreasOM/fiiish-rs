@@ -1,0 +1,106 @@
+# variable_filename: image_variables.yaml
+variable_defaults:
+  title: "Fiiish! RS"
+  title_1: "Reimplementing Fiiish! in rust from scratch."
+  fps: 25.0
+  fiiish_x: 860
+  fiiish_y: 400
+  title_x: 80
+  title_y: 920
+
+elements:
+  - name: Title Background
+    type: block
+    parameters:
+      pos_x: 10
+      pos_y: 970 #"970.0+0.0*sin($time)"
+      width: 1010
+      height: 100
+      color: "0xff3333aa"
+  - name: Title Background Image
+    type: image
+    parameters:
+      pos_x: 10
+      pos_y: 898
+      filename: frame.png
+  - name: Title
+    type: text
+    parameters:
+      pos_x: "$title_x"
+      pos_y: "$title_y"
+      width: 860
+      height: 80
+      size: 50
+      text: "$title"
+      font: fonts/FiraCode-Medium.ttf
+      color: "0xffffffff"
+
+  - name: Title 1
+    type: text
+    parameters:
+      pos_x: "$title_x+20"
+      pos_y: "$title_y+60"
+      width: 860
+      height: 80
+      size: 30
+      text: "$title_1"
+      font: fonts/FiraCode-Medium.ttf
+      color: "0xffffffff"
+
+
+  - name: Image 1
+    type: image
+    disabled: true
+    parameters:
+      pos_x: 10
+      pos_y: 100
+      filename: data/one.png
+
+
+  - name: Image Animated
+    type: image
+    parameters:
+      pos_x: 0 # "$fiiish_x"
+      pos_y: 0 # "$fiiish_y"
+      filename: fiiish_anim/*.png
+      fps: "$fps"
+
+default_page: 1
+pages:
+  - name: Page Break
+    elements:
+    - name: Sub Title Background
+      type: block
+      parameters:
+        pos_x: 40
+        pos_y: 140
+        width: 1840
+        height: 740
+        color: "0xaa222288"
+    - name: Sub Title
+      type: text
+      parameters:
+        pos_x: 60
+        pos_y: 160
+        width: 1920
+        height: 180
+        size: 150
+        text: "\"Taking a Quick Break...\""
+        font: fonts/FiraCode-Medium.ttf
+        color: "0xffffffff"
+
+  - name: Page Working
+    elements:
+    - name: Sub Title
+      type: text
+      disabled: true
+      parameters:
+        pos_x: 0
+        pos_y: 0
+        width: 860
+        height: 80
+        size: 50
+        text: "\"Working...\""
+        font: fonts/FiraCode-Medium.ttf
+        color: "0xffffffff"
+

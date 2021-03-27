@@ -1,0 +1,20 @@
+---
+variables:
+  time:
+    F32: 16.10700035095215
+  fiiish_y:
+    I32: 400
+  fps:
+    F32: 25.0
+  cheval_active_page_number:
+    String: "1"
+  clock_string:
+    String: "23:20:33"
+  fiiish_x:
+    I32: 860
+  title_1:
+    String: Reimplementing Fiiish! in rust from scratch.
+  title:
+    String: Fiiish! RS
+  frametime_string:
+    String: "16"
