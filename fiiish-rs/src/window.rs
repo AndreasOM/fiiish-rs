@@ -18,6 +18,7 @@ use crate::window_update_context::WindowUpdateContext;
 pub struct Window {
 	el: Option< EventLoop<()> >,
 	windowed_context: Option< ContextWrapper<PossiblyCurrent, glutin::window::Window> >,
+	title: String,
 }
 
 impl Window {
@@ -25,15 +26,23 @@ impl Window {
 		Self {
 			el: None,
 			windowed_context: None,
+			title: String::new(),
 		}
 	}
 
 	// some form of configuration
+	pub fn set_title( &mut self, title: &str ) {
+		self.title = title.to_string();
+		// if the window is already open fix the title
+		if let Some( ctx ) = &mut self.windowed_context {
+			ctx.window().set_title( &self.title );
+		}
+	}
 
 	pub fn setup(&mut self) -> anyhow::Result<()> {
 
 	    let el = EventLoop::new();
-	    let wb = WindowBuilder::new().with_title("A fantastic window!");
+	    let wb = WindowBuilder::new().with_title(&self.title);
 
 	    let windowed_context = ContextBuilder::new().build_windowed(wb, &el).unwrap();
 

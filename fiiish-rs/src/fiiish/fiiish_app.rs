@@ -25,7 +25,7 @@ impl FiiishApp {
 	}
 
 	pub fn setup( &mut self, window: &mut Window ) {
-		// :TODO: setup renderer here
+		window.set_title("Fiiish! RS");
 		let mut renderer = Renderer::new();
 		renderer.setup( window );
 		self.renderer = Some( renderer );

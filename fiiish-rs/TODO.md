@@ -15,7 +15,7 @@
 
 
 ## DONE
-
+- [x] Allow setting of window title
 - [x] Create wrapper to acces OpenGL functions, and use them in renderer
 - [x] Add time step to update context
 - [x] Accept keyboard input (exit via ESC & SPACE)
