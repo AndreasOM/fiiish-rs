@@ -1,4 +1,6 @@
 
+use chrono::prelude::*;
+
 use glutin::event::{ElementState, Event, KeyboardInput, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
 use glutin::window::{
@@ -57,9 +59,14 @@ impl Window {
 	    let mut is_done = false;
 	    let mut window_update_context = WindowUpdateContext::new();
 
+	    let mut previous_now: DateTime<Utc> = Utc::now();
+
 	    el.run(move |event, _, control_flow| {
 //	        println!("{:?}", event);
-	        *control_flow = ControlFlow::Poll;
+//	        *control_flow = ControlFlow::Poll;
+			let next_frame_time = std::time::Instant::now() +
+            	std::time::Duration::from_nanos(16_666_667);
+        	*control_flow = glutin::event_loop::ControlFlow::WaitUntil(next_frame_time);
 
 	        match event {
 	            Event::LoopDestroyed => return,
@@ -86,7 +93,22 @@ impl Window {
 //	                gl.draw_frame([1.0, 0.5, 0.7, 1.0]);
 	                windowed_context.swap_buffers().unwrap();
 	            },
-	            Event::MainEventsCleared | Event::RedrawEventsCleared => {},
+	            Event::MainEventsCleared => {
+	            	// all evens handled, lets render
+			        let now: DateTime<Utc> = Utc::now();
+			        let frame_duration = now.signed_duration_since( previous_now );
+			        let time_step = frame_duration.num_milliseconds() as f64 / 1000.0;
+			        previous_now = now;
+			        window_update_context.time_step = time_step;
+
+			        if !is_done && f( &mut window_update_context ) {
+			        	println!("f returned false");
+			        	*control_flow = ControlFlow::Exit;
+			        	is_done = true;
+			        }
+	                windowed_context.swap_buffers().unwrap();	            	
+	            },
+	            Event::RedrawEventsCleared => {},
 	            Event::NewEvents( _ ) => {},
 	            Event::DeviceEvent{ .. } => {
 
@@ -96,11 +118,8 @@ impl Window {
 	            },
 	        }
 
-	        if !is_done && f( &mut window_update_context ) {
-	        	println!("f returned false");
-	        	*control_flow = ControlFlow::Exit;
-	        	is_done = true;
-	        }
+
+
     	});
 	}
 

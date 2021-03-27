@@ -6,7 +6,6 @@
 
 ## TODO
 
-- [ ] Add time step to update context
 - [ ] Create OpenGL context
 - [ ] Render untextured triangle
 - [ ] Render triangle with shader
@@ -18,6 +17,7 @@
 
 ## DONE
 
+- [x] Add time step to update context
 - [x] Accept keyboard input (exit via ESC & SPACE)
 - [x] Open window on MacOS
 - [x] Create gitignore to reduce noise

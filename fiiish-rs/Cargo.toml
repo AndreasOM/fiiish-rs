@@ -13,3 +13,4 @@ path="src/fiiish_main.rs"
 [dependencies]
 glutin = "0.26.0"
 anyhow = "1.0.40"
+chrono = "0.4.19"
