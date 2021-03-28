@@ -1,4 +1,5 @@
 
+use crate::math::Vector2;
 use crate::window::Window;
 
 use material::Material;
@@ -125,6 +126,20 @@ impl Renderer {
 			None => {},
 		}
 	}
+
+	pub fn render_quad( &mut self, pos: &Vector2, size: &Vector2 ) {
+		let mut hs = *size;	// hs => half size
+		hs.x = 0.5 * hs.x;
+		hs.y = 0.5 * hs.y;
+
+		let v0 = self.add_vertex( -hs.x + pos.x,  hs.y + pos.y ); // TopLeft
+		let v1 = self.add_vertex( -hs.x + pos.x, -hs.y + pos.y ); // BottomLeft
+		let v2 = self.add_vertex(  hs.x + pos.x, -hs.y + pos.y ); // BottomRight
+		let v3 = self.add_vertex(  hs.x + pos.x,  hs.y + pos.y ); // TopRight
+		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
+		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
+	}
+
 }
 
 mod gl {

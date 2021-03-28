@@ -84,30 +84,12 @@ impl FiiishApp {
 		}
 //		let next_frame_time = std::time::Instant::now() +
 //        	std::time::Duration::from_nanos(4_000_000);	// use some time for update
-		std::thread::sleep( std::time::Duration::new(0, 4_000_000)); // 1_000_000_000 ns in 1s
+//		std::thread::sleep( std::time::Duration::new(0, 4_000_000)); // 1_000_000_000 ns in 1s
 	}
-
-	pub fn render_quad( renderer: &mut Renderer, pos: &Vector2, size: &Vector2 ) {
-//		let mut pos = pos;
-//		pos.x -= 0.5*size.x;
-//		pos.y -= 0.5*size.y;
-
-		let mut hs = *size;	// hs => half size
-		hs.x = 0.5 * hs.x;
-		hs.y = 0.5 * hs.y;
-
-		let v0 = renderer.add_vertex( -hs.x + pos.x,  hs.y + pos.y ); // TopLeft
-		let v1 = renderer.add_vertex( -hs.x + pos.x, -hs.y + pos.y ); // BottomLeft
-		let v2 = renderer.add_vertex(  hs.x + pos.x, -hs.y + pos.y ); // BottomRight
-		let v3 = renderer.add_vertex(  hs.x + pos.x,  hs.y + pos.y ); // TopRight
-		renderer.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
-		renderer.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
-	}
-
 
 	pub fn render( &mut self ) {
 //		println!("Render {}", &self.count );
-		std::thread::sleep( std::time::Duration::new(0, 5_000_000)); // 1_000_000_000 ns in 1s
+//		std::thread::sleep( std::time::Duration::new(0, 5_000_000)); // 1_000_000_000 ns in 1s
 		match &mut self.renderer {
 			Some( renderer ) => {
 				renderer.begin_frame();
@@ -125,13 +107,13 @@ impl FiiishApp {
 
 					let pos = Vector2::new( x, y );
 					let size = Vector2::new( 2.0*s, 2.0*s );
-					FiiishApp::render_quad( renderer, &pos, &size );
+					renderer.render_quad( &pos, &size );
 				}
 
 				for cp in &self.click_positions {
-					FiiishApp::render_quad( renderer, &cp, &Vector2::new( 0.1, 0.1 ) );
+					renderer.render_quad( &cp, &Vector2::new( 0.1, 0.1 ) );
 				}
-				FiiishApp::render_quad( renderer, &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
+				renderer.render_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
 
 //				dbg!( &renderer );
 				renderer.end_frame();

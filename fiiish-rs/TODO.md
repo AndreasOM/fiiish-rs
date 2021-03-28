@@ -6,10 +6,11 @@
 
 ## TODO
 
+- [ ] Encapsulate shader and program
+
 - [ ] Render triangle with customer shader from file
 - [ ] Render triangle with texture
 
-- [ ] Encapsulate shader and program
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
 
@@ -19,6 +20,7 @@
 
 ## DONE
 
+- [x] Move quad renderer into renderer
 - [x] Accept mouse input (buttons & position)
 - [x] Create container for Vector2
 - [x] Render untextured triangle
