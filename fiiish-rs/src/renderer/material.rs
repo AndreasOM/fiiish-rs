@@ -1,6 +1,9 @@
 
 use crate::renderer::{
+	Debug,
 	gl,
+	Program,
+	ShaderType,
 	Vertex,
 };
 
@@ -10,50 +13,31 @@ pub struct Material {
 	buffer: gl::types::GLuint,
 	vao: gl::types::GLuint,
 
-	// :HACK:
-	vs: gl::types::GLuint,
-	fs: gl::types::GLuint,
-	prog: gl::types::GLuint,
+	program: Program,
 }
 
-const VS_SRC:&'static [u8] = b"
+const VS_SRC: &str = "
 #version 330 core
 layout (location = 0) in vec3 aPos;
 out vec2 screen_pos;
+
 void main()
 {
 	screen_pos = aPos.xy;
     gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
 }
-\0";
+";
 
-const FS_SRC:&'static [u8] = b"
+const FS_SRC: &str = "
 #version 330 core
 out vec4 FragColor;
 in vec2 screen_pos;
+
 void main()
 {
     FragColor = vec4(1.0f, abs(screen_pos.x*2.0), abs(screen_pos.y*2.0), 0.125f);
 } 
-\0";
-
-
-fn check_gl_error( line: u32 ) {
-	unsafe {
-		match gl::GetError() {
-			gl::NO_ERROR => {},
-			e => {
-				println!("GL Error in line {}: {}", line,
-					match e {
-						gl::INVALID_VALUE => "INVALID_VALUE".to_string(),
-						gl::INVALID_OPERATION => "INVALID_OPERATION".to_string(),
-						e => format!("{}",e ),
-					}
-				);
-			},
-		}
-	}
-}
+";
 
 impl Material {
 
@@ -62,49 +46,19 @@ impl Material {
 			vertices: Vec::new(),
 			buffer: 0xffffffff,
 			vao: 0xffffffff,
-			vs: 0xffffffff,
-			fs: 0xffffffff,
-			prog: 0xffffffff,
+			program: Program::new(),
 		};
 
 		unsafe {
 			gl::GenVertexArrays( 1, &mut s.vao );
 			gl::GenBuffers( 1, &mut s.buffer );
-
-			s.vs = gl::CreateShader( gl::VERTEX_SHADER );
-			gl::ShaderSource( s.vs, 1, [ VS_SRC.as_ptr() as *const _ ].as_ptr(), std::ptr::null() );
-			gl::CompileShader( s.vs );
-
-			s.fs = gl::CreateShader( gl::FRAGMENT_SHADER );
-			gl::ShaderSource( s.fs, 1, [ FS_SRC.as_ptr() as *const _ ].as_ptr(), std::ptr::null() );
-			gl::CompileShader( s.fs );
-
-			// :TODO: actually do the error handling, and reporting
-			let mut log_length = 0;
-			gl::GetShaderiv( s.fs, gl::INFO_LOG_LENGTH, &mut log_length );
-			dbg!(&log_length);
-
-
-			s.prog = gl::CreateProgram();
-			gl::AttachShader( s.prog, s.fs );
-			gl::AttachShader( s.prog, s.vs );
-			gl::LinkProgram( s.prog );
-
-			let mut status = 0;
-			gl::GetProgramiv( s.prog, gl::LINK_STATUS, &mut status );
-			dbg!(&status);
-
-			check_gl_error( std::line!() );
 		}
+		s.program.add_shader( ShaderType::Vertex, &VS_SRC );
+		s.program.add_shader( ShaderType::Fragment, &FS_SRC );
+		s.program.link();
 
 		s
 	}
-
-	/*
-GLuint vaoId = 0;
-glGenVertexArrays(1, &vaoId);
-glBindVertexArray(vaoId);
-	*/	
 
 	pub fn clear( &mut self ) {
 		self.vertices.clear();
@@ -116,7 +70,6 @@ glBindVertexArray(vaoId);
 
 	pub fn render( &mut self ) {
 		unsafe {
-			check_gl_error( std::line!() );
 			gl::Enable( gl::BLEND );
 			gl::BlendFunc( gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA );
 
@@ -136,22 +89,17 @@ glBindVertexArray(vaoId);
 				self.vertices.as_ptr() as *const core::ffi::c_void,
 				gl::STATIC_DRAW		 									//maybe STREAM?
 			);
-			check_gl_error( std::line!() );
 
 			let attrib_index = 0;
 
 			gl::EnableVertexAttribArray( attrib_index );
-			check_gl_error( std::line!() );
 			gl::VertexAttribPointer( attrib_index, 3, gl::FLOAT, gl::FALSE, vertex_size as i32, 0 as *const _ );
-			check_gl_error( std::line!() );
 
-			gl::UseProgram( self.prog );
-			check_gl_error( std::line!() );
+			self.program.r#use();
+
 //			gl::PolygonMode( gl::FRONT_AND_BACK, gl::LINE );
-//			let number_of_triangles = ( vertex_count / 3 ) as i32;
 			gl::DrawArrays( gl::TRIANGLES, 0, vertex_count as i32 );
 //			println!("Rendering {} vertices", vertex_count);
-			check_gl_error( std::line!() );
 		}
 //		dbg!(&self);
 	}

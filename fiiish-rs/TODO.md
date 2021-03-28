@@ -4,9 +4,8 @@
 ## In Progress
 
 
-## TODO
 
-- [ ] Encapsulate shader and program
+## TODO
 
 - [ ] Render triangle with customer shader from file
 - [ ] Render triangle with texture
@@ -20,6 +19,7 @@
 
 ## DONE
 
+- [x] Encapsulate shader and program
 - [x] Move quad renderer into renderer
 - [x] Accept mouse input (buttons & position)
 - [x] Create container for Vector2

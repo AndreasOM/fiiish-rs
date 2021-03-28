@@ -142,8 +142,14 @@ impl Renderer {
 
 }
 
+mod debug;
+	pub use debug::Debug as Debug;
 mod gl {
     include!(concat!(env!("OUT_DIR"), "/gl_bindings.rs"));
 }
 
 mod material;
+
+mod program;
+	pub use program::Program as Program;
+	pub use program::ShaderType as ShaderType;
