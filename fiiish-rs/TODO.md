@@ -4,8 +4,10 @@
 ## In Progress
 
 
-
 ## TODO
+
+- [ ] Add basic ResourceManager
+- [ ] Add MaterialBuilder
 
 - [ ] Render triangle with customer shader from file
 - [ ] Render triangle with texture
@@ -16,9 +18,11 @@
 ## Future
 
 - [ ] Remember window size, and position
+- [ ] Retain info of open FilesystemStreams in Filesystems to allow cleanup, e.g. via Rc or Arc
 
 ## DONE
 
+- [x] Add filesystem abstraction
 - [x] Encapsulate shader and program
 - [x] Move quad renderer into renderer
 - [x] Accept mouse input (buttons & position)

@@ -4,6 +4,9 @@ use crate::renderer::{
 	Color,
 	Renderer,
 };
+use crate::system::System;
+use crate::system::filesystem_disk::FilesystemDisk;
+
 use crate::window::Window;
 use crate::window_update_context::WindowUpdateContext;
 
@@ -16,6 +19,7 @@ pub struct FiiishApp {
 	cursor_pos: Vector2,
 
 	click_positions: Vec< Vector2 >,
+	system: System,
 }
 
 impl FiiishApp {
@@ -27,10 +31,41 @@ impl FiiishApp {
 			renderer: None,
 			cursor_pos: Vector2::zero(),
 			click_positions: Vec::new(),
+			system: System::new(),
 		}
 	}
 
 	pub fn setup( &mut self, window: &mut Window ) -> anyhow::Result<()> {
+		// :TODO: make configurable via command line, or environment
+
+		let cwd = std::env::current_dir()?;
+		let cwd = cwd.to_string_lossy();
+		let datadir = format!("{}/../fiiish-data", &cwd);
+		let dfs = FilesystemDisk::new( &datadir );
+		self.system.set_default_filesystem( Box::new( dfs ) );
+
+		// :TODO: load confiiguration
+
+		let fs = self.system.default_filesystem_mut();
+		dbg!(&fs);
+
+//		let mut f = fs.open("test.txt");
+		let mut f = fs.open("default_vs.glsl");
+		println!("Testfile has size {}", f.size() );
+		println!("Testfile has pos {}", f.pos() );
+		f.set_pos( 10 );
+		println!("Testfile has pos {}", f.pos() );
+		f.set_pos( 0 );
+		dbg!(&f);
+
+		while !f.eof() {
+			let c = f.read_u8();
+			print!("{}", c as char);
+		}
+		println!("");
+
+		println!("Testfile has pos {}", f.pos() );
+
 		window.set_title("Fiiish! RS");
 		let mut renderer = Renderer::new();
 		renderer.setup( window )?;
