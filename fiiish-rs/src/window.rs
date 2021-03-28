@@ -42,7 +42,9 @@ impl Window {
 	pub fn setup(&mut self) -> anyhow::Result<()> {
 
 	    let el = EventLoop::new();
-	    let wb = WindowBuilder::new().with_title(&self.title);
+	    let wb = WindowBuilder::new()
+	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 1080/2 } )
+	    			.with_title(&self.title);
 
 	    let windowed_context = ContextBuilder::new().build_windowed(wb, &el).unwrap();
 
@@ -91,8 +93,33 @@ impl Window {
 	        match event {
 	            Event::LoopDestroyed => return,
 	            Event::WindowEvent { event, .. } => match event {
-	                WindowEvent::Resized(physical_size) => windowed_context.resize(physical_size),
+	                WindowEvent::Resized(physical_size) => {
+	                	dbg!(&physical_size);
+	                	windowed_context.resize(physical_size)
+	                },
 	                WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
+	                WindowEvent::CursorMoved { position, .. } => {
+	                	let inner_size = windowed_context.window().inner_size();
+
+	                	let w = inner_size.width as f64;
+	                	let h = inner_size.height as f64;
+	                	let mouse_x = position.x/w;
+	                	let mouse_y = ( h - position.y )/h;
+						window_update_context.mouse_pos.x = mouse_x as f32;
+						window_update_context.mouse_pos.y = mouse_y as f32;
+//	                	dbg!(&position, &inner_size, &mouse_x, &mouse_y);
+	                },
+	                WindowEvent::MouseInput { state, button, .. } => {
+	                	let button_index = match button {
+	                		glutin::event::MouseButton::Left => 0,
+	                		glutin::event::MouseButton::Middle => 1,
+	                		glutin::event::MouseButton::Right => 2,
+	                		_ => 0,
+	                	};
+	                	window_update_context.mouse_buttons[ button_index ] = state == glutin::event::ElementState::Pressed;
+
+//	                	dbg!(&state, &button, &window_update_context.mouse_buttons);
+	                },
 					WindowEvent::KeyboardInput {
                     	input: KeyboardInput { virtual_keycode: Some(virtual_code), state, .. },
                     	..
@@ -126,11 +153,13 @@ impl Window {
 			        	*control_flow = ControlFlow::Exit;
 			        	is_done = true;
 			        }
+			        
+			        window_update_context.update();
 	                windowed_context.swap_buffers().unwrap();	            	
 	            },
 	            Event::RedrawEventsCleared => {},
 	            Event::NewEvents( _ ) => {},
-	            Event::DeviceEvent{ .. } => {
+	            Event::DeviceEvent{ .. } => { // :TODO: handle Button
 
 	            },
 	            e => {

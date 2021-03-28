@@ -8,13 +8,19 @@
 
 - [ ] Render triangle with customer shader from file
 - [ ] Render triangle with texture
-- [ ] Accept mouse input (buttons & position)
 
 - [ ] Encapsulate shader and program
 - [ ] Split renderer context from window
+- [ ] Extend Vector2 with more functionality
 
+## Future
+
+- [ ] Remember window size, and position
 
 ## DONE
+
+- [x] Accept mouse input (buttons & position)
+- [x] Create container for Vector2
 - [x] Render untextured triangle
 - [x] Allow setting of window title
 - [x] Create wrapper to acces OpenGL functions, and use them in renderer
