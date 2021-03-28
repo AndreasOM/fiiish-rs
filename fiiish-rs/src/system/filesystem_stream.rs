@@ -9,6 +9,15 @@ pub trait FilesystemStream {
 	fn eof( &self ) -> bool;
 	fn name( &self ) -> &str;
 	fn filesystem_stream_type( &self ) -> &str;
+
+	fn read_as_string( &mut self ) -> String {
+		let mut s = String::new();
+		while !self.eof() {
+			let c = self.read_u8() as char;
+			s.push( c );
+		}
+		s
+	}
 }
 
 

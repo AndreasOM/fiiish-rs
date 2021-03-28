@@ -1,8 +1,9 @@
 
 use crate::math::Vector2;
+use crate::system::System;
 use crate::window::Window;
 
-use material::Material;
+//use material::Material;
 
 #[derive(Debug)]
 pub struct Color {
@@ -50,10 +51,18 @@ impl Renderer {
 		}
 	}
 
-	pub fn setup( &mut self, window: &Window ) -> anyhow::Result<()> {
+	pub fn setup( &mut self, window: &Window, system: &mut System ) -> anyhow::Result<()> {
 		gl::load_with(|s| window.get_proc_address(s) as *const _); // :TODO: maybe use CFBundleGetFunctionPointerForName directly
 		// :HACK: create one material
-		self.materials.push( Material::new() );
+		let mb = MaterialBuilder::new()
+					.with_name( "Default" )
+					.with_vertex_shader( "default_vs.glsl")
+					.with_fragment_shader( "default_fs.glsl")
+//					.with_fragment_shader( "white_fs.glsl")
+				;
+		let m = mb.build_with_system( system );
+
+		self.materials.push( m );
 		unsafe {
 			let s = gl::GetString( gl::VERSION );
 			let s = String::from_utf8( std::ffi::CStr::from_ptr( s as *const _ ).to_bytes().to_vec() )?;
@@ -149,7 +158,9 @@ mod gl {
 }
 
 mod material;
-
+	pub use material::Material as Material;
+mod material_builder;
+	pub use material_builder::MaterialBuilder as MaterialBuilder;
 mod program;
 	pub use program::Program as Program;
 	pub use program::ShaderType as ShaderType;

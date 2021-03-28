@@ -3,13 +3,11 @@
 
 ## In Progress
 
-
 ## TODO
 
+- [ ] Allow material switching for renderer
 - [ ] Add basic ResourceManager
-- [ ] Add MaterialBuilder
 
-- [ ] Render triangle with customer shader from file
 - [ ] Render triangle with texture
 
 - [ ] Split renderer context from window
@@ -22,6 +20,8 @@
 
 ## DONE
 
+- [x] Add MaterialBuilder
+- [x] Render triangle with customer shader from file
 - [x] Add filesystem abstraction
 - [x] Encapsulate shader and program
 - [x] Move quad renderer into renderer

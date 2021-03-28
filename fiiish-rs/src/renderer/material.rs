@@ -16,29 +16,6 @@ pub struct Material {
 	program: Program,
 }
 
-const VS_SRC: &str = "
-#version 330 core
-layout (location = 0) in vec3 aPos;
-out vec2 screen_pos;
-
-void main()
-{
-	screen_pos = aPos.xy;
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-}
-";
-
-const FS_SRC: &str = "
-#version 330 core
-out vec4 FragColor;
-in vec2 screen_pos;
-
-void main()
-{
-    FragColor = vec4(1.0f, abs(screen_pos.x*2.0), abs(screen_pos.y*2.0), 0.125f);
-} 
-";
-
 impl Material {
 
 	pub fn new() -> Self {
@@ -53,11 +30,20 @@ impl Material {
 			gl::GenVertexArrays( 1, &mut s.vao );
 			gl::GenBuffers( 1, &mut s.buffer );
 		}
-		s.program.add_shader( ShaderType::Vertex, &VS_SRC );
-		s.program.add_shader( ShaderType::Fragment, &FS_SRC );
-		s.program.link();
 
 		s
+	}
+
+	pub fn add_vertex_shader( &mut self, vs: &str ) {
+		self.program.add_shader( ShaderType::Vertex, &vs );
+	}
+
+	pub fn add_fragment_shader( &mut self, fs: &str ) {
+		self.program.add_shader( ShaderType::Fragment, &fs );
+	}
+
+	pub fn link( &mut self ) {
+		self.program.link();
 	}
 
 	pub fn clear( &mut self ) {

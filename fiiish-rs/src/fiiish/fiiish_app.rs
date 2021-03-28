@@ -68,7 +68,7 @@ impl FiiishApp {
 
 		window.set_title("Fiiish! RS");
 		let mut renderer = Renderer::new();
-		renderer.setup( window )?;
+		renderer.setup( window, &mut self.system )?;
 		self.renderer = Some( renderer );
 		Ok(())
 	}
@@ -131,6 +131,7 @@ impl FiiishApp {
 				let color = Color::from_rgba( 0.5 + 0.5*( self.total_time * 0.5 ).sin() as f32, 0.5, 0.5, 1.0 );
 				renderer.clear( &color );
 
+				// renderer.use_material( "rainbow" );
 				for i in 0..100 {
 					let s = 0.125;
 					let fi = i as f32;
@@ -148,6 +149,7 @@ impl FiiishApp {
 				for cp in &self.click_positions {
 					renderer.render_quad( &cp, &Vector2::new( 0.1, 0.1 ) );
 				}
+				// renderer.use_material( "white" );
 				renderer.render_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
 
 //				dbg!( &renderer );
