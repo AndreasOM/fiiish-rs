@@ -125,14 +125,22 @@ impl FiiishApp {
 	pub fn render( &mut self ) {
 //		println!("Render {}", &self.count );
 //		std::thread::sleep( std::time::Duration::new(0, 5_000_000)); // 1_000_000_000 ns in 1s
+
 		match &mut self.renderer {
 			Some( renderer ) => {
 				renderer.begin_frame();
 				let color = Color::from_rgba( 0.5 + 0.5*( self.total_time * 0.5 ).sin() as f32, 0.5, 0.5, 1.0 );
 				renderer.clear( &color );
 
+				renderer.use_effect( "Default" );
+
 				// renderer.use_material( "rainbow" );
 				for i in 0..100 {
+					if i % 2 == 0 {
+						renderer.use_effect( "White" );
+					} else {
+						renderer.use_effect( "Default" );
+					}
 					let s = 0.125;
 					let fi = i as f32;
 					let t = self.total_time as f32 + fi*1.01;
@@ -149,7 +157,7 @@ impl FiiishApp {
 				for cp in &self.click_positions {
 					renderer.render_quad( &cp, &Vector2::new( 0.1, 0.1 ) );
 				}
-				// renderer.use_material( "white" );
+				renderer.use_effect( "White" );
 				renderer.render_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
 
 //				dbg!( &renderer );

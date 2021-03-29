@@ -3,9 +3,9 @@
 
 ## In Progress
 
+
 ## TODO
 
-- [ ] Allow material switching for renderer
 - [ ] Add basic ResourceManager
 
 - [ ] Render triangle with texture
@@ -18,8 +18,14 @@
 - [ ] Remember window size, and position
 - [ ] Retain info of open FilesystemStreams in Filesystems to allow cleanup, e.g. via Rc or Arc
 
+## Out of scope (for now)
+
+- [ ] Add multi texture support
+
 ## DONE
 
+- [x] Extract render Effect.
+- [x] Allow material switching for renderer
 - [x] Add MaterialBuilder
 - [x] Render triangle with customer shader from file
 - [x] Add filesystem abstraction

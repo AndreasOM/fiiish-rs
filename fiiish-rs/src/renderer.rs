@@ -1,4 +1,6 @@
 
+use std::collections::HashMap;
+
 use crate::math::Vector2;
 use crate::system::System;
 use crate::window::Window;
@@ -39,30 +41,63 @@ impl Vertex {
 
 #[derive(Debug)]
 pub struct Renderer {
-	materials: Vec<Material>,
+	frame: u64,
+	material_manager: MaterialManager,
 	vertices: Vec<Vertex>,
+	effects: HashMap< String, Effect >,
+	default_effect_name: String,
+	active_effect_name: String,
 }
 
 impl Renderer {
 	pub fn new() -> Self {
 		Self {
-			materials: Vec::new(),
+			frame: 0,
+			material_manager: MaterialManager::new(),
 			vertices: Vec::new(),		// :TODO: pre allocate size? or maybe even a fixed size array
+			effects: HashMap::new(),
+			default_effect_name: String::new(),
+			active_effect_name: String::new(),
+		}
+	}
+
+	pub fn register_effect( &mut self, mut effect: Effect ) {
+		effect.set_id( ( self.effects.len()+1 ) as u16 );
+		self.effects.insert(effect.name().to_string(), effect);
+	}
+
+	fn get_mut_default_effect(&mut self) -> &mut Effect {
+		match self.effects.get_mut( &self.default_effect_name ) {
+			Some( e ) => e,
+			None => panic!("No default render Effect")
+		}
+	}
+
+	fn get_active_effect(&self) -> &Effect {
+		match self.effects.get( &self.active_effect_name ) {
+			Some( e ) => e,
+			None => panic!("No active render Effect")
 		}
 	}
 
 	pub fn setup( &mut self, window: &Window, system: &mut System ) -> anyhow::Result<()> {
 		gl::load_with(|s| window.get_proc_address(s) as *const _); // :TODO: maybe use CFBundleGetFunctionPointerForName directly
-		// :HACK: create one material
-		let mb = MaterialBuilder::new()
-					.with_name( "Default" )
-					.with_vertex_shader( "default_vs.glsl")
-					.with_fragment_shader( "default_fs.glsl")
-//					.with_fragment_shader( "white_fs.glsl")
-				;
-		let m = mb.build_with_system( system );
 
-		self.materials.push( m );
+		// :HACK: create one effect
+		let e = Effect::create( system, "Default", "default_vs.glsl", "default_fs.glsl" );
+		self.default_effect_name = e.name().to_string();
+		self.active_effect_name = e.name().to_string();
+		self.register_effect( e );
+
+		let e = Effect::create( system, "White", "default_vs.glsl", "white_fs.glsl" );
+		self.register_effect( e );
+
+		// :HACK: create one material
+
+		let e = self.get_mut_default_effect();
+		let m = Material::new( e );
+		self.material_manager.add( m );
+
 		unsafe {
 			let s = gl::GetString( gl::VERSION );
 			let s = String::from_utf8( std::ffi::CStr::from_ptr( s as *const _ ).to_bytes().to_vec() )?;
@@ -77,12 +112,13 @@ impl Renderer {
 
 	pub fn begin_frame( &mut self ) {
 		self.vertices.clear();
-		for material in self.materials.iter_mut() {
+		for material in self.material_manager.iter_mut() {
 			material.clear();
 		}
 	}
 
 	pub fn end_frame( &mut self ) {
+		let debug = self.frame % 500 == 0;
 		// just to avoid ghost
 		unsafe {
 //			gl::Disable(gl::CULL_FACE);
@@ -91,14 +127,31 @@ impl Renderer {
 		}
 
 		// :TODO: fix rendering order
-		for material in self.materials.iter_mut() {
-			material.render();
+		for material in self.material_manager.iter_mut() {
+			// :TODO: ask material for effect
+			let effect_name = material.effect_name();
+			let e = match self.effects.get_mut( effect_name ) {
+				Some( e ) => e,
+				None => match self.effects.get_mut( &self.default_effect_name ) {
+					Some( e ) => e,
+					None => panic!("No default render Effect")
+				}
+			};
+			let vc = material.render( e );
+			if debug {
+				println!("Rendered {} vertices for material {:?} with effect {:?}", vc, &material, &e );
+			}
 		}
 
 		// glFlush or glFinish
 		unsafe {
 			gl::Flush();
 		}
+
+		if debug {
+			dbg!(&self.material_manager);
+		}
+		self.frame += 1;
 	}
 
 	// rendering functions
@@ -112,6 +165,32 @@ impl Renderer {
 		}
 	}
 
+	fn switch_active_material_if_needed( &mut self ) {
+//		println!("switch_active_material_if_needed active_effect_name {}", &self.active_effect_name);
+		let eid = self.get_active_effect().id();
+		let can_render = {
+			let m = self.material_manager.get_active();
+			m.can_render( eid )
+		};
+
+		if !can_render {
+			let found_material = self.material_manager.select_active(|m: &Material|{
+				m.can_render( eid )
+			});
+			if !found_material {
+				println!("Didn't find material for effect id {} active_effect_name {}", eid, &self.active_effect_name );
+				let m = Material::new( &self.get_active_effect() );
+				let i = self.material_manager.add( m );
+				self.material_manager.set_active( i );
+			}
+		}
+
+	}
+	pub fn use_effect( &mut self, effect_name: &str ) {
+		self.active_effect_name = effect_name.to_string();
+		self.switch_active_material_if_needed();
+	}
+
 	pub fn add_vertex( &mut self, x: f32, y: f32 ) -> u32 {
 		let v = Vertex::from_xyz( x, y, 0.0 );
 		self.vertices.push( v );
@@ -119,21 +198,17 @@ impl Renderer {
 	}
 
 	pub fn add_triangle( &mut self, v0: u32, v1: u32, v2: u32 ) {
-		match self.materials.get_mut( 0 ) { // 0 == active material
-			Some( material ) => {
-				for v in [v0, v1, v2].iter() {
-					match self.vertices.get( *v as usize ) {
-						Some( v ) => {
-							material.add_vertex( v );
-						},
-						None => {
-							// :TODO: shout loud
-						},
-					}
-				}				
-			},
-			None => {},
-		}
+		let material = self.material_manager.get_mut_active();
+		for v in [v0, v1, v2].iter() {
+			match self.vertices.get( *v as usize ) {
+				Some( v ) => {
+					material.add_vertex( v );
+				},
+				None => {
+					// :TODO: shout loud
+				},
+			}
+		}				
 	}
 
 	pub fn render_quad( &mut self, pos: &Vector2, size: &Vector2 ) {
@@ -151,16 +226,73 @@ impl Renderer {
 
 }
 
+#[derive(Debug)]
+struct MaterialManager {
+	materials: Vec<Material>,
+	active_index: usize,
+}
+
+impl MaterialManager {
+	pub fn new() -> Self {
+		Self {
+			materials: Vec::new(),
+			active_index: 0,
+		}
+	}
+
+	pub fn set_active( &mut self, index: usize ) {
+		self.active_index = index;
+	}
+
+	pub fn select_active<F>( &mut self, f: F) -> bool
+		where F: Fn( &Material ) -> bool
+	{
+		for (i,m) in self.materials.iter().enumerate() {
+			if f( m ) {
+				self.active_index = i;
+				return true;
+			}
+		}
+		false
+	}
+
+	pub fn add( &mut self, material: Material ) -> usize {
+		let i = self.materials.len();
+		self.materials.push(material);
+		i
+	}
+
+	pub fn iter_mut( &mut self ) -> std::slice::IterMut<'_, Material> {
+		self.materials.iter_mut()
+	}
+	pub fn get_mut_active( &mut self ) -> &mut Material {
+		match self.materials.get_mut( self.active_index ) {
+			Some( m ) => m,
+			None => panic!("No active Material"),
+		}
+	}
+	pub fn get_active( &self ) -> &Material {
+		match self.materials.get( self.active_index ) {
+			Some( m ) => m,
+			None => panic!("No active Material"),
+		}
+	}
+
+}
+
+
 mod debug;
 	pub use debug::Debug as Debug;
 mod gl {
     include!(concat!(env!("OUT_DIR"), "/gl_bindings.rs"));
 }
 
+mod effect;
+	pub use effect::Effect as Effect;
 mod material;
 	pub use material::Material as Material;
-mod material_builder;
-	pub use material_builder::MaterialBuilder as MaterialBuilder;
+//mod material_builder;
+//	pub use material_builder::MaterialBuilder as MaterialBuilder;
 mod program;
 	pub use program::Program as Program;
 	pub use program::ShaderType as ShaderType;

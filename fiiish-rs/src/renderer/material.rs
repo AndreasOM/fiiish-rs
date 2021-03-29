@@ -1,29 +1,34 @@
 
 use crate::renderer::{
 	Debug,
+	Effect,
 	gl,
 	Program,
 	ShaderType,
 	Vertex,
 };
 
-#[derive(Debug)]
+//#[derive(Debug)]
 pub struct Material {
 	vertices: Vec<Vertex>,
 	buffer: gl::types::GLuint,
 	vao: gl::types::GLuint,
 
-	program: Program,
+	effect_id: u16,
+	effect_name: String,
+//	program: Program,
 }
 
 impl Material {
 
-	pub fn new() -> Self {
+	pub fn new( effect: &Effect ) -> Self {
 		let mut s = Self {
 			vertices: Vec::new(),
 			buffer: 0xffffffff,
 			vao: 0xffffffff,
-			program: Program::new(),
+			effect_id: effect.id(),
+			effect_name: effect.name().to_string(),
+//			program: Program::new(),
 		};
 
 		unsafe {
@@ -34,16 +39,12 @@ impl Material {
 		s
 	}
 
-	pub fn add_vertex_shader( &mut self, vs: &str ) {
-		self.program.add_shader( ShaderType::Vertex, &vs );
+	pub fn can_render( &self, effect_id: u16 ) -> bool {
+		self.effect_id == effect_id
 	}
 
-	pub fn add_fragment_shader( &mut self, fs: &str ) {
-		self.program.add_shader( ShaderType::Fragment, &fs );
-	}
-
-	pub fn link( &mut self ) {
-		self.program.link();
+	pub fn effect_name( &self ) -> &str {
+		&self.effect_name
 	}
 
 	pub fn clear( &mut self ) {
@@ -54,7 +55,7 @@ impl Material {
 		self.vertices.push( *vertex );
 	}
 
-	pub fn render( &mut self ) {
+	pub fn render( &mut self, effect: &mut Effect ) -> u32 {
 		unsafe {
 			gl::Enable( gl::BLEND );
 			gl::BlendFunc( gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA );
@@ -81,13 +82,27 @@ impl Material {
 			gl::EnableVertexAttribArray( attrib_index );
 			gl::VertexAttribPointer( attrib_index, 3, gl::FLOAT, gl::FALSE, vertex_size as i32, 0 as *const _ );
 
-			self.program.r#use();
+			effect.r#use();
+//			self.program.r#use();
 
 //			gl::PolygonMode( gl::FRONT_AND_BACK, gl::LINE );
 			gl::DrawArrays( gl::TRIANGLES, 0, vertex_count as i32 );
 //			println!("Rendering {} vertices", vertex_count);
+			vertex_count as u32
 		}
 //		dbg!(&self);
+	}
+}
+
+impl std::fmt::Debug for Material {
+	fn fmt( &self, f: &mut std::fmt::Formatter ) -> std::fmt::Result {
+		writeln!(
+			f, "Material: {} {} effect: {} [{}]",
+			self.buffer,
+			self.vao,
+			&self.effect_name,
+			self.effect_id,
+		)
 	}
 }
 
