@@ -29,12 +29,23 @@ impl Color {
 #[derive(Debug,Copy,Clone)]
 pub struct Vertex {
 	pos: [f32;3],
+	tex_coords: [f32;2],
+	color: [f32;4],
 }
 
 impl Vertex {
 	pub fn from_xyz( x: f32, y: f32, z: f32 ) -> Self {
 		Self {
 			pos: [ x, y, z ],
+			tex_coords: [ 0.0, 0.0 ],
+			color: [ 1.0, 1.0, 1.0, 1.0 ],
+		}
+	}
+	pub fn from_pos_with_tex_coords( pos: &Vector2, tex_coords: &Vector2 ) -> Self {
+		Self {
+			pos: [ pos.x, pos.y, 0.0 ],
+			tex_coords: [ tex_coords.x, tex_coords.y ],
+			color: [ 1.0, 1.0, 1.0, 1.0 ],
 		}
 	}
 }
@@ -47,6 +58,8 @@ pub struct Renderer {
 	effects: HashMap< u16, Effect >,
 	default_effect_id: u16,
 	active_effect_id: u16,
+
+	tex_coords: Vector2,
 }
 
 impl Renderer {
@@ -58,6 +71,8 @@ impl Renderer {
 			effects: HashMap::new(),
 			default_effect_id: 0,
 			active_effect_id: 0,
+
+			tex_coords: Vector2::zero(),
 		}
 	}
 
@@ -204,8 +219,11 @@ impl Renderer {
 		self.switch_active_material_if_needed();
 	}
 
+	pub fn set_tex_coords( &mut self, tex_coords: &Vector2 ) {
+		self.tex_coords = *tex_coords;
+	}
 	pub fn add_vertex( &mut self, x: f32, y: f32 ) -> u32 {
-		let v = Vertex::from_xyz( x, y, 0.0 );
+		let v = Vertex::from_pos_with_tex_coords( &Vector2::new( x, y ), &self.tex_coords );
 		self.vertices.push( v );
 		self.vertices.len() as u32 - 1
 	}
@@ -233,6 +251,24 @@ impl Renderer {
 		let v1 = self.add_vertex( -hs.x + pos.x, -hs.y + pos.y ); // BottomLeft
 		let v2 = self.add_vertex(  hs.x + pos.x, -hs.y + pos.y ); // BottomRight
 		let v3 = self.add_vertex(  hs.x + pos.x,  hs.y + pos.y ); // TopRight
+		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
+		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
+	}
+
+	pub fn render_textured_quad( &mut self, pos: &Vector2, size: &Vector2 ) {
+		let mut hs = *size;	// hs => half size
+		hs.x = 0.5 * hs.x;
+		hs.y = 0.5 * hs.y;
+
+		self.set_tex_coords( &Vector2::new( 0.0, 0.0 ) );
+		let v0 = self.add_vertex( -hs.x + pos.x,  hs.y + pos.y ); // TopLeft
+		self.set_tex_coords( &Vector2::new( 0.0, 1.0 ) );
+		let v1 = self.add_vertex( -hs.x + pos.x, -hs.y + pos.y ); // BottomLeft
+		self.set_tex_coords( &Vector2::new( 1.0, 1.0 ) );
+		let v2 = self.add_vertex(  hs.x + pos.x, -hs.y + pos.y ); // BottomRight
+		self.set_tex_coords( &Vector2::new( 1.0, 0.0 ) );
+		let v3 = self.add_vertex(  hs.x + pos.x,  hs.y + pos.y ); // TopRight
+
 		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
 		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
 	}

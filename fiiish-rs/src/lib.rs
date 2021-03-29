@@ -1,3 +1,7 @@
+#[macro_use]
+extern crate derivative;
+
+
 // App generic
 pub mod math;
 pub mod renderer;

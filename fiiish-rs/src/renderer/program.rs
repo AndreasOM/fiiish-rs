@@ -7,18 +7,24 @@ use crate::renderer::{
 	gl,
 };
 
-#[derive(Debug,PartialEq,Eq,Hash)]
+#[derive(Debug,Copy,Clone,PartialEq,Eq,Hash)]
 pub enum ShaderType {
 	Vertex,
 	Fragment,
 }
 
-#[derive(Debug)]
+//#[derive(Debug)]
+#[derive(Derivative)]
+#[derivative(Debug)]
 pub struct Program {
 
 //	shader_ids: HashMap<ShaderType, gl::types::GLuint>,
 	shader_ids: Vec< (ShaderType, gl::types::GLuint) >,
 	program_id: gl::types::GLuint,
+
+	#[derivative(Debug="ignore")]
+	// :TODO: make debug only
+	shader_sources: Vec< (ShaderType, String) >,
 }
 
 impl Program {
@@ -27,6 +33,8 @@ impl Program {
 //			shader_ids: HashMap::new(),
 			shader_ids: Vec::new(),
 			program_id: 0xffffffff,
+
+			shader_sources: Vec::new(),
 		}
 	}
 
@@ -57,6 +65,7 @@ impl Program {
 
 //			self.shader_ids.insert( shader_type, id );
 			self.shader_ids.push( ( shader_type, id ) );
+			self.shader_sources.push( ( shader_type, source.to_string() ) );
 		}
 		Debug::check_gl_error( std::file!(), std::line!() );
 	}
@@ -73,7 +82,10 @@ impl Program {
 			let mut status = 0;
 			gl::GetProgramiv( id, gl::LINK_STATUS, &mut status );
 			if status != 1 {
-				println!("Warning: Failed linking shaders into program")
+				println!("Warning: Failed linking shaders into program");
+				for (_k, s) in self.shader_sources.iter() {
+					println!("{}", &s);
+				}
 			}
 			dbg!(&status);
 

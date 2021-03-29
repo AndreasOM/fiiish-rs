@@ -71,7 +71,7 @@ impl Material {
 			gl::BindBuffer( gl::ARRAY_BUFFER, self.buffer );
 
 //			let vertex_size = ( core::mem::size_of<gl::type::GLFloat>() * 3 ) as i32;
-			let vertex_size = ( core::mem::size_of::<f32>( ) * 3 ) as isize;
+			let vertex_size = ( core::mem::size_of::<f32>( ) * ( 3 + 2 + 4 ) ) as isize; // :HACK:
 			let vertex_count = self.vertices.len();
 			// :TODO: we might want to reuse this
 			gl::BufferData(
@@ -81,14 +81,20 @@ impl Material {
 				gl::STATIC_DRAW		 									//maybe STREAM?
 			);
 
-			let attrib_index = 0;
+			let attrib_pos_index = 0;
+			let attrib_tex_coords_index = 1;
 
-			gl::EnableVertexAttribArray( attrib_index );
-			gl::VertexAttribPointer( attrib_index, 3, gl::FLOAT, gl::FALSE, vertex_size as i32, 0 as *const _ );
+			gl::EnableVertexAttribArray( attrib_pos_index );
+			gl::VertexAttribPointer( attrib_pos_index, 3, gl::FLOAT, gl::FALSE, vertex_size as i32, 0 as *const _ );
+
+			// :TODO: only enable when needed
+			gl::EnableVertexAttribArray( attrib_tex_coords_index );
+			gl::VertexAttribPointer( attrib_tex_coords_index, 2, gl::FLOAT, gl::FALSE, vertex_size as i32, ( 3 * 4 ) as *const _ );
 
 			effect.r#use();
 //			self.program.r#use();
 
+//			dbg!(&self.vertices);
 //			gl::PolygonMode( gl::FRONT_AND_BACK, gl::LINE );
 			gl::DrawArrays( gl::TRIANGLES, 0, vertex_count as i32 );
 //			println!("Rendering {} vertices", vertex_count);

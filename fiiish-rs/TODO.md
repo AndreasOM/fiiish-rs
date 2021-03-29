@@ -3,17 +3,20 @@
 
 ## In Progress
 
+- [ ] Render quad with texture
 
 ## TODO
 
-- [ ] Add basic ResourceManager
 
-- [ ] Render triangle with texture
 
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
 
+- [ ] Add basic ResourceManager
+
 ## Future
+
+- [ ] Only transfer minimal per Vertex data to GPU (e.g. remove TexCoords where not needed)
 
 - [ ] Remember window size, and position
 - [ ] Retain info of open FilesystemStreams in Filesystems to allow cleanup, e.g. via Rc or Arc
@@ -24,7 +27,9 @@
 
 ## DONE
 
-- [x] Extract render Effect.
+- [x] Improve shader problem debugging by adding shader source to failure report
+- [x] Add texture coordinates to vertices
+- [x] Extract render Effect
 - [x] Allow material switching for renderer
 - [x] Add MaterialBuilder
 - [x] Render triangle with customer shader from file

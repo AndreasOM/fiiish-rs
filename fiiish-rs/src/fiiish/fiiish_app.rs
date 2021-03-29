@@ -72,8 +72,9 @@ impl FiiishApp {
 		let mut renderer = Renderer::new();
 		renderer.setup( window, &mut self.system )?;
 
-		renderer.register_effect( Effect::create( &mut self.system, EffectId::Default as u16, "Default", "default_vs.glsl", "default_fs.glsl" ) );
-		renderer.register_effect( Effect::create( &mut self.system, EffectId::White as u16  , "White"  , "default_vs.glsl", "white_fs.glsl" ) );
+		renderer.register_effect( Effect::create( &mut self.system, EffectId::Default as u16  , "Default"  , "default_vs.glsl", "default_fs.glsl" ) );
+		renderer.register_effect( Effect::create( &mut self.system, EffectId::White as u16    , "White"    , "default_vs.glsl", "white_fs.glsl" ) );
+		renderer.register_effect( Effect::create( &mut self.system, EffectId::Textured as u16 , "Textured" , "textured_vs.glsl", "textured_fs.glsl" ) );
 
 		self.renderer = Some( renderer );
 		Ok(())
@@ -106,7 +107,7 @@ impl FiiishApp {
 			self.click_positions.push( cp );
 		}
 		if wuc.mouse_buttons[ 1 ] {
-			println!("Middle Mouse Button is pressed! -> {}", self.click_positions.len());
+//			println!("Middle Mouse Button is pressed! -> {}", self.click_positions.len());
 			let cp = self.cursor_pos;
 
 			for _ in 0..1000 {
@@ -164,6 +165,11 @@ impl FiiishApp {
 				for cp in &self.click_positions {
 					renderer.render_quad( &cp, &Vector2::new( 0.1, 0.1 ) );
 				}
+				
+				renderer.use_effect( EffectId::Textured as u16 );
+				renderer.render_textured_quad( &Vector2::new( -0.8, 0.8 ), &Vector2::new( 0.2, 0.2 ) );
+				renderer.render_textured_quad( &Vector2::new(  0.6, 0.6 ), &Vector2::new( 0.4, 0.4 ) );
+
 				renderer.use_effect( EffectId::White as u16 );
 				renderer.render_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
 
