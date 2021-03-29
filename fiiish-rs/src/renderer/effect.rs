@@ -19,12 +19,14 @@ pub struct Effect {
 impl Effect {
 	pub fn create(
 		system: &mut System,
+		id: u16,
 		name: &str,
 		vertex_shader_name: &str,
 		fragment_shader_name: &str,
 	) -> Self {
 		Effect::new(
 			system,
+			id,
 			name,
 			vertex_shader_name,
 			fragment_shader_name,
@@ -32,6 +34,7 @@ impl Effect {
 	}
 	fn new(
 		system: &mut System,
+		id: u16,
 		name: &str,
 		vertex_shader_name: &str,
 		fragment_shader_name: &str,		
@@ -49,14 +52,10 @@ impl Effect {
 		program.link();
 
 		Self {
-			id: 0,
+			id,
 			name: name.to_string(),
 			program,
 		}
-	}
-
-	pub fn set_id( &mut self, id: u16 ) {
-		self.id = id;
 	}
 
 	pub fn id( &self ) -> u16 {

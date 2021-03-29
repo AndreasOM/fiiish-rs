@@ -1,7 +1,9 @@
+use super::effect_ids::EffectId;
 
 use crate::math::Vector2;
 use crate::renderer::{
 	Color,
+	Effect,
 	Renderer,
 };
 use crate::system::System;
@@ -69,6 +71,10 @@ impl FiiishApp {
 		window.set_title("Fiiish! RS");
 		let mut renderer = Renderer::new();
 		renderer.setup( window, &mut self.system )?;
+
+		renderer.register_effect( Effect::create( &mut self.system, EffectId::Default as u16, "Default", "default_vs.glsl", "default_fs.glsl" ) );
+		renderer.register_effect( Effect::create( &mut self.system, EffectId::White as u16  , "White"  , "default_vs.glsl", "white_fs.glsl" ) );
+
 		self.renderer = Some( renderer );
 		Ok(())
 	}
@@ -132,14 +138,15 @@ impl FiiishApp {
 				let color = Color::from_rgba( 0.5 + 0.5*( self.total_time * 0.5 ).sin() as f32, 0.5, 0.5, 1.0 );
 				renderer.clear( &color );
 
-				renderer.use_effect( "Default" );
+//				renderer.use_effect( "Default" );
+				renderer.use_effect( EffectId::Default as u16 );
 
 				// renderer.use_material( "rainbow" );
 				for i in 0..100 {
-					if i % 2 == 0 {
-						renderer.use_effect( "White" );
+					if i % 10 == 0 {
+						renderer.use_effect( EffectId::White as u16 );
 					} else {
-						renderer.use_effect( "Default" );
+						renderer.use_effect( EffectId::Default as u16 );
 					}
 					let s = 0.125;
 					let fi = i as f32;
@@ -157,7 +164,7 @@ impl FiiishApp {
 				for cp in &self.click_positions {
 					renderer.render_quad( &cp, &Vector2::new( 0.1, 0.1 ) );
 				}
-				renderer.use_effect( "White" );
+				renderer.use_effect( EffectId::White as u16 );
 				renderer.render_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
 
 //				dbg!( &renderer );
@@ -167,3 +174,4 @@ impl FiiishApp {
 		}
 	}
 }
+

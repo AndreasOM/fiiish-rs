@@ -44,9 +44,9 @@ pub struct Renderer {
 	frame: u64,
 	material_manager: MaterialManager,
 	vertices: Vec<Vertex>,
-	effects: HashMap< String, Effect >,
-	default_effect_name: String,
-	active_effect_name: String,
+	effects: HashMap< u16, Effect >,
+	default_effect_id: u16,
+	active_effect_id: u16,
 }
 
 impl Renderer {
@@ -56,25 +56,27 @@ impl Renderer {
 			material_manager: MaterialManager::new(),
 			vertices: Vec::new(),		// :TODO: pre allocate size? or maybe even a fixed size array
 			effects: HashMap::new(),
-			default_effect_name: String::new(),
-			active_effect_name: String::new(),
+			default_effect_id: 0,
+			active_effect_id: 0,
 		}
 	}
 
 	pub fn register_effect( &mut self, mut effect: Effect ) {
-		effect.set_id( ( self.effects.len()+1 ) as u16 );
-		self.effects.insert(effect.name().to_string(), effect);
+		if self.effects.len() == 0 { 
+			self.default_effect_id = effect.id();
+		}
+		self.effects.insert(effect.id(), effect);
 	}
 
-	fn get_mut_default_effect(&mut self) -> &mut Effect {
-		match self.effects.get_mut( &self.default_effect_name ) {
+	fn get_default_effect(&self) -> &Effect {
+		match self.effects.get( &self.default_effect_id ) {
 			Some( e ) => e,
 			None => panic!("No default render Effect")
 		}
 	}
 
 	fn get_active_effect(&self) -> &Effect {
-		match self.effects.get( &self.active_effect_name ) {
+		match self.effects.get( &self.active_effect_id ) {
 			Some( e ) => e,
 			None => panic!("No active render Effect")
 		}
@@ -84,6 +86,7 @@ impl Renderer {
 		gl::load_with(|s| window.get_proc_address(s) as *const _); // :TODO: maybe use CFBundleGetFunctionPointerForName directly
 
 		// :HACK: create one effect
+		/*
 		let e = Effect::create( system, "Default", "default_vs.glsl", "default_fs.glsl" );
 		self.default_effect_name = e.name().to_string();
 		self.active_effect_name = e.name().to_string();
@@ -91,12 +94,14 @@ impl Renderer {
 
 		let e = Effect::create( system, "White", "default_vs.glsl", "white_fs.glsl" );
 		self.register_effect( e );
-
+		*/
 		// :HACK: create one material
 
+		/*
 		let e = self.get_mut_default_effect();
 		let m = Material::new( e );
 		self.material_manager.add( m );
+		*/
 
 		unsafe {
 			let s = gl::GetString( gl::VERSION );
@@ -115,6 +120,14 @@ impl Renderer {
 		for material in self.material_manager.iter_mut() {
 			material.clear();
 		}
+		// enusre we have at least one material, and it is active
+		if self.material_manager.len() == 0 {
+			let m = Material::new( &self.get_default_effect() );
+			let i = self.material_manager.add( m );
+			self.material_manager.set_active( i );			
+		}
+//		let default_effect_name = self.default_effect_name.clone();
+//		self.use_effect( &default_effect_name );
 	}
 
 	pub fn end_frame( &mut self ) {
@@ -129,10 +142,10 @@ impl Renderer {
 		// :TODO: fix rendering order
 		for material in self.material_manager.iter_mut() {
 			// :TODO: ask material for effect
-			let effect_name = material.effect_name();
-			let e = match self.effects.get_mut( effect_name ) {
+			let effect_id = material.effect_id();
+			let e = match self.effects.get_mut( &effect_id ) {
 				Some( e ) => e,
-				None => match self.effects.get_mut( &self.default_effect_name ) {
+				None => match self.effects.get_mut( &self.default_effect_id ) {
 					Some( e ) => e,
 					None => panic!("No default render Effect")
 				}
@@ -178,7 +191,7 @@ impl Renderer {
 				m.can_render( eid )
 			});
 			if !found_material {
-				println!("Didn't find material for effect id {} active_effect_name {}", eid, &self.active_effect_name );
+				println!("Didn't find material for effect id {} active_effect_id {}", eid, &self.active_effect_id );
 				let m = Material::new( &self.get_active_effect() );
 				let i = self.material_manager.add( m );
 				self.material_manager.set_active( i );
@@ -186,8 +199,8 @@ impl Renderer {
 		}
 
 	}
-	pub fn use_effect( &mut self, effect_name: &str ) {
-		self.active_effect_name = effect_name.to_string();
+	pub fn use_effect( &mut self, effect_id: u16 ) {
+		self.active_effect_id = effect_id;
 		self.switch_active_material_if_needed();
 	}
 
@@ -256,6 +269,9 @@ impl MaterialManager {
 		false
 	}
 
+	pub fn len( &self ) -> usize {
+		self.materials.len()
+	}
 	pub fn add( &mut self, material: Material ) -> usize {
 		let i = self.materials.len();
 		self.materials.push(material);

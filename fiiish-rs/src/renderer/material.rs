@@ -43,6 +43,10 @@ impl Material {
 		self.effect_id == effect_id
 	}
 
+	pub fn effect_id( &self ) -> u16 {
+		self.effect_id
+	}
+
 	pub fn effect_name( &self ) -> &str {
 		&self.effect_name
 	}
