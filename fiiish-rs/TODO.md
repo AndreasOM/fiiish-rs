@@ -3,11 +3,16 @@
 
 ## In Progress
 
-- [ ] Render quad with texture
 
 ## TODO
 
+- [ ] Add Filesystem_Layered that allows fallbacks for loading
 
+- [ ] Add support for (M)VP uniform
+- [ ] Add very basic Matrix struct
+- [ ] Setup correct MVP for orthographic projection
+
+- [ ] Add basic Fiiish movement
 
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
@@ -21,12 +26,16 @@
 - [ ] Remember window size, and position
 - [ ] Retain info of open FilesystemStreams in Filesystems to allow cleanup, e.g. via Rc or Arc
 
+- [ ] Add Read, BufRead, and Seek trait to FilesystemStream
+
 ## Out of scope (for now)
 
 - [ ] Add multi texture support
 
 ## DONE
 
+- [x] Add initial uniform handling
+- [x] Render quad with texture
 - [x] Improve shader problem debugging by adding shader source to failure report
 - [x] Add texture coordinates to vertices
 - [x] Extract render Effect

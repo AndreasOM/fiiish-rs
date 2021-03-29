@@ -13,7 +13,6 @@ pub enum ShaderType {
 	Fragment,
 }
 
-//#[derive(Debug)]
 #[derive(Derivative)]
 #[derivative(Debug)]
 pub struct Program {
@@ -21,6 +20,8 @@ pub struct Program {
 //	shader_ids: HashMap<ShaderType, gl::types::GLuint>,
 	shader_ids: Vec< (ShaderType, gl::types::GLuint) >,
 	program_id: gl::types::GLuint,
+
+	uniforms: HashMap< String, i32 >,
 
 	#[derivative(Debug="ignore")]
 	// :TODO: make debug only
@@ -33,6 +34,7 @@ impl Program {
 //			shader_ids: HashMap::new(),
 			shader_ids: Vec::new(),
 			program_id: 0xffffffff,
+			uniforms: HashMap::new(),
 
 			shader_sources: Vec::new(),
 		}
@@ -61,6 +63,17 @@ impl Program {
 			if log_length > 0 {
 				// :TODO: get actual log
 				println!("Warning: LogLength {} for shader {:?}\n{}", &log_length, &shader_type, &source );
+
+				let mut buf: Vec<u8> = Vec::with_capacity( log_length as usize );
+				gl::GetShaderInfoLog( id, log_length, &mut log_length, buf.as_mut_ptr() as *mut _ );
+				buf.set_len( log_length as usize );
+				let s = String::from_utf8( buf ).unwrap();
+				println!("Error Log: {}", &s );
+/*
+
+			GLchar *log = (GLchar *)malloc(logLength);
+			glGetShaderInfoLog(*shader, logLength, &logLength, log);
+*/				
 			}
 
 //			self.shader_ids.insert( shader_type, id );
@@ -93,6 +106,23 @@ impl Program {
 			self.program_id = id;
 		}
 		Debug::check_gl_error( std::file!(), std::line!() );
+
+		// lookup common uniforms
+		unsafe {
+			let uniform_names = [ "texture0\0" ];
+			for un in uniform_names.iter() {
+				let l = gl::GetUniformLocation( self.program_id, un.as_ptr() as *const _ );
+				if l != -1 {
+					println!("Got uniform {} at location {}", &un, l );
+					self.uniforms.insert( un.to_string(), l );
+				}
+			}
+
+		}
+	}
+
+	pub fn uniforms_iter( &self ) -> std::collections::hash_map::Iter<'_, String, i32> {
+		self.uniforms.iter()
 	}
 
 	// :TODO: find better name, `use` is rust keyword :(

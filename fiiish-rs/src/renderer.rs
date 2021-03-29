@@ -53,7 +53,8 @@ impl Vertex {
 #[derive(Debug)]
 pub struct Renderer {
 	frame: u64,
-	material_manager: MaterialManager,
+	material_manager: Manager<Material>,
+	texture_manager: Manager<Texture>,
 	vertices: Vec<Vertex>,
 	effects: HashMap< u16, Effect >,
 	default_effect_id: u16,
@@ -66,7 +67,8 @@ impl Renderer {
 	pub fn new() -> Self {
 		Self {
 			frame: 0,
-			material_manager: MaterialManager::new(),
+			material_manager: Manager::new(),
+			texture_manager: Manager::new(),
 			vertices: Vec::new(),		// :TODO: pre allocate size? or maybe even a fixed size array
 			effects: HashMap::new(),
 			default_effect_id: 0,
@@ -81,6 +83,13 @@ impl Renderer {
 			self.default_effect_id = effect.id();
 		}
 		self.effects.insert(effect.id(), effect);
+	}
+
+	pub fn register_texture( &mut self, mut texture: Texture ) {
+		let index = self.texture_manager.add( texture );
+		if self.texture_manager.len() == 1 {
+			self.texture_manager.set_active( index );
+		}
 	}
 
 	fn get_default_effect(&self) -> &Effect {
@@ -137,7 +146,7 @@ impl Renderer {
 		}
 		// enusre we have at least one material, and it is active
 		if self.material_manager.len() == 0 {
-			let m = Material::new( &self.get_default_effect() );
+			let m = Material::new( &self.get_default_effect(), &self.texture_manager.get_active() );
 			let i = self.material_manager.add( m );
 			self.material_manager.set_active( i );			
 		}
@@ -196,18 +205,20 @@ impl Renderer {
 	fn switch_active_material_if_needed( &mut self ) {
 //		println!("switch_active_material_if_needed active_effect_name {}", &self.active_effect_name);
 		let eid = self.get_active_effect().id();
+		let tid = self.texture_manager.get_active().hwid();
+		let key = Material::calculate_key( eid, tid );
 		let can_render = {
 			let m = self.material_manager.get_active();
-			m.can_render( eid )
+			m.can_render( key )
 		};
 
 		if !can_render {
 			let found_material = self.material_manager.select_active(|m: &Material|{
-				m.can_render( eid )
+				m.can_render( key )
 			});
 			if !found_material {
 				println!("Didn't find material for effect id {} active_effect_id {}", eid, &self.active_effect_id );
-				let m = Material::new( &self.get_active_effect() );
+				let m = Material::new( &self.get_active_effect(), &self.texture_manager.get_active() );
 				let i = self.material_manager.add( m );
 				self.material_manager.set_active( i );
 			}
@@ -217,6 +228,23 @@ impl Renderer {
 	pub fn use_effect( &mut self, effect_id: u16 ) {
 		self.active_effect_id = effect_id;
 		self.switch_active_material_if_needed();
+	}
+
+	pub fn use_texture( &mut self, name: &str ) {
+		let current_active_texture = self.texture_manager.get_active();
+		if name != current_active_texture.name() {
+//			println!("Switching active texture from {} to {}", &current_active_texture.name(), &name );
+
+			let found_texture = self.texture_manager.select_active(|t: &Texture|{
+				t.name() == name
+			});
+
+			if !found_texture {
+				println!("Warning: Texture {} not found using default", &name);
+				self.texture_manager.set_active( 0 );
+			}
+			self.switch_active_material_if_needed();
+		}
 	}
 
 	pub fn set_tex_coords( &mut self, tex_coords: &Vector2 ) {
@@ -276,13 +304,15 @@ impl Renderer {
 }
 
 #[derive(Debug)]
-struct MaterialManager {
-	materials: Vec<Material>,
+struct Manager<T> {
+	materials: Vec<T>,
 	active_index: usize,
 }
 
-impl MaterialManager {
+impl <T>Manager<T> {
 	pub fn new() -> Self {
+		println!("Creating manager for {}", std::any::type_name::<T>());
+
 		Self {
 			materials: Vec::new(),
 			active_index: 0,
@@ -294,7 +324,7 @@ impl MaterialManager {
 	}
 
 	pub fn select_active<F>( &mut self, f: F) -> bool
-		where F: Fn( &Material ) -> bool
+		where F: Fn( &T ) -> bool
 	{
 		for (i,m) in self.materials.iter().enumerate() {
 			if f( m ) {
@@ -308,25 +338,25 @@ impl MaterialManager {
 	pub fn len( &self ) -> usize {
 		self.materials.len()
 	}
-	pub fn add( &mut self, material: Material ) -> usize {
+	pub fn add( &mut self, material: T ) -> usize {
 		let i = self.materials.len();
 		self.materials.push(material);
 		i
 	}
 
-	pub fn iter_mut( &mut self ) -> std::slice::IterMut<'_, Material> {
+	pub fn iter_mut( &mut self ) -> std::slice::IterMut<'_, T> {
 		self.materials.iter_mut()
 	}
-	pub fn get_mut_active( &mut self ) -> &mut Material {
+	pub fn get_mut_active( &mut self ) -> &mut T {
 		match self.materials.get_mut( self.active_index ) {
 			Some( m ) => m,
-			None => panic!("No active Material"),
+			None => panic!("No active {}", std::any::type_name::<T>()),
 		}
 	}
-	pub fn get_active( &self ) -> &Material {
+	pub fn get_active( &self ) -> &T {
 		match self.materials.get( self.active_index ) {
 			Some( m ) => m,
-			None => panic!("No active Material"),
+			None => panic!("No active {}", std::any::type_name::<T>()),
 		}
 	}
 
@@ -348,3 +378,6 @@ mod material;
 mod program;
 	pub use program::Program as Program;
 	pub use program::ShaderType as ShaderType;
+mod texture;
+	pub use texture::Texture as Texture;
+

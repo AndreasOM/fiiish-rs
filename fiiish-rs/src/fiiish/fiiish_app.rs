@@ -5,6 +5,7 @@ use crate::renderer::{
 	Color,
 	Effect,
 	Renderer,
+	Texture,
 };
 use crate::system::System;
 use crate::system::filesystem_disk::FilesystemDisk;
@@ -76,6 +77,10 @@ impl FiiishApp {
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::White as u16    , "White"    , "default_vs.glsl", "white_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Textured as u16 , "Textured" , "textured_vs.glsl", "textured_fs.glsl" ) );
 
+		renderer.register_texture( Texture::create( &mut self.system, "test_texture_1" ) );
+		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
+		renderer.register_texture( Texture::create( &mut self.system, "fish_swim0000" ) );
+
 		self.renderer = Some( renderer );
 		Ok(())
 	}
@@ -110,7 +115,7 @@ impl FiiishApp {
 //			println!("Middle Mouse Button is pressed! -> {}", self.click_positions.len());
 			let cp = self.cursor_pos;
 
-			for _ in 0..1000 {
+			for _ in 0..1 /*000*/ {
 				self.click_positions.push( cp );
 			}
 		}
@@ -141,37 +146,43 @@ impl FiiishApp {
 
 //				renderer.use_effect( "Default" );
 				renderer.use_effect( EffectId::Default as u16 );
+				renderer.use_texture( "fish_swim0000" );
 
 				// renderer.use_material( "rainbow" );
 				for i in 0..100 {
 					if i % 10 == 0 {
-						renderer.use_effect( EffectId::White as u16 );
-					} else {
 						renderer.use_effect( EffectId::Default as u16 );
+					} else {
+						renderer.use_effect( EffectId::Textured as u16 );
 					}
 					let s = 0.125;
 					let fi = i as f32;
 					let t = self.total_time as f32 + fi*1.01;
 					let y = 0.2*t.sin() as f32;
 					let x = 0.2*(t + 3.14*0.5).sin() as f32;
-					let x = 2.0 * x;
-					let y = 2.0 * y;
+					let x = 3.0 * x;
+					let y = 3.0 * y;
 
 					let pos = Vector2::new( x, y );
 					let size = Vector2::new( 2.0*s, 2.0*s );
-					renderer.render_quad( &pos, &size );
+					renderer.render_textured_quad( &pos, &size );
 				}
 
+				renderer.use_effect( EffectId::Default as u16 );
 				for cp in &self.click_positions {
 					renderer.render_quad( &cp, &Vector2::new( 0.1, 0.1 ) );
 				}
 				
 				renderer.use_effect( EffectId::Textured as u16 );
+				renderer.use_texture( "test_texture_1" );
 				renderer.render_textured_quad( &Vector2::new( -0.8, 0.8 ), &Vector2::new( 0.2, 0.2 ) );
+				renderer.use_texture( "test_texture_2" );
 				renderer.render_textured_quad( &Vector2::new(  0.6, 0.6 ), &Vector2::new( 0.4, 0.4 ) );
+//				renderer.use_texture( "test_texture_3" );
 
-				renderer.use_effect( EffectId::White as u16 );
-				renderer.render_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
+				renderer.use_effect( EffectId::Textured as u16 );
+				renderer.use_texture( "fish_swim0000" );
+				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
 
 //				dbg!( &renderer );
 				renderer.end_frame();

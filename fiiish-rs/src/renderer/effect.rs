@@ -70,6 +70,7 @@ impl Effect {
 		&self.name
 	}
 
-
-
+	pub fn program(&self) -> &Program { 
+		&self.program
+	}
 }
