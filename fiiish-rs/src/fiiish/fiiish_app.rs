@@ -9,6 +9,7 @@ use crate::renderer::{
 };
 use crate::system::System;
 use crate::system::filesystem_disk::FilesystemDisk;
+use crate::system::filesystem_layered::FilesystemLayered;
 
 use crate::window::Window;
 use crate::window_update_context::WindowUpdateContext;
@@ -52,8 +53,17 @@ impl FiiishApp {
 		let cwd = std::env::current_dir()?;
 		let cwd = cwd.to_string_lossy();
 		let datadir = format!("{}/../fiiish-data", &cwd);
-		let dfs = FilesystemDisk::new( &datadir );
-		self.system.set_default_filesystem( Box::new( dfs ) );
+		let dfs1 = FilesystemDisk::new( &datadir );
+
+		let datadir = format!("{}/../dummy-data", &cwd);
+		let dfs2 = FilesystemDisk::new( &datadir );
+
+		let mut lfs = FilesystemLayered::new();
+		// Note: Filesystems will be searched last to first (lifo)
+		lfs.add_filesystem( Box::new( dfs2 ) );
+		lfs.add_filesystem( Box::new( dfs1 ) );
+
+		self.system.set_default_filesystem( Box::new( lfs ) );
 
 		// :TODO: load confiiguration
 
@@ -90,6 +100,7 @@ impl FiiishApp {
 		renderer.register_texture( Texture::create( &mut self.system, "fish_swim0000" ) );
 
 
+//		todo!("die");
 		// setup sub parts
 		self.mixel.setup( &mut self.system, &mut renderer );
 

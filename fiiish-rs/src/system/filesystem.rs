@@ -5,6 +5,9 @@ use crate::system::filesystem_stream::FilesystemStream;
 pub trait Filesystem {
 
 	fn open( &mut self, name: &str ) -> Box< dyn FilesystemStream >;
+	fn exists( &mut self, name: &str ) -> bool {
+		false
+	}
 
 	fn name( &self ) -> &str;
 	fn filesystem_type( &self ) -> &str;

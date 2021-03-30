@@ -6,8 +6,6 @@
 
 ## TODO
 
-- [ ] Add Filesystem_Layered that allows fallbacks for loading
-
 - [ ] Add support for (M)VP uniform
 - [ ] Add very basic Matrix struct
 - [ ] Setup correct MVP for orthographic projection
@@ -36,6 +34,7 @@
 
 ## DONE
 
+- [x] Add Filesystem_Layered that allows fallbacks for loading
 - [x] Add support for runtime modifiable textures
 - [x] Add pixel editor, just because we can
 - [x] Add initial uniform handling

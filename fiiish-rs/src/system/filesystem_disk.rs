@@ -22,6 +22,10 @@ impl Filesystem for FilesystemDisk {
 
 		Box::new( stream )
 	}
+	fn exists( &mut self, name: &str ) -> bool {
+		let fullname = format!("{}/{}", &self.basedir, &name);
+		std::path::Path::new(&fullname).exists()
+	}
 
 	fn name( &self ) -> &str {
 		""

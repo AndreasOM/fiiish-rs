@@ -32,3 +32,5 @@ pub mod filesystem_stream_empty;
 
 pub mod filesystem_disk;
 pub mod filesystem_stream_disk;
+
+pub mod filesystem_layered;
