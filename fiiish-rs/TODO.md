@@ -19,6 +19,8 @@
 
 - [ ] Add basic ResourceManager
 
+- [ ] Refactor WindowUpdateContext
+
 ## Future
 
 - [ ] Only transfer minimal per Vertex data to GPU (e.g. remove TexCoords where not needed)
@@ -34,6 +36,8 @@
 
 ## DONE
 
+- [x] Add support for runtime modifiable textures
+- [x] Add pixel editor, just because we can
 - [x] Add initial uniform handling
 - [x] Render quad with texture
 - [x] Improve shader problem debugging by adding shader source to failure report

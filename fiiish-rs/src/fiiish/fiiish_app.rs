@@ -13,6 +13,8 @@ use crate::system::filesystem_disk::FilesystemDisk;
 use crate::window::Window;
 use crate::window_update_context::WindowUpdateContext;
 
+use super::mixel::Mixel;
+
 #[derive(Debug)]
 pub struct FiiishApp {
 	count: isize,
@@ -23,6 +25,8 @@ pub struct FiiishApp {
 
 	click_positions: Vec< Vector2 >,
 	system: System,
+
+	mixel: Mixel,
 }
 
 impl FiiishApp {
@@ -35,6 +39,8 @@ impl FiiishApp {
 			cursor_pos: Vector2::zero(),
 			click_positions: Vec::new(),
 			system: System::new(),
+
+			mixel: Mixel::new(),
 		}
 	}
 
@@ -81,6 +87,10 @@ impl FiiishApp {
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "fish_swim0000" ) );
 
+
+		// setup sub parts
+		self.mixel.setup( &mut self.system, &mut renderer );
+
 		self.renderer = Some( renderer );
 		Ok(())
 	}
@@ -89,6 +99,7 @@ impl FiiishApp {
 		// Note: teardown is currently not called
 		// implement Drop if you really need cleanup, or just do it before returning true from is_done
 
+		self.mixel.teardown();
 		self.renderer = None;
 	}
 
@@ -125,13 +136,16 @@ impl FiiishApp {
 			println!("fps: {}", fps);
 		}
 
-		if wuc.is_escaped_pressed || wuc.is_space_pressed {
+		if wuc.is_escaped_pressed { //|| wuc.is_space_pressed {
 			self.is_done = true;
 //			dbg!(&self);
 		}
 //		let next_frame_time = std::time::Instant::now() +
 //        	std::time::Duration::from_nanos(4_000_000);	// use some time for update
 //		std::thread::sleep( std::time::Duration::new(0, 4_000_000)); // 1_000_000_000 ns in 1s
+
+
+		self.mixel.update( wuc );
 	}
 
 	pub fn render( &mut self ) {
@@ -185,6 +199,10 @@ impl FiiishApp {
 				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
 
 //				dbg!( &renderer );
+
+
+				self.mixel.render( renderer );
+
 				renderer.end_frame();
 			},
 			None => {},

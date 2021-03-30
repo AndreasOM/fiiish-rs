@@ -132,7 +132,15 @@ impl Window {
                 			window_update_context.is_space_pressed = state == ElementState::Pressed;
 //                			println!("Space {:?}", &state );
                 		},
-                		_ => {},
+                		( vkc, state ) if vkc >= VirtualKeyCode::A && vkc <= VirtualKeyCode::Z => {
+                			let o = ( ( vkc as u16 ) - ( VirtualKeyCode::A as u16 ) ) as u8;
+                			let o = ( o + 'a' as u8 ) as usize;
+                			//println!("KeyboardInput A-Z {:?} -> {}", &vkc, &o);
+                			window_update_context.is_key_pressed[ o ] = state == ElementState::Pressed;
+                		},
+                		_ => {
+                			println!("KeyboardInput {:?}", &virtual_code);
+                		},
                 	},
 					_ => (),
 	            },

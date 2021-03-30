@@ -1,4 +1,5 @@
 
+use crate::math::Vector2;
 
 use crate::renderer::{
 	Debug,
@@ -11,6 +12,9 @@ use crate::system::System;
 pub struct Texture {
 	name: String,
 	hwid: gl::types::GLuint,
+	width: u32,
+	height: u32,
+	canvas: Option< Vec<u32> >,
 }
 
 impl Texture {
@@ -20,15 +24,29 @@ impl Texture {
 		t
 	}
 
+	pub fn create_canvas( system: &mut System, name: &str, size: u32 ) -> Self {
+		let mut t = Texture::new( name );
+		t.make_canvas( size );
+		t.update_canvas();
+		t
+	}
+
 	pub fn new( name: &str ) -> Self {
 		let mut hwid = 0xffff;
 		unsafe {
 			gl::GenTextures( 1, &mut hwid );
+			gl::BindTexture( gl::TEXTURE_2D, hwid );
+
+			gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
+			gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
 		}
 
 		Self {
 			name: name.to_string(),
 			hwid: hwid,
+			width: 0,
+			height: 0,
+			canvas: None,
 		}
 	}
 
@@ -46,6 +64,58 @@ impl Texture {
 			gl::ActiveTexture( gl::TEXTURE0 );
 			gl::BindTexture( gl::TEXTURE_2D, self.hwid );
 		}
+	}
+
+	pub fn clear( &mut self ) {
+		if let Some( c ) = &mut self.canvas {
+			c.fill( 0 );
+		}		
+	}
+	pub fn set_texel( &mut self, pos: &Vector2, color: u32 ) {
+		if let Some( c ) = &mut self.canvas {
+			let p = ( self.width * pos.y as u32 + pos.x as u32 ) as usize;
+			if p < c.len() {
+				c[ p ] = color;
+			}
+		}		
+	}
+
+	pub fn update_canvas( &mut self ) {
+		if let Some( c ) = &self.canvas {
+			unsafe {
+				gl::BindTexture( gl::TEXTURE_2D, self.hwid );
+				gl::TexImage2D(
+					gl::TEXTURE_2D,
+					0, // mimap
+					gl::RGBA8 as i32,
+					self.width as i32,
+					self.height as i32,
+					0, // border
+					gl::RGBA,
+					gl::UNSIGNED_BYTE,
+					//std::ptr::null(),
+					// dummy_buf.as_ptr() as *const _,
+					//i.into_raw().as_ptr() as *const _,
+					c.as_ptr() as *const _,
+				);
+
+				Debug::check_gl_error( std::file!(), std::line!() );
+
+//				gl::GenerateMipmap( gl::TEXTURE_2D );
+			}
+		}
+	}
+	fn make_canvas( &mut self, size: u32 ) {
+		self.width = size;
+		self.height = size;
+		let buf_size = ( size*size ) as usize;
+		let mut c = Vec::with_capacity( buf_size );
+		unsafe {
+			c.set_len( buf_size );
+		}
+		c.fill( 0x00000000 );
+//		c[ 0 ] = 0xff0000ff;
+		self.canvas = Some( c );
 	}
 
 	fn load( &mut self, system: &mut System, name: &str ) -> bool {
@@ -70,6 +140,9 @@ impl Texture {
 						let w = i.width();
 						let h = i.height();
 
+						self.width = w;
+						self.height = h;
+
 						unsafe {
 							gl::BindTexture( gl::TEXTURE_2D, self.hwid );
 							gl::TexImage2D(
@@ -88,7 +161,7 @@ impl Texture {
 
 							Debug::check_gl_error( std::file!(), std::line!() );
 
-							gl::GenerateMipmap( gl::TEXTURE_2D );
+//							gl::GenerateMipmap( gl::TEXTURE_2D );
 /*
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);
 
