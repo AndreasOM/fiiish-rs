@@ -27,6 +27,7 @@ pub struct FiiishApp {
 	system: System,
 
 	mixel: Mixel,
+	mixel_enabled: bool,
 }
 
 impl FiiishApp {
@@ -41,6 +42,7 @@ impl FiiishApp {
 			system: System::new(),
 
 			mixel: Mixel::new(),
+			mixel_enabled: false,
 		}
 	}
 
@@ -144,8 +146,14 @@ impl FiiishApp {
 //        	std::time::Duration::from_nanos(4_000_000);	// use some time for update
 //		std::thread::sleep( std::time::Duration::new(0, 4_000_000)); // 1_000_000_000 ns in 1s
 
+		if wuc.was_key_pressed( 'm' as u8 ) {
+			self.mixel_enabled = !self.mixel_enabled;
+		}
 
-		self.mixel.update( wuc );
+
+		if self.mixel_enabled {
+			self.mixel.update( wuc );
+		}
 	}
 
 	pub fn render( &mut self ) {
@@ -201,7 +209,9 @@ impl FiiishApp {
 //				dbg!( &renderer );
 
 
-				self.mixel.render( renderer );
+				if self.mixel_enabled {
+					self.mixel.render( renderer );
+				}
 
 				renderer.end_frame();
 			},

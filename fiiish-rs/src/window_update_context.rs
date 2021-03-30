@@ -11,6 +11,7 @@ pub struct WindowUpdateContext {
 	pub is_key_pressed: [bool;256],
 
 	previous_mouse_buttons: [bool;3],
+	previous_keys_pressed: [bool;256],
 }
 
 impl WindowUpdateContext {
@@ -25,15 +26,24 @@ impl WindowUpdateContext {
 			is_key_pressed: [false;256],
 
 			previous_mouse_buttons: [false,false,false],
+			previous_keys_pressed: [false;256],
 		}
 	}
 
 	pub fn update( &mut self ) {
 //		dbg!(&self);
 		self.previous_mouse_buttons = self.mouse_buttons;
+		self.previous_keys_pressed = self.is_key_pressed;
+//		for i in 0..self.is_key_pressed.len() {
+//			self.previous_keys_pressed[ i ] = self.is_key_pressed[ i ];
+//		}
 	}
 
 	pub fn was_mouse_button_pressed( &self, button_index: usize ) -> bool {
 		self.mouse_buttons[ button_index ] && !self.previous_mouse_buttons[ button_index ]
+	}
+
+	pub fn was_key_pressed( &self, key: u8 ) -> bool {
+		self.is_key_pressed[ key as usize ] && !self.previous_keys_pressed[ key as usize ]
 	}
 }
