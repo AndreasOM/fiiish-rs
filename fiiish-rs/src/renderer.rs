@@ -1,7 +1,7 @@
 
 use std::collections::HashMap;
 
-use crate::math::{ Matrix44, Vector2 };
+use crate::math::{ Matrix22, Matrix44, Vector2 };
 use crate::system::System;
 use crate::window::Window;
 
@@ -303,8 +303,8 @@ impl Renderer {
 	pub fn set_tex_coords( &mut self, tex_coords: &Vector2 ) {
 		self.tex_coords = *tex_coords;
 	}
-	pub fn add_vertex( &mut self, x: f32, y: f32 ) -> u32 {
-		let v = Vertex::from_pos_with_tex_coords( &Vector2::new( x, y ), &self.tex_coords );
+	pub fn add_vertex( &mut self, pos: &Vector2 ) -> u32 {
+		let v = Vertex::from_pos_with_tex_coords( pos, &self.tex_coords );
 		self.vertices.push( v );
 		self.vertices.len() as u32 - 1
 	}
@@ -328,10 +328,16 @@ impl Renderer {
 		hs.x = 0.5 * hs.x;
 		hs.y = 0.5 * hs.y;
 
-		let v0 = self.add_vertex( -hs.x + pos.x,  hs.y + pos.y ); // TopLeft
-		let v1 = self.add_vertex( -hs.x + pos.x, -hs.y + pos.y ); // BottomLeft
-		let v2 = self.add_vertex(  hs.x + pos.x, -hs.y + pos.y ); // BottomRight
-		let v3 = self.add_vertex(  hs.x + pos.x,  hs.y + pos.y ); // TopRight
+		let tl = Vector2::new( -hs.x + pos.x,  hs.y + pos.y );
+		let bl = Vector2::new( -hs.x + pos.x, -hs.y + pos.y );
+		let br = Vector2::new(  hs.x + pos.x, -hs.y + pos.y );
+		let tr = Vector2::new(  hs.x + pos.x,  hs.y + pos.y );
+
+		let v0 = self.add_vertex( &tl );
+		let v1 = self.add_vertex( &bl );
+		let v2 = self.add_vertex( &br );
+		let v3 = self.add_vertex( &tr );
+
 		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
 		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
 	}
@@ -341,14 +347,57 @@ impl Renderer {
 		hs.x = 0.5 * hs.x;
 		hs.y = 0.5 * hs.y;
 
+		let tl = Vector2::new( -hs.x + pos.x,  hs.y + pos.y );
+		let bl = Vector2::new( -hs.x + pos.x, -hs.y + pos.y );
+		let br = Vector2::new(  hs.x + pos.x, -hs.y + pos.y );
+		let tr = Vector2::new(  hs.x + pos.x,  hs.y + pos.y );
+
 		self.set_tex_coords( &Vector2::new( 0.0, 0.0 ) );
-		let v0 = self.add_vertex( -hs.x + pos.x,  hs.y + pos.y ); // TopLeft
+		let v0 = self.add_vertex( &tl );
 		self.set_tex_coords( &Vector2::new( 0.0, 1.0 ) );
-		let v1 = self.add_vertex( -hs.x + pos.x, -hs.y + pos.y ); // BottomLeft
+		let v1 = self.add_vertex( &bl );
 		self.set_tex_coords( &Vector2::new( 1.0, 1.0 ) );
-		let v2 = self.add_vertex(  hs.x + pos.x, -hs.y + pos.y ); // BottomRight
+		let v2 = self.add_vertex( &br );
 		self.set_tex_coords( &Vector2::new( 1.0, 0.0 ) );
-		let v3 = self.add_vertex(  hs.x + pos.x,  hs.y + pos.y ); // TopRight
+		let v3 = self.add_vertex( &tr );
+
+		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
+		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
+	}
+
+	pub fn render_textured_quad_with_rotation( &mut self, pos: &Vector2, size: &Vector2, angle: f32 ) {
+		let angle = angle * 0.01745329252;
+
+		let mut hs = *size;	// hs => half size
+		hs.x = 0.5 * hs.x;
+		hs.y = 0.5 * hs.y;
+
+		let tl = Vector2::new( -hs.x,  hs.y );
+		let bl = Vector2::new( -hs.x, -hs.y );
+		let br = Vector2::new(  hs.x, -hs.y );
+		let tr = Vector2::new(  hs.x,  hs.y );
+
+		let mtx = Matrix22::z_rotation( angle );
+
+		// :TODO: future optimization once we have full matrix implementation
+//		let mtx_tr = Matrix22::translation( pos.x, pos.y );
+//		let mtx = mtx_r.mul_matrix( &mtx );
+
+		let tl = mtx.mul_vector2( &tl ).add( &pos );
+		let bl = mtx.mul_vector2( &bl ).add( &pos );
+		let br = mtx.mul_vector2( &br ).add( &pos );
+		let tr = mtx.mul_vector2( &tr ).add( &pos );
+
+//		dbg!(&mtx, &tl);
+
+		self.set_tex_coords( &Vector2::new( 0.0, 0.0 ) );
+		let v0 = self.add_vertex( &tl );
+		self.set_tex_coords( &Vector2::new( 0.0, 1.0 ) );
+		let v1 = self.add_vertex( &bl );
+		self.set_tex_coords( &Vector2::new( 1.0, 1.0 ) );
+		let v2 = self.add_vertex( &br );
+		self.set_tex_coords( &Vector2::new( 1.0, 0.0 ) );
+		let v3 = self.add_vertex( &tr );
 
 		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
 		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		

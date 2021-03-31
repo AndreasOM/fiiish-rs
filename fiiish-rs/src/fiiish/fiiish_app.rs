@@ -233,13 +233,14 @@ impl FiiishApp {
 					let fi = i as f32;
 					let t = self.total_time as f32 + fi*1.01;
 					let y = 0.2*t.sin() as f32;
-					let x = 0.2*(t + 3.14*0.5).sin() as f32;
-					let x = 512.0*3.0 * x;
-					let y = 512.0*3.0 * y;
+					let x = 0.2*t.cos() as f32;
+					let d = 1.0+(0.5+0.5*t.sin());
+					let x = d*512.0*3.0 * x;
+					let y = d*512.0*3.0 * y;
 
 					let pos = Vector2::new( x, y );
 					let size = Vector2::new( 2.0*s, 2.0*s );
-					renderer.render_textured_quad( &pos, &size );
+					renderer.render_textured_quad_with_rotation( &pos, &size, -t*57.29577951289617186797 + 270.0 );
 				}
 
 				renderer.use_effect( EffectId::Default as u16 );

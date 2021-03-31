@@ -24,6 +24,7 @@ impl Game {
 	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer) {
 		// load texture
 		renderer.register_texture( Texture::create( system, "fish_swim0000" ) );
+		renderer.register_texture( Texture::create( system, "fish_swim0021" ) );
 		renderer.register_texture( Texture::create( system, "fish_die00" ) );
 
 		let mut p = Player::new();
@@ -48,6 +49,9 @@ impl Game {
 					} else {
 						p.turn_up();
 					};
+					if wuc.was_key_pressed( 'k' as u8 ) {
+						p.kill();
+					}
 				} else {
 					// :TODO: handle via UI
 					if p.can_respawn() {

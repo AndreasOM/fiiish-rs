@@ -7,8 +7,6 @@
 
 ## TODO
 
-- [ ] Allow quads to be rotated
-- [ ] Add fish rotation, and use direction for movement
 - [ ] Add AnimatedTexture
 
 - [ ] Split renderer context from window
@@ -22,12 +20,15 @@
 
 ## Future
 
+- [ ] Limit player/fish angle at boundaries
+
 - [ ] Only transfer minimal per Vertex data to GPU (e.g. remove TexCoords where not needed)
 
 - [ ] Remember window size, and position
 - [ ] Retain info of open FilesystemStreams in Filesystems to allow cleanup, e.g. via Rc or Arc
 
 - [ ] Add Read, BufRead, and Seek trait to FilesystemStream
+- [ ] Add Angle helpers
 
 ## Out of scope (for now)
 
@@ -35,6 +36,8 @@
 
 ## DONE
 
+- [x] Allow quads to be rotated
+- [x] Add fish rotation, and use direction for movement
 - [x] Add game logic wrapper
 - [x] Add basic Fiiish movement
 - [x] Add support for (M)VP uniform

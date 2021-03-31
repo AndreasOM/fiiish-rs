@@ -14,15 +14,24 @@ enum PlayerState {
 	Dead,
 }
 
+#[derive(Debug,PartialEq,Eq)]
+enum PlayerDirection {
+	Up,
+	Down,
+	Float,
+}
+
 #[derive(Debug)]
 pub struct Player {
 	name: String,
 	spawn_pos: Vector2,
 	pos: Vector2,
+	angle: f32,
 	size: Vector2,
 	state: PlayerState,
-	going_down: bool,
+	direction: PlayerDirection,
 	speed: f32,
+	time_since_dying: f32,
 }
 
 impl Player {
@@ -31,10 +40,12 @@ impl Player {
 			name: String::new(),
 			spawn_pos: Vector2::new( -512.0, 0.0 ),
 			pos: Vector2::zero(),
+			angle: 0.0,
 			size: Vector2::new( 128.0, 128.0 ),
 			state: PlayerState::Dead,
-			going_down: false,
+			direction: PlayerDirection::Float,
 			speed: 100.0,
+			time_since_dying: f32::MAX,
 		}
 	}
 
@@ -65,6 +76,11 @@ impl Player {
 		match state {
 			PlayerState::WaitForStart => {
 				self.pos = self.spawn_pos;
+				self.angle = 0.0;
+				self.direction = PlayerDirection::Float;
+			},
+			PlayerState::Dying => {
+				self.time_since_dying = 0.0;
 			},
 			_ => {},
 		}
@@ -86,31 +102,102 @@ impl Player {
 				self.goto_state( PlayerState::Swimming );
 			},
 			PlayerState::Swimming => {
-				self.going_down = true;
+				self.direction = PlayerDirection::Down;
 			}
 			_ => {},
 		}
 	}
 
 	pub fn turn_up( &mut self ) {
-		self.going_down = false;	
+		self.direction = PlayerDirection::Up;
+	}
+
+	pub fn kill( &mut self ) {
+		if self.is_alive() {
+			self.goto_state( PlayerState::Dying );
+		}
+	}
+
+	fn get_angle_range_for_y( y: f32 ) -> ( f32, f32 ) {
+        let limit = 35.0;
+        let range = 1.0/280.0;
+	
+		let a = ( y.abs() * range ).sin();
+        // float a = Functions::getSin( Functions::getAbs( y )*range );
+        let m = limit*( 1.0-a*a*a*a );
+        // float m = limit*( 1.0-a*a*a*a );
+        
+        if( y<0.0 )
+        {
+        	( -limit, m )
+//            *pMinAngle = -limit;
+//            *pMaxAngle = m;
+        }
+        else
+        {
+        	( -m, limit )
+//            *pMinAngle = -m;
+//            *pMaxAngle = limit;
+        }
 	}
 
 	fn update_swimming( &mut self, euc: &mut EntityUpdateContext ) {
-		if self.going_down {
-			self.pos.y -= self.speed*euc.time_step() as f32;
-			if self.pos.y < -512.0 {
-				self.goto_state( PlayerState::Dying );
-			}
-		} else {
-			self.pos.y += self.speed*euc.time_step() as f32;
-			if self.pos.y > 512.0 {
-				self.goto_state( PlayerState::Dying );
-			}
-		}		
+		let ts = euc.time_step() as f32;
+		match self.direction {
+			PlayerDirection::Down => {
+				self.angle += 120.0 * ts; 
+			},
+			PlayerDirection::Up => {
+				self.angle -= 120.0 * ts; 
+			},
+			PlayerDirection::Float => {},
+		}
+
+		// :TODO: port over angle limiting logic from original game
+
+		let ( min_a, max_a ) = Player::get_angle_range_for_y( self.pos.y );
+
+//		self.angle = MAX( minAngle, MIN( maxAngle, m_angle ) );
+		self.angle = self.angle.clamp( min_a, max_a );
+//		println!("{} {} {} {}", &self.pos.y, &self.angle, &min_a, &max_a );
+
+		let a = self.angle;
+		let dy = ( ( a/57.2957795 ).sin() )*-350.0*ts;
+
+		// y +=  Functions::getSin( m_angle/57.2957795 )*-350.0*timeStep;
+
+		self.pos.y += dy;
+
+		// should never trigger, but better be safe
+		if self.pos.y > 512.0 || self.pos.y < -512.0 {
+			self.goto_state( PlayerState::Dying );
+		}
+
 	}
 	fn update_dying( &mut self, euc: &mut EntityUpdateContext ) {
-		self.pos.y += self.speed*euc.time_step() as f32;
+		let ts = euc.time_step() as f32;
+		self.time_since_dying += ts;
+		self.pos.y += 1.5*128.0 * self.time_since_dying * ts;
+
+		// this works in this case, but is a bad idea in general,
+		// use angle helpers instead
+		self.angle -= 60.0 * ts;
+		self.angle = self.angle.max( -90.0 );
+//		println!("{} {}", &self.pos.y, &self.angle );
+		/*
+			m_timeSinceKill += timeStep;
+            
+            float y = m_position.y;
+            
+            y += 1.5f*128.0f * m_timeSinceKill * timeStep;
+            
+            m_position.y = y;
+            
+            m_angle = Functions::approachAngle( -90.0f, m_angle,  60.0f*timeStep );
+            
+            m_rotation = m_angle;
+		*/
+
 		if self.pos.y > 512.0+128.0 {
 			self.goto_state( PlayerState::Dead );
 		}
@@ -134,8 +221,8 @@ impl Player {
 		renderer.use_effect( EffectId::Textured as u16 );
 		match self.state {
 			PlayerState::Dying | PlayerState::Dead => renderer.use_texture( "fish_die00" ),
-			_ => renderer.use_texture( "fish_swim0000" ),
+			_ => renderer.use_texture( "fish_swim0021" ),
 		}
-		renderer.render_textured_quad( &self.pos, &self.size );
+		renderer.render_textured_quad_with_rotation( &self.pos, &self.size, self.angle );
 	}
 }
