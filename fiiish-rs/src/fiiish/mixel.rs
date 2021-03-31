@@ -48,8 +48,8 @@ impl Mixel {
 //		canvas.set_texel( &Vector2::new( 15.0, 15.0 ), 0x0000ffff );
 //		canvas.set_texel( &Vector2::new( 1.0, 1.0 ), 0xffff0000 );
 //		canvas.update_canvas();
-		renderer.register_texture( Texture::create_canvas( system, "canvas", self.size.into() ) );
-		renderer.register_texture( Texture::create_canvas( system, "cursor", self.size.into() ) );
+		renderer.register_texture( Texture::create_canvas( system, "m_canvas", self.size.into() ) );
+		renderer.register_texture( Texture::create_canvas( system, "m_cursor", self.size.into() ) );
 	}
 
 	pub fn teardown( &mut self ) {
@@ -108,7 +108,7 @@ impl Mixel {
 	}
 
 	pub fn render( &mut self, renderer: &mut Renderer) {
-		if let Some( canvas ) = renderer.find_texture_mut( "canvas" ) {
+		if let Some( canvas ) = renderer.find_texture_mut( "m_canvas" ) {
 			if self.clear_canvas {
 				self.clear_canvas = false;
 				canvas.clear();
@@ -119,7 +119,7 @@ impl Mixel {
 				canvas.update_canvas();
 			}
 		}
-		if let Some( canvas ) = renderer.find_texture_mut( "cursor" ) {
+		if let Some( canvas ) = renderer.find_texture_mut( "m_cursor" ) {
 			canvas.clear();
 			let w = self.size as u16;
 			let h = self.size as u16;
@@ -139,9 +139,9 @@ impl Mixel {
 			canvas.update_canvas();
 		}
 		renderer.use_effect( EffectId::Textured as u16 );
-		renderer.use_texture( "canvas" );
+		renderer.use_texture( "m_canvas" );
 		renderer.render_textured_quad( &Vector2::new( 0.0, 0.0 ), &self.window_size );
-		renderer.use_texture( "cursor" );
+		renderer.use_texture( "m_cursor" );
 		renderer.render_textured_quad( &Vector2::new( 0.0, 0.0 ), &self.window_size );
 	}
 

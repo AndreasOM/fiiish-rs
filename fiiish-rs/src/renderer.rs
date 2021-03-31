@@ -203,6 +203,10 @@ impl Renderer {
 	}
 
 	pub fn end_frame( &mut self ) {
+		let mut total_vertices = 0;
+		let mut total_materials = 0;
+		let mut total_materials_with_vertices = 0;
+
 		let debug = self.frame % 500 == 0;
 		// just to avoid ghost
 		unsafe {
@@ -224,6 +228,11 @@ impl Renderer {
 			};
 			material.set_mvp_matrix( &self.mvp_matrix );
 			let vc = material.render( e );
+			total_vertices += vc;
+			total_materials += 1;
+			if vc > 0 {
+				total_materials_with_vertices += 1;
+			}
 			if debug {
 				println!("Rendered {} vertices for material {:?} with effect {:?}", vc, &material, &e );
 			}
@@ -237,6 +246,7 @@ impl Renderer {
 		if debug {
 			dbg!(&self.material_manager);
 		}
+		println!("Render Stats: {} {} {}", total_vertices, total_materials_with_vertices, total_materials);
 		self.frame += 1;
 	}
 
