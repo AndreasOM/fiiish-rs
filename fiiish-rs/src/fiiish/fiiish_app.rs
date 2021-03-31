@@ -11,11 +11,14 @@ use crate::system::System;
 use crate::system::filesystem_disk::FilesystemDisk;
 use crate::system::filesystem_layered::FilesystemLayered;
 
+use crate::fiiish::app_update_context::AppUpdateContext;
+
 use crate::window::Window;
 use crate::window_update_context::WindowUpdateContext;
 
 use crate::fiiish::game::Game;
 
+use super::demo::Demo;
 use super::mixel::Mixel;
 
 #[derive(Debug)]
@@ -26,13 +29,15 @@ pub struct FiiishApp {
 	renderer: Option< Renderer >,
 	cursor_pos: Vector2,
 
-	click_positions: Vec< Vector2 >,
 	system: System,
 
 	size: Vector2,
 	scaling: f32,
 
 	game: Game,
+
+	demo: Demo,
+	demo_enabled: bool,
 
 	mixel: Mixel,
 	mixel_enabled: bool,
@@ -46,7 +51,6 @@ impl FiiishApp {
 			is_done: false,
 			renderer: None,
 			cursor_pos: Vector2::zero(),
-			click_positions: Vec::new(),
 			system: System::new(),
 
 			size: Vector2::zero(),
@@ -54,6 +58,8 @@ impl FiiishApp {
 
 			game: Game::new(),
 
+			demo: Demo::new(),
+			demo_enabled: false,
 			mixel: Mixel::new(),
 			mixel_enabled: false,
 		}
@@ -109,11 +115,14 @@ impl FiiishApp {
 
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_1" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
-		renderer.register_texture( Texture::create( &mut self.system, "fish_swim0000" ) );
+		renderer.register_texture( Texture::create( &mut self.system, "cursor" ) );
 
 //		todo!("die");
 		// setup sub parts
 		self.game.setup( &mut self.system, &mut renderer );
+
+
+		self.demo.setup( &mut self.system, &mut renderer );
 		self.mixel.setup( &mut self.system, &mut renderer );
 
 		self.renderer = Some( renderer );
@@ -125,6 +134,8 @@ impl FiiishApp {
 		// implement Drop if you really need cleanup, or just do it before returning true from is_done
 
 		self.mixel.teardown();
+		self.demo.teardown();
+
 		self.game.teardown();
 		self.renderer = None;
 	}
@@ -136,6 +147,7 @@ impl FiiishApp {
 
 	pub fn update( &mut self, wuc: &mut WindowUpdateContext ) {
 //		println!("Update {}", &wuc.time_step );
+
 		self.count += 1;
 		self.total_time += wuc.time_step;
 
@@ -148,20 +160,10 @@ impl FiiishApp {
 		self.cursor_pos.x = self.scaling * wuc.window_size.x * ( 2.0*wuc.mouse_pos.x - 1.0 );
 		self.cursor_pos.y = self.scaling * wuc.window_size.y * ( 2.0*wuc.mouse_pos.y - 1.0 );
 
-		if wuc.was_mouse_button_pressed( 0 ) {
-			println!("Left Mouse Button was pressed!");
-			let cp = self.cursor_pos;
-
-			self.click_positions.push( cp );
-		}
-		if wuc.mouse_buttons[ 1 ] {
-//			println!("Middle Mouse Button is pressed! -> {}", self.click_positions.len());
-			let cp = self.cursor_pos;
-
-			for _ in 0..1 /*000*/ {
-				self.click_positions.push( cp );
-			}
-		}
+		let mut auc = AppUpdateContext::new()
+					.set_time_step( wuc.time_step )
+					.set_cursor_pos( &self.cursor_pos )
+					.set_wuc( &wuc );
 
 		if self.count % 180 == 0 {
 			let fps = self.count as f64 / self.total_time;
@@ -170,18 +172,21 @@ impl FiiishApp {
 
 		if wuc.is_escaped_pressed { //|| wuc.is_space_pressed {
 			self.is_done = true;
-//			dbg!(&self);
 		}
-//		let next_frame_time = std::time::Instant::now() +
-//        	std::time::Duration::from_nanos(4_000_000);	// use some time for update
-//		std::thread::sleep( std::time::Duration::new(0, 4_000_000)); // 1_000_000_000 ns in 1s
 
 		self.game.update( wuc );
+
+
+		if wuc.was_key_pressed( 't' as u8 ) {
+			self.demo_enabled = !self.demo_enabled;
+		}
+		if self.demo_enabled {
+			self.demo.update( &mut auc );
+		}
 
 		if wuc.was_key_pressed( 'm' as u8 ) {
 			self.mixel_enabled = !self.mixel_enabled;
 		}
-
 		if self.mixel_enabled {
 			self.mixel.update( wuc );
 		}
@@ -205,9 +210,6 @@ impl FiiishApp {
 				let near = 1.0;
 				let far = -1.0;
 
-//				dbg!(&scaling);
-//				dbg!(&top,&bottom);
-
 				let mvp = Matrix44::ortho(
 					left, right,
 					bottom, top,
@@ -218,55 +220,18 @@ impl FiiishApp {
 					&mvp
 				);
 
-//				renderer.use_effect( "Default" );
-				renderer.use_effect( EffectId::Default as u16 );
-				renderer.use_texture( "fish_swim0000" );
-
-				// renderer.use_material( "rainbow" );
-				for i in 0..100 {
-					if i % 10 == 0 {
-						renderer.use_effect( EffectId::Default as u16 );
-					} else {
-						renderer.use_effect( EffectId::Textured as u16 );
-					}
-					let s = 64.0;
-					let fi = i as f32;
-					let t = self.total_time as f32 + fi*1.01;
-					let y = 0.2*t.sin() as f32;
-					let x = 0.2*t.cos() as f32;
-					let d = 1.0+(0.5+0.5*t.sin());
-					let x = d*512.0*3.0 * x;
-					let y = d*512.0*3.0 * y;
-
-					let pos = Vector2::new( x, y );
-					let size = Vector2::new( 2.0*s, 2.0*s );
-					renderer.render_textured_quad_with_rotation( &pos, &size, -t*57.29577951289617186797 + 270.0 );
+				if self.demo_enabled {
+					self.demo.render( renderer );
 				}
-
-				renderer.use_effect( EffectId::Default as u16 );
-				for cp in &self.click_positions {
-					renderer.render_quad( &cp, &Vector2::new( 64.0, 64.0 ) );
-				}
-				
-				renderer.use_effect( EffectId::Textured as u16 );
-				renderer.use_texture( "test_texture_1" );
-				renderer.render_textured_quad( &Vector2::new( -256.0, 512.0 - 0.5*64.0 ), &Vector2::new( 64.0, 64.0 ) );
-				renderer.use_texture( "test_texture_2" );
-				renderer.render_textured_quad( &Vector2::new(  512.0 - 0.5*128.0, -512.0 + 0.5*128.0 ), &Vector2::new( 128.0, 128.0 ) );
-//				renderer.use_texture( "test_texture_3" );
-
-				renderer.use_effect( EffectId::Textured as u16 );
-				renderer.use_texture( "fish_swim0000" );
-				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 128.0, 128.0 ) );
-
-//				dbg!( &renderer );
-
-
 				if self.mixel_enabled {
 					self.mixel.render( renderer );
 				}
 
 				self.game.render( renderer );
+
+				renderer.use_effect( EffectId::Textured as u16 );
+				renderer.use_texture( "cursor" );
+				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 128.0, 128.0 ) );
 
 				renderer.end_frame();
 			},

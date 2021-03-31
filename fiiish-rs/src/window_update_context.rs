@@ -1,7 +1,7 @@
 
 use crate::math::Vector2;
 
-#[derive(Debug)]
+#[derive(Debug,Copy,Clone)]
 pub struct WindowUpdateContext {
 	pub time_step: f64,
 	pub is_escaped_pressed: bool,

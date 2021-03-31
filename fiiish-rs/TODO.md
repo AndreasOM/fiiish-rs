@@ -4,7 +4,6 @@
 ## In Progress
 
 
-
 ## TODO
 
 - [ ] Split renderer context from window
@@ -13,7 +12,6 @@
 - [ ] Add basic ResourceManager
 
 - [ ] Refactor WindowUpdateContext
-- [ ] Extrac demo code out of FiiishApp
 - [ ] Avoid duplication in texture manager
 
 ## Future
@@ -34,6 +32,7 @@
 
 ## DONE
 
+- [x] Extract demo code out of FiiishApp
 - [x] Add AnimatedTexture (a bit hacky)
 - [x] Allow quads to be rotated
 - [x] Add fish rotation, and use direction for movement

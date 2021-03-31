@@ -24,9 +24,6 @@ impl Game {
 
 	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer) {
 		// load texture
-		renderer.register_texture( Texture::create( system, "fish_swim0000" ) );
-		renderer.register_texture( Texture::create( system, "fish_swim0021" ) );
-		renderer.register_texture( Texture::create( system, "fish_die00" ) );
 		AnimatedTexture::register_all( system, renderer, "fish_swim", 4 );
 		AnimatedTexture::register_all( system, renderer, "fish_die", 2 );
 
