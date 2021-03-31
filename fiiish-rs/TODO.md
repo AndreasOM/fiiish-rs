@@ -3,6 +3,8 @@
 
 ## In Progress
 
+- [ ] Add TextureAtlas
+	- [ ] Fix sub texture tex coords (via texture mtx)
 
 ## TODO
 
@@ -13,6 +15,8 @@
 
 - [ ] Refactor WindowUpdateContext
 - [ ] Avoid duplication in texture manager
+
+- [ ] Write better formatter for Matrix?? and Vector?
 
 ## Future
 
@@ -25,6 +29,8 @@
 
 - [ ] Add Read, BufRead, and Seek trait to FilesystemStream
 - [ ] Add Angle helpers
+
+- [ ] Fix linkage between TextureAtlas sub Texture via hwid
 
 ## Out of scope (for now)
 

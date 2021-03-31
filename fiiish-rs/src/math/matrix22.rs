@@ -1,11 +1,19 @@
 use crate::math::Vector2;
 
+#[derive(Copy,Clone)]
 pub struct Matrix22 {
 	x: Vector2,
 	y: Vector2,
 }
 
 impl Matrix22 {
+	pub fn new(x: &Vector2, y: &Vector2) -> Self {
+		Self {
+			x: *x,
+			y: *y,
+		}
+	}
+
 	pub fn identity() -> Matrix22 {
 		Self {
 			x: Vector2::new( 1.0, 0.0 ),

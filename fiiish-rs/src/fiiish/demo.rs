@@ -30,6 +30,7 @@ impl Demo {
 	}
 
 	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer) {
+		renderer.register_texture( Texture::create( system, "fish_swim0000" ) );
 	}
 
 	pub fn teardown( &mut self ) {

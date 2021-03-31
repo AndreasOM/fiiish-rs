@@ -1,5 +1,6 @@
 
 use crate::math::Vector2;
+use crate::math::Matrix32;
 
 use crate::renderer::{
 	Debug,
@@ -15,6 +16,7 @@ pub struct Texture {
 	width: u32,
 	height: u32,
 	canvas: Option< Vec<u32> >,
+	mtx: Matrix32,
 }
 
 impl Texture {
@@ -33,6 +35,17 @@ impl Texture {
 		t
 	}
 
+	pub fn create_from_atlas( name: &str, mtx: &Matrix32, atlas: &Texture  ) -> Self {
+		Self {
+			name: name.to_string(),
+			hwid: atlas.hwid() as u32,
+			width: 0,	// :TODO:
+			height: 0,	// :TODO:
+			canvas: None,
+			mtx: *mtx,
+		}
+	}
+
 	pub fn new( name: &str ) -> Self {
 		let mut hwid = 0xffff;
 		unsafe {
@@ -49,6 +62,7 @@ impl Texture {
 			width: 0,
 			height: 0,
 			canvas: None,
+			mtx: Matrix32::identity(),
 		}
 	}
 
@@ -58,6 +72,10 @@ impl Texture {
 
 	pub fn hwid( &self ) -> u16 {
 		self.hwid as u16
+	}
+
+	pub fn mtx( &self ) -> &Matrix32 {
+		&self.mtx
 	}
 
 	pub fn bind( &self ) {

@@ -18,6 +18,33 @@ pub trait FilesystemStream {
 		}
 		s
 	}
+
+	fn read_u16( &mut self ) -> u16 {
+		let a = self.read_u8() as u16;
+		let b = self.read_u8() as u16;
+
+		  ( b << 8 )
+		| ( a << 0 )
+	}
+
+	fn read_u32( &mut self ) -> u32 {
+		let a = self.read_u8() as u32;
+		let b = self.read_u8() as u32;
+		let c = self.read_u8() as u32;
+		let d = self.read_u8() as u32;
+
+		  ( d << 24 )
+		| ( c << 16 )
+		| ( b <<  8 )
+		| ( a <<  0 )
+	}
+
+	fn read_f32( &mut self ) -> f32 {
+		let f = self.read_u32();
+
+		unsafe { std::mem::transmute( f ) }
+	}
+
 }
 
 

@@ -245,8 +245,8 @@ impl Renderer {
 
 		if debug {
 			dbg!(&self.material_manager);
+			println!("Render Stats: {} {} {}", total_vertices, total_materials_with_vertices, total_materials);
 		}
-		println!("Render Stats: {} {} {}", total_vertices, total_materials_with_vertices, total_materials);
 		self.frame += 1;
 	}
 
@@ -512,4 +512,6 @@ mod program;
 	pub use program::ShaderType as ShaderType;
 mod texture;
 	pub use texture::Texture as Texture;
+mod texture_atlas;
+	pub use texture_atlas::TextureAtlas as TextureAtlas;
 

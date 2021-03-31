@@ -6,6 +6,7 @@ use crate::renderer::{
 	Effect,
 	Renderer,
 	Texture,
+	TextureAtlas,
 };
 use crate::system::System;
 use crate::system::filesystem_disk::FilesystemDisk;
@@ -113,6 +114,8 @@ impl FiiishApp {
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::White as u16    , "White"    , "default_vs.glsl", "white_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Textured as u16 , "Textured" , "textured_vs.glsl", "textured_fs.glsl" ) );
 
+
+		TextureAtlas::load_all( &mut self.system, &mut renderer, "game-atlas-%d" );
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_1" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "cursor" ) );
@@ -229,6 +232,11 @@ impl FiiishApp {
 
 				self.game.render( renderer );
 
+				// :DEBUG: render atlas
+				renderer.use_effect( EffectId::Textured as u16 );
+				renderer.use_texture( "game-atlas-0" );
+				renderer.render_textured_quad( &Vector2::zero(), &Vector2::new( 1024.0, 1024.0 ) );
+
 				renderer.use_effect( EffectId::Textured as u16 );
 				renderer.use_texture( "cursor" );
 				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 128.0, 128.0 ) );
@@ -238,5 +246,6 @@ impl FiiishApp {
 			None => {},
 		}
 	}
+
 }
 
