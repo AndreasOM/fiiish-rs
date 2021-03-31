@@ -1,4 +1,5 @@
 
+use crate::math::Matrix44;
 use crate::renderer::{
 	Debug,
 	Effect,
@@ -25,6 +26,8 @@ pub struct Material {
 	texture_name: String,
 
 	key: u128,
+
+	mvp_matrix: Matrix44,
 }
 
 impl Material {
@@ -41,6 +44,8 @@ impl Material {
 			texture_name: texture.name().to_string(),
 
 			key: Material::calculate_key( effect.id(), texture.hwid() ),
+
+			mvp_matrix: Matrix44::identity(),
 		};
 
 		unsafe {
@@ -96,6 +101,10 @@ impl Material {
 		self.vertices.push( *vertex );
 	}
 
+	pub fn set_mvp_matrix( &mut self, mvp_matrix: &Matrix44 ) {
+		self.mvp_matrix = *mvp_matrix;
+	}
+
 	pub fn render( &mut self, effect: &mut Effect ) -> u32 {
 		let vertex_count = self.vertices.len();
 		if vertex_count == 0 {
@@ -137,10 +146,16 @@ impl Material {
 			for ( n, l ) in effect.program().uniforms_iter() {
 //				println!("{} -> {}", &n, &l );
 				match n.as_str() {
-					"texture0" => {
+					"texture0\0" => {
 						gl::Uniform1i( *l, 0 );	// always use channel 0 for texture0
 					},
-					_ => {},
+					"modelViewProjectionMatrix\0" => {
+						gl::UniformMatrix4fv( *l, 1, 0, self.mvp_matrix.as_ptr() as *const _ );
+
+					}
+					_ => {
+						todo!("handle uniform {:?}", &n);
+					},
 				}
 			}
 //			gl::Uniform1i( 0, 0 );

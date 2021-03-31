@@ -109,7 +109,7 @@ impl Program {
 
 		// lookup common uniforms
 		unsafe {
-			let uniform_names = [ "texture0\0" ];
+			let uniform_names = [ "texture0\0", "modelViewProjectionMatrix\0" ];
 			for un in uniform_names.iter() {
 				let l = gl::GetUniformLocation( self.program_id, un.as_ptr() as *const _ );
 				if l != -1 {

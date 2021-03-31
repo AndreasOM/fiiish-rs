@@ -1,7 +1,7 @@
 
 use std::collections::HashMap;
 
-use crate::math::Vector2;
+use crate::math::{ Matrix44, Vector2 };
 use crate::system::System;
 use crate::window::Window;
 
@@ -106,6 +106,8 @@ pub struct Renderer {
 	active_effect_id: u16,
 
 	tex_coords: Vector2,
+
+	mvp_matrix: Matrix44,
 }
 
 impl Renderer {
@@ -120,6 +122,7 @@ impl Renderer {
 			active_effect_id: 0,
 
 			tex_coords: Vector2::zero(),
+			mvp_matrix: Matrix44::identity(),
 		}
 	}
 
@@ -219,6 +222,7 @@ impl Renderer {
 					None => panic!("No default render Effect")
 				}
 			};
+			material.set_mvp_matrix( &self.mvp_matrix );
 			let vc = material.render( e );
 			if debug {
 				println!("Rendered {} vertices for material {:?} with effect {:?}", vc, &material, &e );
@@ -247,6 +251,10 @@ impl Renderer {
 		}
 	}
 
+	pub fn set_mvp_matrix( &mut self, mvp_matrix: &Matrix44 ) {
+		self.mvp_matrix = *mvp_matrix;
+	}
+	
 	fn switch_active_material_if_needed( &mut self ) {
 //		println!("switch_active_material_if_needed active_effect_name {}", &self.active_effect_name);
 		let eid = self.get_active_effect().id();

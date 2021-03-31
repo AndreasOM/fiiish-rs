@@ -22,6 +22,8 @@ pub struct Mixel {
 	time_since_last_key: f64,
 	set_pixel: bool,
 	clear_canvas: bool,
+	window_size: Vector2,
+	scaling: f32,
 }
 
 
@@ -36,6 +38,8 @@ impl Mixel {
 			time_since_last_key: f64::MAX,
 			set_pixel: false,
 			clear_canvas: false,
+			window_size: Vector2::zero(),
+			scaling: 1.0,
 		}
 	}
 
@@ -58,6 +62,14 @@ impl Mixel {
 		self.color.r = 0.5+0.5*t.sin();
 		self.color.g = 0.5+0.5*t.sin();
 		self.color.b = 0.5+0.5*t.sin();
+
+		self.window_size = wuc.window_size;
+
+		let scaling = 1024.0/self.window_size.y;
+		self.scaling = 0.5*scaling;
+
+		self.window_size.y *= self.scaling * 2.0;
+		self.window_size.x = self.window_size.y;
 
 		//   w  
 		// a s d
@@ -128,9 +140,9 @@ impl Mixel {
 		}
 		renderer.use_effect( EffectId::Textured as u16 );
 		renderer.use_texture( "canvas" );
-		renderer.render_textured_quad( &Vector2::new( 0.0, 0.0 ), &Vector2::new( 2.0, 2.0 ) );
+		renderer.render_textured_quad( &Vector2::new( 0.0, 0.0 ), &self.window_size );
 		renderer.use_texture( "cursor" );
-		renderer.render_textured_quad( &Vector2::new( 0.0, 0.0 ), &Vector2::new( 2.0, 2.0 ) );
+		renderer.render_textured_quad( &Vector2::new( 0.0, 0.0 ), &self.window_size );
 	}
 
 }

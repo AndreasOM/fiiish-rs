@@ -44,6 +44,7 @@ impl Window {
 	    let el = EventLoop::new();
 	    let wb = WindowBuilder::new()
 	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 1080/2 } )
+//	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 512, height: 512 } )
 	    			.with_title(&self.title);
 
 	    let windowed_context = ContextBuilder::new().build_windowed(wb, &el).unwrap();
@@ -84,6 +85,9 @@ impl Window {
 	    let mut previous_now: DateTime<Utc> = Utc::now();
 
 	    el.run(move |event, _, control_flow| {
+		    window_update_context.window_size.x = windowed_context.window().inner_size().width as f32;
+		    window_update_context.window_size.y = windowed_context.window().inner_size().height as f32;
+
 //	        println!("{:?}", event);
 //	        *control_flow = ControlFlow::Poll;
 			let next_frame_time = std::time::Instant::now() +

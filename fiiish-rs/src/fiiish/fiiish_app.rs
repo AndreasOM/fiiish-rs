@@ -1,6 +1,6 @@
 use super::effect_ids::EffectId;
 
-use crate::math::Vector2;
+use crate::math::{ Matrix44, Vector2 };
 use crate::renderer::{
 	Color,
 	Effect,
@@ -27,6 +27,9 @@ pub struct FiiishApp {
 	click_positions: Vec< Vector2 >,
 	system: System,
 
+	size: Vector2,
+	scaling: f32,
+
 	mixel: Mixel,
 	mixel_enabled: bool,
 }
@@ -41,6 +44,9 @@ impl FiiishApp {
 			cursor_pos: Vector2::zero(),
 			click_positions: Vec::new(),
 			system: System::new(),
+
+			size: Vector2::zero(),
+			scaling: 1.0,
 
 			mixel: Mixel::new(),
 			mixel_enabled: false,
@@ -126,8 +132,14 @@ impl FiiishApp {
 		self.count += 1;
 		self.total_time += wuc.time_step;
 
-		self.cursor_pos.x = 2.0*wuc.mouse_pos.x - 1.0;
-		self.cursor_pos.y = 2.0*wuc.mouse_pos.y - 1.0;
+		self.size = wuc.window_size;
+
+		let scaling = 1024.0/self.size.y;
+		self.scaling = 0.5*scaling;
+
+
+		self.cursor_pos.x = self.scaling * wuc.window_size.x * ( 2.0*wuc.mouse_pos.x - 1.0 );
+		self.cursor_pos.y = self.scaling * wuc.window_size.y * ( 2.0*wuc.mouse_pos.y - 1.0 );
 
 		if wuc.was_mouse_button_pressed( 0 ) {
 			println!("Left Mouse Button was pressed!");
@@ -177,6 +189,27 @@ impl FiiishApp {
 				let color = Color::from_rgba( 0.5 + 0.5*( self.total_time * 0.5 ).sin() as f32, 0.5, 0.5, 1.0 );
 				renderer.clear( &color );
 
+				let scaling = self.scaling;
+				let left = -self.size.x * scaling;
+				let right = self.size.x * scaling;
+				let top = self.size.y * scaling;
+				let bottom = - self.size.y * scaling;
+				let near = 1.0;
+				let far = -1.0;
+
+//				dbg!(&scaling);
+//				dbg!(&top,&bottom);
+
+				let mvp = Matrix44::ortho(
+					left, right,
+					bottom, top,
+					near, far
+				);
+
+				renderer.set_mvp_matrix(
+					&mvp
+				);
+
 //				renderer.use_effect( "Default" );
 				renderer.use_effect( EffectId::Default as u16 );
 				renderer.use_texture( "fish_swim0000" );
@@ -188,13 +221,13 @@ impl FiiishApp {
 					} else {
 						renderer.use_effect( EffectId::Textured as u16 );
 					}
-					let s = 0.125;
+					let s = 64.0;
 					let fi = i as f32;
 					let t = self.total_time as f32 + fi*1.01;
 					let y = 0.2*t.sin() as f32;
 					let x = 0.2*(t + 3.14*0.5).sin() as f32;
-					let x = 3.0 * x;
-					let y = 3.0 * y;
+					let x = 512.0*3.0 * x;
+					let y = 512.0*3.0 * y;
 
 					let pos = Vector2::new( x, y );
 					let size = Vector2::new( 2.0*s, 2.0*s );
@@ -203,19 +236,19 @@ impl FiiishApp {
 
 				renderer.use_effect( EffectId::Default as u16 );
 				for cp in &self.click_positions {
-					renderer.render_quad( &cp, &Vector2::new( 0.1, 0.1 ) );
+					renderer.render_quad( &cp, &Vector2::new( 64.0, 64.0 ) );
 				}
 				
 				renderer.use_effect( EffectId::Textured as u16 );
 				renderer.use_texture( "test_texture_1" );
-				renderer.render_textured_quad( &Vector2::new( -0.8, 0.8 ), &Vector2::new( 0.2, 0.2 ) );
+				renderer.render_textured_quad( &Vector2::new( -256.0, 512.0 - 0.5*64.0 ), &Vector2::new( 64.0, 64.0 ) );
 				renderer.use_texture( "test_texture_2" );
-				renderer.render_textured_quad( &Vector2::new(  0.6, 0.6 ), &Vector2::new( 0.4, 0.4 ) );
+				renderer.render_textured_quad( &Vector2::new(  512.0 - 0.5*128.0, -512.0 + 0.5*128.0 ), &Vector2::new( 128.0, 128.0 ) );
 //				renderer.use_texture( "test_texture_3" );
 
 				renderer.use_effect( EffectId::Textured as u16 );
 				renderer.use_texture( "fish_swim0000" );
-				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 0.1, 0.1 ) );
+				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 128.0, 128.0 ) );
 
 //				dbg!( &renderer );
 

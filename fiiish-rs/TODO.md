@@ -6,10 +6,6 @@
 
 ## TODO
 
-- [ ] Add support for (M)VP uniform
-- [ ] Add very basic Matrix struct
-- [ ] Setup correct MVP for orthographic projection
-
 - [ ] Add basic Fiiish movement
 
 - [ ] Split renderer context from window
@@ -34,6 +30,9 @@
 
 ## DONE
 
+- [x] Add support for (M)VP uniform
+- [x] Add very basic Matrix struct
+- [x] Setup correct MVP for orthographic projection
 - [x] Add Filesystem_Layered that allows fallbacks for loading
 - [x] Add support for runtime modifiable textures
 - [x] Add pixel editor, just because we can
