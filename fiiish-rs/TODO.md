@@ -7,8 +7,6 @@
 
 ## TODO
 
-- [ ] Add AnimatedTexture
-
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
 
@@ -36,6 +34,7 @@
 
 ## DONE
 
+- [x] Add AnimatedTexture (a bit hacky)
 - [x] Allow quads to be rotated
 - [x] Add fish rotation, and use direction for movement
 - [x] Add game logic wrapper

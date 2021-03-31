@@ -3,6 +3,7 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::EntityUpdateContext;
 use crate::math::Vector2;
 use crate::renderer::{
+	AnimatedTexture,
 	Renderer,
 };
 
@@ -32,6 +33,8 @@ pub struct Player {
 	direction: PlayerDirection,
 	speed: f32,
 	time_since_dying: f32,
+	animated_texture: AnimatedTexture,
+	animated_texture_dying: AnimatedTexture,
 }
 
 impl Player {
@@ -46,11 +49,15 @@ impl Player {
 			direction: PlayerDirection::Float,
 			speed: 100.0,
 			time_since_dying: f32::MAX,
+			animated_texture: AnimatedTexture::new(),
+			animated_texture_dying: AnimatedTexture::new(),
 		}
 	}
 
 	pub fn setup( &mut self, name: &str ) {
 		self.name = name.to_owned();
+		self.animated_texture.setup( "fish_swim", 4, 27, 25.0 );
+		self.animated_texture_dying.setup( "fish_die", 2, 2, 25.0 );
 	}
 
 	pub fn teardown( &mut self ) {
@@ -141,7 +148,11 @@ impl Player {
         }
 	}
 
+	fn update_waiting_for_start( &mut self, euc: &mut EntityUpdateContext ) {
+		self.animated_texture.update( euc.time_step() );
+	}
 	fn update_swimming( &mut self, euc: &mut EntityUpdateContext ) {
+		self.animated_texture.update( euc.time_step() );
 		let ts = euc.time_step() as f32;
 		match self.direction {
 			PlayerDirection::Down => {
@@ -175,6 +186,7 @@ impl Player {
 
 	}
 	fn update_dying( &mut self, euc: &mut EntityUpdateContext ) {
+		self.animated_texture_dying.update( euc.time_step() );
 		let ts = euc.time_step() as f32;
 		self.time_since_dying += ts;
 		self.pos.y += 1.5*128.0 * self.time_since_dying * ts;
@@ -206,6 +218,7 @@ impl Player {
 	pub fn update( &mut self, euc: &mut EntityUpdateContext ) {
 		// :TODO: time step
 		match self.state {
+			PlayerState::WaitForStart => self.update_waiting_for_start( euc ),
 			PlayerState::Swimming => self.update_swimming( euc ),
 			PlayerState::Dying => self.update_dying( euc ),
 			_ => {},
@@ -220,8 +233,8 @@ impl Player {
 
 		renderer.use_effect( EffectId::Textured as u16 );
 		match self.state {
-			PlayerState::Dying | PlayerState::Dead => renderer.use_texture( "fish_die00" ),
-			_ => renderer.use_texture( "fish_swim0021" ),
+			PlayerState::Dying | PlayerState::Dead => self.animated_texture_dying.r#use( renderer ),
+			_ => self.animated_texture.r#use( renderer ),
 		}
 		renderer.render_textured_quad_with_rotation( &self.pos, &self.size, self.angle );
 	}

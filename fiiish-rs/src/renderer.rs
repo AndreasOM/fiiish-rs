@@ -482,6 +482,9 @@ impl <T>Manager<T> {
 }
 
 
+mod animated_texture;
+	pub use animated_texture::AnimatedTexture as AnimatedTexture;
+
 mod debug;
 	pub use debug::Debug as Debug;
 mod gl {

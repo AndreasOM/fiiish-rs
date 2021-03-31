@@ -3,6 +3,7 @@ use crate::system::filesystem::Filesystem;
 
 use crate::system::filesystem_stream::FilesystemStream;
 
+#[derive(Debug)]
 pub struct FilesystemLayered {
 	filesystems: Vec< Box< dyn Filesystem > >,
 }
@@ -32,6 +33,16 @@ impl Filesystem for FilesystemLayered {
 		} else {
 			panic!( "Error: FilesystemLayered tried to open file without any filesystem" );
 		}
+	}
+
+	fn exists( &mut self, name: &str ) -> bool {
+		for fs in self.filesystems.iter_mut().rev() {
+			if fs.exists( name ) {
+				return true;
+			}
+		}
+		dbg!(&self, &name);
+		false
 	}
 
 	fn name( &self ) -> &str {

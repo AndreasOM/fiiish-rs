@@ -1,5 +1,6 @@
 
 use crate::renderer::{
+	AnimatedTexture,
 	Renderer,
 	Texture,
 };
@@ -26,6 +27,8 @@ impl Game {
 		renderer.register_texture( Texture::create( system, "fish_swim0000" ) );
 		renderer.register_texture( Texture::create( system, "fish_swim0021" ) );
 		renderer.register_texture( Texture::create( system, "fish_die00" ) );
+		AnimatedTexture::register_all( system, renderer, "fish_swim", 4 );
+		AnimatedTexture::register_all( system, renderer, "fish_die", 2 );
 
 		let mut p = Player::new();
 		p.setup( "player" );

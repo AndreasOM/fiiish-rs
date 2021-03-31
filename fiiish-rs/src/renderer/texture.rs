@@ -20,7 +20,9 @@ pub struct Texture {
 impl Texture {
 	pub fn create( system: &mut System, name: &str ) -> Self {
 		let mut t = Texture::new( name );
-		t.load( system, name );
+		if !t.load( system, name ) {
+			println!( "Warning: Failed loading texture {}", &name );
+		}
 		t
 	}
 
