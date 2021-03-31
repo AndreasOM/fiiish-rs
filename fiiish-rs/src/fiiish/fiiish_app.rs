@@ -14,6 +14,8 @@ use crate::system::filesystem_layered::FilesystemLayered;
 use crate::window::Window;
 use crate::window_update_context::WindowUpdateContext;
 
+use crate::fiiish::game::Game;
+
 use super::mixel::Mixel;
 
 #[derive(Debug)]
@@ -29,6 +31,8 @@ pub struct FiiishApp {
 
 	size: Vector2,
 	scaling: f32,
+
+	game: Game,
 
 	mixel: Mixel,
 	mixel_enabled: bool,
@@ -47,6 +51,8 @@ impl FiiishApp {
 
 			size: Vector2::zero(),
 			scaling: 1.0,
+
+			game: Game::new(),
 
 			mixel: Mixel::new(),
 			mixel_enabled: false,
@@ -105,9 +111,9 @@ impl FiiishApp {
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "fish_swim0000" ) );
 
-
 //		todo!("die");
 		// setup sub parts
+		self.game.setup( &mut self.system, &mut renderer );
 		self.mixel.setup( &mut self.system, &mut renderer );
 
 		self.renderer = Some( renderer );
@@ -119,6 +125,7 @@ impl FiiishApp {
 		// implement Drop if you really need cleanup, or just do it before returning true from is_done
 
 		self.mixel.teardown();
+		self.game.teardown();
 		self.renderer = None;
 	}
 
@@ -169,10 +176,11 @@ impl FiiishApp {
 //        	std::time::Duration::from_nanos(4_000_000);	// use some time for update
 //		std::thread::sleep( std::time::Duration::new(0, 4_000_000)); // 1_000_000_000 ns in 1s
 
+		self.game.update( wuc );
+
 		if wuc.was_key_pressed( 'm' as u8 ) {
 			self.mixel_enabled = !self.mixel_enabled;
 		}
-
 
 		if self.mixel_enabled {
 			self.mixel.update( wuc );
@@ -256,6 +264,8 @@ impl FiiishApp {
 				if self.mixel_enabled {
 					self.mixel.render( renderer );
 				}
+
+				self.game.render( renderer );
 
 				renderer.end_frame();
 			},

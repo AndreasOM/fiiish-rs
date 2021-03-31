@@ -4,9 +4,12 @@
 ## In Progress
 
 
+
 ## TODO
 
-- [ ] Add basic Fiiish movement
+- [ ] Allow quads to be rotated
+- [ ] Add fish rotation, and use direction for movement
+- [ ] Add AnimatedTexture
 
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
@@ -14,6 +17,8 @@
 - [ ] Add basic ResourceManager
 
 - [ ] Refactor WindowUpdateContext
+- [ ] Extrac demo code out of FiiishApp
+- [ ] Avoid duplication in texture manager
 
 ## Future
 
@@ -30,6 +35,8 @@
 
 ## DONE
 
+- [x] Add game logic wrapper
+- [x] Add basic Fiiish movement
 - [x] Add support for (M)VP uniform
 - [x] Add very basic Matrix struct
 - [x] Setup correct MVP for orthographic projection
