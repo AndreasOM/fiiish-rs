@@ -3,9 +3,10 @@
 
 ## In Progress
 
-- [ ] Add more ...
 
 ## TODO
+
+- [ ] Create generic pickup entity
 
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
@@ -30,6 +31,8 @@
 - [ ] Add Angle helpers
 
 - [ ] Fix linkage between TextureAtlas sub Texture via hwid
+- [ ] Play music
+- [ ] Add SFX
 
 ## Out of scope (for now)
 
@@ -37,6 +40,7 @@
 
 ## DONE
 
+- [x] Add some coins
 - [x] Add TextureAtlas
 - [x] Extract demo code out of FiiishApp
 - [x] Add AnimatedTexture (a bit hacky)

@@ -10,6 +10,7 @@ use crate::system::System;
 pub struct AnimatedTexture {
 	prefix: String,
 	number_of_digits: u8,
+	first_frame: u16,
 	number_of_frames: u16,
 	fps: f32,
 	current_frame: u16,
@@ -23,6 +24,7 @@ impl AnimatedTexture {
 		Self {
 			prefix: String::new(),
 			number_of_digits: 0,
+			first_frame: 0,
 			number_of_frames: 0,
 			fps: 0.0,
 			current_frame: 0,
@@ -31,18 +33,28 @@ impl AnimatedTexture {
 		}
 	}
 
-	pub fn setup( &mut self, prefix: &str, number_of_digits: u8, number_of_frames: u16, fps: f32 ) {
+	pub fn setup( &mut self, prefix: &str, number_of_digits: u8, first_frame: u16, number_of_frames: u16, fps: f32 ) {
 		self.prefix = prefix.to_owned();
 		self.number_of_digits = number_of_digits;
+		self.first_frame = first_frame;
 		self.number_of_frames = number_of_frames;
 		self.fps = fps;
 		self.time_per_frame = 1.0/fps;
+		self.current_frame = first_frame;
+	}
+
+	pub fn set_current_frame(&mut self, f: u16 ){
+		self.current_frame = f;
 	}
 
 	pub fn update( &mut self, time_step: f64 ) {
 		self.time_in_current_frame += time_step as f32;
 		while self.time_in_current_frame > self.time_per_frame {
-			self.current_frame = ( self.current_frame+1 ) % self.number_of_frames;
+//			self.current_frame = ( self.current_frame+1 ) % self.number_of_frames;
+			self.current_frame += 1;
+			if self.current_frame >= self.first_frame + self.number_of_frames {
+				self.current_frame -= self.number_of_frames;
+			}
 			self.time_in_current_frame -= self.time_per_frame;
 		}
 	}

@@ -5,7 +5,7 @@
 cp ../fiiish-content/fish/fish_*.png ../fiiish-data/
 
 ## combine images ... needs omt-atlas in path
-omt-atlas combine --border 1 --size 2048 --output ../fiiish-data/game-atlas-%d --input ../fiiish-content/fish/fish_*.png
+omt-atlas combine --border 1 --size 2048 --output ../fiiish-data/game-atlas-%d --input ../fiiish-content/fish/fish_*.png ../fiiish-content/pickups/coin/coin_*.png
 
 
 ## preview
