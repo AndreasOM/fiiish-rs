@@ -14,6 +14,16 @@ impl Matrix32 {
 			pos: Vector2::zero(),
 		}
 	}
+	pub fn mul_vector2( &self, v: &Vector2 ) -> Vector2 {
+        let x = v.x;
+        let y = v.y;
+
+        Vector2::new(
+	        self.rot.x.x * x + self.rot.y.x * y + self.pos.x,
+	        self.rot.x.y * x + self.rot.y.y * y + self.pos.y,
+        )
+	}
+
 }
 
 impl From<[f32;6]> for Matrix32 {

@@ -184,7 +184,7 @@ impl TextureAtlas {
 			self.entries.push( e );
 		}
 
-		dbg!(&self);
+//		dbg!(&self);
 
 		true
 

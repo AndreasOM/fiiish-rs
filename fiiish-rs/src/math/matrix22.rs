@@ -2,8 +2,8 @@ use crate::math::Vector2;
 
 #[derive(Copy,Clone)]
 pub struct Matrix22 {
-	x: Vector2,
-	y: Vector2,
+	pub x: Vector2,
+	pub y: Vector2,
 }
 
 impl Matrix22 {

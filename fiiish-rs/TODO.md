@@ -3,8 +3,7 @@
 
 ## In Progress
 
-- [ ] Add TextureAtlas
-	- [ ] Fix sub texture tex coords (via texture mtx)
+- [ ] Add more ...
 
 ## TODO
 
@@ -38,6 +37,7 @@
 
 ## DONE
 
+- [x] Add TextureAtlas
 - [x] Extract demo code out of FiiishApp
 - [x] Add AnimatedTexture (a bit hacky)
 - [x] Allow quads to be rotated

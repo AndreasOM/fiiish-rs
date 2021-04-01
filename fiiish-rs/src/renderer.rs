@@ -1,7 +1,7 @@
 
 use std::collections::HashMap;
 
-use crate::math::{ Matrix22, Matrix44, Vector2 };
+use crate::math::{ Matrix22, Matrix32, Matrix44, Vector2 };
 use crate::system::System;
 use crate::window::Window;
 
@@ -353,6 +353,8 @@ impl Renderer {
 	}
 
 	pub fn render_textured_quad( &mut self, pos: &Vector2, size: &Vector2 ) {
+		self.render_textured_quad_with_rotation( pos, size, 0.0 );
+		/*
 		let mut hs = *size;	// hs => half size
 		hs.x = 0.5 * hs.x;
 		hs.y = 0.5 * hs.y;
@@ -372,45 +374,51 @@ impl Renderer {
 		let v3 = self.add_vertex( &tr );
 
 		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
-		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
+		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft
+		*/
 	}
 
 	pub fn render_textured_quad_with_rotation( &mut self, pos: &Vector2, size: &Vector2, angle: f32 ) {
 		let angle = angle * 0.01745329252;
 
-		let mut hs = *size;	// hs => half size
-		hs.x = 0.5 * hs.x;
-		hs.y = 0.5 * hs.y;
-
-		let tl = Vector2::new( -hs.x,  hs.y );
-		let bl = Vector2::new( -hs.x, -hs.y );
-		let br = Vector2::new(  hs.x, -hs.y );
-		let tr = Vector2::new(  hs.x,  hs.y );
-
 		let mtx = Matrix22::z_rotation( angle );
 
+		let positions = [
+			Vector2::new( -0.5,  0.5 ),
+			Vector2::new( -0.5, -0.5 ),
+			Vector2::new(  0.5, -0.5 ),
+			Vector2::new(  0.5,  0.5 ),
+		];
+
+		let tex_coords = [
+			Vector2::new( 0.0, 0.0 ),
+			Vector2::new( 0.0, 1.0 ),
+			Vector2::new( 1.0, 1.0 ),
+			Vector2::new( 1.0, 0.0 ),
+		];
+
+//		let tex_mtx = Matrix32::identity();
+		let tex_mtx = *self.texture_manager.get_active().mtx();
+
+		let mut v = [0u32;4];
+
 		// :TODO: future optimization once we have full matrix implementation
-//		let mtx_tr = Matrix22::translation( pos.x, pos.y );
+//		let mtx_tr = Matrix32::translation( pos.x, pos.y );
 //		let mtx = mtx_r.mul_matrix( &mtx );
+		for i in 0..4 {
+			let p = positions[ i ];
+			let p = p.scale_vector2( &size );
+			let p = mtx.mul_vector2( &p ).add( &pos );
 
-		let tl = mtx.mul_vector2( &tl ).add( &pos );
-		let bl = mtx.mul_vector2( &bl ).add( &pos );
-		let br = mtx.mul_vector2( &br ).add( &pos );
-		let tr = mtx.mul_vector2( &tr ).add( &pos );
+			let t = tex_coords[ i ];
+			let t = tex_mtx.mul_vector2( &t );
 
-//		dbg!(&mtx, &tl);
+			self.set_tex_coords( &t );
+			v[ i ] = self.add_vertex( &p );
+		}
 
-		self.set_tex_coords( &Vector2::new( 0.0, 0.0 ) );
-		let v0 = self.add_vertex( &tl );
-		self.set_tex_coords( &Vector2::new( 0.0, 1.0 ) );
-		let v1 = self.add_vertex( &bl );
-		self.set_tex_coords( &Vector2::new( 1.0, 1.0 ) );
-		let v2 = self.add_vertex( &br );
-		self.set_tex_coords( &Vector2::new( 1.0, 0.0 ) );
-		let v3 = self.add_vertex( &tr );
-
-		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
-		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
+		self.add_triangle( v[ 0 ], v[ 1 ], v[ 2 ] );
+		self.add_triangle( v[ 2 ], v[ 3 ], v[ 0 ] );
 	}
 
 	pub fn find_texture_mut( &mut self, name: &str ) -> Option< &mut Texture > {

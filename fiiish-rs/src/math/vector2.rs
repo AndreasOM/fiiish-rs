@@ -28,6 +28,14 @@ impl Vector2 {
 			y: self.y + o.y,
 		}
 	}
+
+
+	pub fn scale_vector2( &self, o: &Vector2 ) -> Self {
+		Self {
+			x: self.x * o.x,
+			y: self.y * o.y,
+		}
+	}
 }
 
 
