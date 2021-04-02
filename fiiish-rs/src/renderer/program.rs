@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use crate::renderer::{
 	Debug,
 	gl,
+	Uniform,
 };
 
 #[derive(Debug,Copy,Clone,PartialEq,Eq,Hash)]
@@ -109,7 +110,7 @@ impl Program {
 
 		// lookup common uniforms
 		unsafe {
-			let uniform_names = [ "texture0\0", "modelViewProjectionMatrix\0" ];
+			let uniform_names = [ "texture0\0", "texture1\0", "modelViewProjectionMatrix\0" ];
 			for un in uniform_names.iter() {
 				let l = gl::GetUniformLocation( self.program_id, un.as_ptr() as *const _ );
 				if l != -1 {
@@ -120,6 +121,19 @@ impl Program {
 
 		}
 	}
+
+	pub fn lookup_uniform( &self, name: &str ) -> Option< i32 > {
+		unsafe {
+			// :TODO: use cache
+			let l = gl::GetUniformLocation( self.program_id, name.as_ptr() as *const _ );
+			if l != -1 {
+				Some( l )
+			} else {
+				None
+			}
+		}
+	}
+
 
 	pub fn uniforms_iter( &self ) -> std::collections::hash_map::Iter<'_, String, i32> {
 		self.uniforms.iter()

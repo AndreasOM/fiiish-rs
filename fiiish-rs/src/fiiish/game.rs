@@ -93,8 +93,14 @@ impl Game {
 		}
 
 
+
 		let mut euc = EntityUpdateContext::new()
 						.set_time_step( wuc.time_step );
+
+		// :HACK: for testing background state transitions
+		if wuc.was_key_pressed( 'b' as u8 ) {
+			euc.enable_change_background_state();
+		}
 
 		for p in self.players.iter_mut() {
 			p.update( &mut euc );

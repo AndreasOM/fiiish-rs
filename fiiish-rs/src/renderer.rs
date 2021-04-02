@@ -344,6 +344,12 @@ impl Renderer {
 	pub fn set_tex_matrix( &mut self, tex_matrix: &Matrix32 ) {
 		self.tex_matrix = *tex_matrix;
 	}
+
+	pub fn set_uniform_float( &mut self, name: &str, value: f32 ) {
+		// :HACK:
+		let mut m = self.material_manager.get_mut_active();
+		m.set_uniform( name, &Uniform::F32( value ) );
+	}
 	
 	fn switch_active_material_if_needed( &mut self ) {
 //		println!("switch_active_material_if_needed active_effect_name {}", &self.active_effect_name);
@@ -432,7 +438,7 @@ impl Renderer {
 //			dbg!(&t.name(), &name);
 			t.name() == name
 		}) {
-			None => todo!("User error"),
+			None => todo!("Texture not found {}. User error?", &name),
 			Some( i ) => {
 				self.active_textures[ channel as usize ] = Some ( i as u16 );
 				self.switch_active_material_if_needed();
@@ -667,4 +673,6 @@ mod texture;
 	pub use texture::Texture as Texture;
 mod texture_atlas;
 	pub use texture_atlas::TextureAtlas as TextureAtlas;
+mod uniform;
+	pub use uniform::Uniform as Uniform;
 

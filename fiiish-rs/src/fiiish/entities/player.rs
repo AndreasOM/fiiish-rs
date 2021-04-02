@@ -58,7 +58,7 @@ impl Player {
 	pub fn setup( &mut self, name: &str ) {
 		self.name = name.to_owned();
 		self.animated_texture.setup( "fish_swim", 4, 0, 27, 25.0 );
-		self.animated_texture_dying.setup( "fish_die", 0, 2, 2, 25.0 );
+		self.animated_texture_dying.setup( "fish_die", 2, 0, 2, 25.0 );
 	}
 
 	pub fn teardown( &mut self ) {

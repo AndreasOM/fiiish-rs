@@ -3,13 +3,6 @@
 
 ## In Progress
 
-- [ ] Add background (:WIP:)
-	- [x] Make background fullscreen
-	- [x] Fix texture mapping for background
-	- [x] Use correct shader for background
-	- [x] Move background
-	- [ ] Add support for multiple texture channels (:WIP:)
-	- [ ] Add second texture for background
 
 ## TODO
 
@@ -45,13 +38,21 @@
 
 ## Out of scope (for now)
 
+- [ ] Select active Material via configuration
 - [ ] Multitextureing with tex coords for channel 1, or following is currently not supported
-- [ ] Reflect channel 1, and following textures in Material key
 - [ ] Reimplement all Matrix & Vector math
-- [ ] Add multi texture support
 
 ## DONE
 
+- [x] Add background
+	- [x] Make background fullscreen
+	- [x] Fix texture mapping for background
+	- [x] Use correct shader for background
+	- [x] Move background
+	- [x] Add support for multiple texture channels
+	- [x] Add second texture for background
+- [x] Add multi texture support
+- [x] Reflect channel 1, and following textures in Material key
 - [x] Add render layers
 - [x] Add some coins
 - [x] Add TextureAtlas

@@ -1,4 +1,6 @@
 
+use std::collections::HashMap;
+
 use crate::math::Matrix44;
 use crate::renderer::{
 	Debug,
@@ -7,6 +9,7 @@ use crate::renderer::{
 	Program,
 	ShaderType,
 	Texture,
+	Uniform,
 	Vertex,
 };
 
@@ -27,6 +30,8 @@ pub struct Material {
 	texture_name: String,
 
 	key: u128,
+
+	uniforms: HashMap< String, Uniform >,
 
 	mvp_matrix: Matrix44,
 }
@@ -50,6 +55,8 @@ impl Material {
 			texture_name: texture_name,
 
 			key: key,
+
+			uniforms: HashMap::new(),
 
 			mvp_matrix: Matrix44::identity(),
 		};
@@ -132,6 +139,10 @@ impl Material {
 		self.vertices.push( *vertex );
 	}
 
+	pub fn set_uniform( &mut self, name: &str, value: &Uniform ) {
+		self.uniforms.insert( name.to_owned(), *value );
+	}
+
 	pub fn set_mvp_matrix( &mut self, mvp_matrix: &Matrix44 ) {
 		self.mvp_matrix = *mvp_matrix;
 	}
@@ -174,11 +185,31 @@ impl Material {
 
 			effect.r#use();
 			// :HACK:
+			for ( n, v ) in self.uniforms.iter() {
+				match effect.program().lookup_uniform( &n ) {
+					Some( l ) => {
+//						println!("Location for {} is {}", &n, l );
+						match v {
+							Uniform::F32( v ) => {
+								gl::Uniform1f( l, *v );
+							},
+							_ => todo!("Uniform type not supported. {:?}", v ),
+
+						}
+					},
+					None => {
+						println!("Warning: Location of {} not found {:?}", &n, &effect );
+					},
+				}
+			}
 			for ( n, l ) in effect.program().uniforms_iter() {
 //				println!("{} -> {}", &n, &l );
 				match n.as_str() {
 					"texture0\0" => {
 						gl::Uniform1i( *l, 0 );	// always use channel 0 for texture0
+					},
+					"texture1\0" => {
+						gl::Uniform1i( *l, 1 );	// always use channel 1 for texture1
 					},
 					"modelViewProjectionMatrix\0" => {
 						gl::UniformMatrix4fv( *l, 1, 0, self.mvp_matrix.as_ptr() as *const _ );
@@ -191,11 +222,12 @@ impl Material {
 			}
 //			gl::Uniform1i( 0, 0 );
 
-			gl::ActiveTexture( gl::TEXTURE0 );
-			if let Some( hwid ) = self.texture_hwids.get( 0 ) {
+			for ( i, hwid ) in self.texture_hwids.iter().enumerate() {
+				gl::ActiveTexture( gl::TEXTURE0+i as u32 );
 				gl::BindTexture( gl::TEXTURE_2D, *hwid as u32 );
 			}
-
+			// :TODO: decide if we really cleanup in case somebody else expects defaults
+			gl::ActiveTexture( gl::TEXTURE0 );
 
 //			dbg!(&self.vertices);
 //			gl::PolygonMode( gl::FRONT_AND_BACK, gl::LINE );

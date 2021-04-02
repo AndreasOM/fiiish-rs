@@ -60,6 +60,7 @@ impl AnimatedTexture {
 	}
 
 	pub fn r#use( &self, renderer: &mut Renderer ) {
+//		dbg!(&self);
 		let name = AnimatedTexture::append_number_with_digits( &self.prefix, self.current_frame, self.number_of_digits );
 		renderer.use_texture( &name )
 	}
