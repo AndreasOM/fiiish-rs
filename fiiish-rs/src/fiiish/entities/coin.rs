@@ -1,5 +1,6 @@
 
 use crate::fiiish::effect_ids::EffectId;
+use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
 use crate::fiiish::EntityUpdateContext;
@@ -49,6 +50,7 @@ impl Entity for Coin {
 	}
 
 	fn render( &mut self, renderer: &mut Renderer ){
+		renderer.use_layer( LayerId::Pickups as u8 );
 		renderer.use_effect( EffectId::Textured as u16 );
 //		renderer.use_texture( "coin_01" );
 		self.animated_texture.r#use( renderer );

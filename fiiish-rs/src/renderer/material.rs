@@ -19,6 +19,7 @@ pub struct Material {
 	buffer: gl::types::GLuint,
 	vao: gl::types::GLuint,
 
+	layer_id: u8,
 	effect_id: u16,
 	texture_hwid: u16,
 
@@ -32,18 +33,20 @@ pub struct Material {
 
 impl Material {
 
-	pub fn new( effect: &Effect, texture: &Texture ) -> Self {
+	pub fn new( layer_id: u8, effect: &Effect, texture: &Texture ) -> Self {
 		let mut s = Self {
 			vertices: Vec::new(),
 			buffer: 0xffffffff,
 			vao: 0xffffffff,
+
+			layer_id: layer_id,
 			effect_id: effect.id(),
 			texture_hwid: texture.hwid(),
 
 			effect_name: effect.name().to_string(),
 			texture_name: texture.name().to_string(),
 
-			key: Material::calculate_key( effect.id(), texture.hwid() ),
+			key: Material::calculate_key( layer_id, effect.id(), texture.hwid() ),
 
 			mvp_matrix: Matrix44::identity(),
 		};
@@ -56,12 +59,12 @@ impl Material {
 		s
 	}
 
-	pub fn calculate_key( effect_id: u16, texture_hwid: u16 ) -> u128 {
+	pub fn calculate_key( layer_id: u8, effect_id: u16, texture_hwid: u16 ) -> u128 {
 		// old fiiish: 
 		// 00##llll pppppppp rrrrtttt tttttttt
 
 		// .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..
-		// .. .. .. .. .. .. .. .. .. .. .. .. .. rr tt tt
+		// .. .. .. .. .. .. .. .. .. .. .. .. .l rr tt tt
 		if texture_hwid > 0xffff {
 			panic!("Too many textures. Got id {}", &texture_hwid );
 		}
@@ -71,10 +74,20 @@ impl Material {
 
 		  ( ( texture_hwid as u128 & 0xffff ) <<   0 )
 		| ( ( effect_id    as u128 &   0xff ) <<  16 )
+		| ( ( layer_id     as u128 & 0x000f ) <<  24 )
 	}
+
 	pub fn can_render( &self, key: u128 ) -> bool {
 //		self.effect_id == effect_id
 		self.key == key
+	}
+
+	pub fn key( &self ) -> u128 {
+		self.key
+	}
+
+	pub fn layer_id( &self ) -> u8 {
+		self.layer_id
 	}
 
 	pub fn effect_id( &self ) -> u16 {

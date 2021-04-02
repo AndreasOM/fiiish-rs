@@ -9,6 +9,7 @@ use crate::system::System;
 use crate::window_update_context::WindowUpdateContext;
 
 use crate::fiiish::entities::{
+	Background,
 	Coin,
 	Entity,
 	EntityManager,
@@ -34,10 +35,16 @@ impl Game {
 		// load texture
 		AnimatedTexture::register_all( system, renderer, "fish_swim", 4 );
 		AnimatedTexture::register_all( system, renderer, "fish_die", 2 );
+		renderer.register_texture( Texture::create( system, "background" ) );
+		renderer.register_texture( Texture::create( system, "background_grad" ) );
 
 		let mut p = Player::new();
 		p.setup( "player" );
 		self.players.push( p );
+
+		let mut b = Background::new();
+		b.setup( "backround" );
+		self.entity_manager.add( Box::new( b ) );
 
 		self.entity_manager.setup();
 

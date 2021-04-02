@@ -1,5 +1,6 @@
 
 use crate::fiiish::effect_ids::EffectId;
+use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::EntityUpdateContext;
 use crate::math::Vector2;
 use crate::renderer::{
@@ -231,6 +232,7 @@ impl Player {
 			return;
 		}
 
+		renderer.use_layer( LayerId::Fish as u8 );
 		renderer.use_effect( EffectId::Textured as u16 );
 		match self.state {
 			PlayerState::Dying | PlayerState::Dead => self.animated_texture_dying.r#use( renderer ),

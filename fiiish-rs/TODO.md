@@ -3,8 +3,15 @@
 
 ## In Progress
 
+- [ ] Add render layers
+- [ ] Add background (:WIP:)
+	- [ ] Make background fullscreen
+	- [ ] Move background
+	- [ ] Use correct shader for background
 
 ## TODO
+
+- [ ] Add real Pickups
 
 - [ ] Create generic pickup entity
 
@@ -20,7 +27,7 @@
 
 ## Future
 
-- [ ] Limit player/fish angle at boundaries
+- [ ] Sort Materials on creation instead of every frame
 
 - [ ] Only transfer minimal per Vertex data to GPU (e.g. remove TexCoords where not needed)
 
@@ -46,6 +53,7 @@
 - [x] Add AnimatedTexture (a bit hacky)
 - [x] Allow quads to be rotated
 - [x] Add fish rotation, and use direction for movement
+- [x] Limit player/fish angle at boundaries
 - [x] Add game logic wrapper
 - [x] Add basic Fiiish movement
 - [x] Add support for (M)VP uniform

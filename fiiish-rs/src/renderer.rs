@@ -104,6 +104,7 @@ pub struct Renderer {
 	effects: HashMap< u16, Effect >,
 	default_effect_id: u16,
 	active_effect_id: u16,
+	active_layer_id: u8,
 
 	tex_coords: Vector2,
 
@@ -120,6 +121,7 @@ impl Renderer {
 			effects: HashMap::new(),
 			default_effect_id: 0,
 			active_effect_id: 0,
+			active_layer_id: 0,
 
 			tex_coords: Vector2::zero(),
 			mvp_matrix: Matrix44::identity(),
@@ -150,7 +152,10 @@ impl Renderer {
 	fn get_active_effect(&self) -> &Effect {
 		match self.effects.get( &self.active_effect_id ) {
 			Some( e ) => e,
-			None => panic!("No active render Effect")
+			None => {
+				println!("No active render Effect -> using default");
+				self.get_default_effect()
+			}
 		}
 	}
 
@@ -194,7 +199,7 @@ impl Renderer {
 		}
 		// enusre we have at least one material, and it is active
 		if self.material_manager.len() == 0 {
-			let m = Material::new( &self.get_default_effect(), &self.texture_manager.get_active() );
+			let m = Material::new( self.active_layer_id, &self.get_default_effect(), &self.texture_manager.get_active() );
 			let i = self.material_manager.add( m );
 			self.material_manager.set_active( i );			
 		}
@@ -215,8 +220,24 @@ impl Renderer {
 			gl::Disable(gl::DEPTH_TEST);
 		}
 
+//		println!("---");
 		// :TODO: fix rendering order
-		for material in self.material_manager.iter_mut() {
+		let mut material_indices = Vec::new();
+		for i in 0..self.material_manager.len() {
+			material_indices.push( i );
+		}
+
+		material_indices.sort_unstable_by(|a, b|{
+			let a = self.material_manager.get( *a ).unwrap().key();
+			let b = self.material_manager.get( *b ).unwrap().key();
+
+			a.partial_cmp(&b).unwrap()
+		});
+
+		for i in material_indices {
+			let material = self.material_manager.get_mut( i ).unwrap();
+
+//			println!("SortKey: 0x{:016X}", material.key() );
 			// :TODO: ask material for effect
 			let effect_id = material.effect_id();
 			let e = match self.effects.get_mut( &effect_id ) {
@@ -267,9 +288,10 @@ impl Renderer {
 	
 	fn switch_active_material_if_needed( &mut self ) {
 //		println!("switch_active_material_if_needed active_effect_name {}", &self.active_effect_name);
+		let lid = self.active_layer_id;
 		let eid = self.get_active_effect().id();
 		let tid = self.texture_manager.get_active().hwid();
-		let key = Material::calculate_key( eid, tid );
+		let key = Material::calculate_key( lid, eid, tid );
 		let can_render = {
 			let m = self.material_manager.get_active();
 			m.can_render( key )
@@ -280,8 +302,13 @@ impl Renderer {
 				m.can_render( key )
 			});
 			if !found_material {
-				println!("Didn't find material for effect id {} active_effect_id {}", eid, &self.active_effect_id );
-				let m = Material::new( &self.get_active_effect(), &self.texture_manager.get_active() );
+				println!(
+					"Didn't find material for layer id {} effect id {} active_effect_id {}",
+					lid,
+					eid,
+					&self.active_effect_id
+				);
+				let m = Material::new( self.active_layer_id, &self.get_active_effect(), &self.texture_manager.get_active() );
 				let i = self.material_manager.add( m );
 				self.material_manager.set_active( i );
 			}
@@ -290,6 +317,11 @@ impl Renderer {
 	}
 	pub fn use_effect( &mut self, effect_id: u16 ) {
 		self.active_effect_id = effect_id;
+		self.switch_active_material_if_needed();
+	}
+
+	pub fn use_layer( &mut self, layer_id: u8 ) {
+		self.active_layer_id = layer_id;
 		self.switch_active_material_if_needed();
 	}
 
@@ -468,6 +500,14 @@ impl <T>Manager<T> {
 		let i = self.materials.len();
 		self.materials.push(material);
 		i
+	}
+
+	pub fn get( &mut self, index: usize ) -> Option< &T > {
+		self.materials.get( index )
+	}
+
+	pub fn get_mut( &mut self, index: usize ) -> Option< &mut T > {
+		self.materials.get_mut( index )
 	}
 
 	pub fn find_mut<F>( &mut self, f: F ) -> Option< &mut T >
