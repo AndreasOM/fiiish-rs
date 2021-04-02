@@ -1,7 +1,13 @@
 
 use std::collections::HashMap;
 
-use crate::math::{ Matrix22, Matrix32, Matrix44, Vector2 };
+use crate::math::{ 
+	Matrix22,
+	Matrix32,
+	Matrix33,
+	Matrix44,
+	Vector2
+};
 use crate::system::System;
 use crate::window::Window;
 
@@ -109,6 +115,7 @@ pub struct Renderer {
 	tex_coords: Vector2,
 
 	mvp_matrix: Matrix44,
+	tex_matrix: Matrix32,
 
 	size: Vector2,
 	viewport_pos: Vector2,
@@ -129,6 +136,7 @@ impl Renderer {
 
 			tex_coords: Vector2::zero(),
 			mvp_matrix: Matrix44::identity(),
+			tex_matrix: Matrix32::identity(),
 
 			size: Vector2::zero(),
 			viewport_pos: Vector2::zero(),
@@ -298,6 +306,14 @@ impl Renderer {
 		}
 	}
 
+	pub fn aspect_ratio( &self ) -> f32 {
+		self.size.x / self.size.y
+	}
+	
+	pub fn size( &self ) -> &Vector2 {
+		&self.size
+	}
+
 	pub fn set_size( &mut self, size: &Vector2 ) {
 		self.size = *size;
 	}
@@ -309,6 +325,10 @@ impl Renderer {
 
 	pub fn set_mvp_matrix( &mut self, mvp_matrix: &Matrix44 ) {
 		self.mvp_matrix = *mvp_matrix;
+	}
+
+	pub fn set_tex_matrix( &mut self, tex_matrix: &Matrix32 ) {
+		self.tex_matrix = *tex_matrix;
 	}
 	
 	fn switch_active_material_if_needed( &mut self ) {
@@ -411,34 +431,12 @@ impl Renderer {
 
 	pub fn render_textured_fullscreen_quad( &mut self ) {
 		let size = self.size;
-		dbg!(&size);
+//		dbg!(&size);
 		self.render_textured_quad( &Vector2::zero(), &size );
 	}
 
 	pub fn render_textured_quad( &mut self, pos: &Vector2, size: &Vector2 ) {
 		self.render_textured_quad_with_rotation( pos, size, 0.0 );
-		/*
-		let mut hs = *size;	// hs => half size
-		hs.x = 0.5 * hs.x;
-		hs.y = 0.5 * hs.y;
-
-		let tl = Vector2::new( -hs.x + pos.x,  hs.y + pos.y );
-		let bl = Vector2::new( -hs.x + pos.x, -hs.y + pos.y );
-		let br = Vector2::new(  hs.x + pos.x, -hs.y + pos.y );
-		let tr = Vector2::new(  hs.x + pos.x,  hs.y + pos.y );
-
-		self.set_tex_coords( &Vector2::new( 0.0, 0.0 ) );
-		let v0 = self.add_vertex( &tl );
-		self.set_tex_coords( &Vector2::new( 0.0, 1.0 ) );
-		let v1 = self.add_vertex( &bl );
-		self.set_tex_coords( &Vector2::new( 1.0, 1.0 ) );
-		let v2 = self.add_vertex( &br );
-		self.set_tex_coords( &Vector2::new( 1.0, 0.0 ) );
-		let v3 = self.add_vertex( &tr );
-
-		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
-		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft
-		*/
 	}
 
 	pub fn render_textured_quad_with_rotation( &mut self, pos: &Vector2, size: &Vector2, angle: f32 ) {
@@ -462,6 +460,7 @@ impl Renderer {
 
 //		let tex_mtx = Matrix32::identity();
 		let tex_mtx = *self.texture_manager.get_active().mtx();
+		let user_tex_mtx = self.tex_matrix;
 
 		let mut v = [0u32;4];
 
@@ -473,9 +472,11 @@ impl Renderer {
 			let p = p.scale_vector2( &size );
 			let p = mtx.mul_vector2( &p ).add( &pos );
 
+			// :TODO: decide if we might want to move this calculation to set_tex_coords
 			let t = tex_coords[ i ];
+			let t = user_tex_mtx.mul_vector2( &t );
 			let t = tex_mtx.mul_vector2( &t );
-
+		
 			self.set_tex_coords( &t );
 			v[ i ] = self.add_vertex( &p );
 		}

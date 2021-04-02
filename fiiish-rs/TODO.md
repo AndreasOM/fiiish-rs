@@ -5,7 +5,7 @@
 
 - [ ] Add background (:WIP:)
 	- [x] Make background fullscreen
-	- [ ] Fix texture mapping for background
+	- [x] Fix texture mapping for background
 	- [ ] Move background
 	- [ ] Use correct shader for background
 
@@ -43,6 +43,7 @@
 
 ## Out of scope (for now)
 
+- [ ] Reimplement all Matrix & Vector math
 - [ ] Add multi texture support
 
 ## DONE

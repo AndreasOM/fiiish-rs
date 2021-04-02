@@ -1,12 +1,21 @@
 use crate::math::Vector3;
 
+#[derive(Debug)]
 pub struct Matrix33 {
-	x: Vector3,
-	y: Vector3,
-	z: Vector3,
+	pub x: Vector3,
+	pub y: Vector3,
+	pub z: Vector3,
 }
 
 impl Matrix33 {
+	pub fn identity() -> Self {
+		Self {
+			x: Vector3::new( 1.0, 0.0, 0.0 ),
+			y: Vector3::new( 0.0, 1.0, 0.0 ),
+			z: Vector3::new( 0.0, 0.0, 1.0 ),
+		}
+	}
+
 	pub fn z_rotation( a: f32 ) -> Self {
 		let s = a.sin();
 		let c = a.cos();

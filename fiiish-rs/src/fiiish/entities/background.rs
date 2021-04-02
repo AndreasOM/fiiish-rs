@@ -4,7 +4,10 @@ use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
 use crate::fiiish::EntityUpdateContext;
-use crate::math::Vector2;
+use crate::math::{
+	Matrix32,
+	Vector2
+};
 use crate::renderer::{
 	Renderer
 };
@@ -39,9 +42,11 @@ impl Entity for Background {
 		renderer.use_layer( LayerId::Background as u8 );
 		renderer.use_effect( EffectId::Textured as u16 );
 		renderer.use_texture( "background" );
-		let size = Vector2::new( 1024.0, 1024.0 );	// :TODO: actually render fullscreen
-//		renderer.render_textured_quad( &self.pos, &size );
+		let a = renderer.aspect_ratio();
+		let mtx = Matrix32::scaling_xy( 1.0*a, 1.0 );
+		renderer.set_tex_matrix( &mtx );
 		renderer.render_textured_fullscreen_quad();
+		renderer.set_tex_matrix( &Matrix32::identity() );
 	}
 
 	fn name( &self ) -> &str {

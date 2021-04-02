@@ -14,12 +14,27 @@ impl Matrix22 {
 		}
 	}
 
-	pub fn identity() -> Matrix22 {
+	pub fn identity() -> Self {
 		Self {
 			x: Vector2::new( 1.0, 0.0 ),
 			y: Vector2::new( 0.0, 1.0 ),
 		}
 	}
+
+	pub fn scaling( scale: f32 ) -> Self {
+		Self {
+			x: Vector2::new( scale, 0.0 ),
+			y: Vector2::new( 0.0, scale ),
+		}		
+	}
+
+	pub fn scaling_xy( x: f32, y: f32 ) -> Self {
+		Self {
+			x: Vector2::new( x, 0.0 ),
+			y: Vector2::new( 0.0, y ),
+		}		
+	}
+
 	pub fn z_rotation( a: f32 ) -> Self {
 		let s = a.sin();
 		let c = a.cos();
