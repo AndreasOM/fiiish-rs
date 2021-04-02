@@ -21,7 +21,7 @@ pub struct Material {
 
 	layer_id: u8,
 	effect_id: u16,
-	texture_hwid: u16,
+	texture_hwids: Vec<u16>,
 
 	effect_name: String,
 	texture_name: String,
@@ -33,7 +33,10 @@ pub struct Material {
 
 impl Material {
 
-	pub fn new( layer_id: u8, effect: &Effect, texture: &Texture ) -> Self {
+	pub fn new( layer_id: u8, effect: &Effect, textures: Vec< &Texture > ) -> Self {
+		let texture_hwids = textures.iter().map( |&t| t.hwid() ).collect();
+		let key = Material::calculate_key( layer_id, effect.id(), &texture_hwids );
+		let	texture_name = textures.iter().map( |&t| t.name().to_owned() ).collect::<Vec<_>>().join(" ");
 		let mut s = Self {
 			vertices: Vec::new(),
 			buffer: 0xffffffff,
@@ -41,12 +44,12 @@ impl Material {
 
 			layer_id: layer_id,
 			effect_id: effect.id(),
-			texture_hwid: texture.hwid(),
+			texture_hwids: texture_hwids,
 
 			effect_name: effect.name().to_string(),
-			texture_name: texture.name().to_string(),
+			texture_name: texture_name,
 
-			key: Material::calculate_key( layer_id, effect.id(), texture.hwid() ),
+			key: key,
 
 			mvp_matrix: Matrix44::identity(),
 		};
@@ -59,22 +62,37 @@ impl Material {
 		s
 	}
 
-	pub fn calculate_key( layer_id: u8, effect_id: u16, texture_hwid: u16 ) -> u128 {
+	pub fn calculate_key( layer_id: u8, effect_id: u16, texture_hwids: &Vec< u16 > ) -> u128 {
 		// old fiiish: 
 		// 00##llll pppppppp rrrrtttt tttttttt
 
 		// .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..
 		// .. .. .. .. .. .. .. .. .. .. .. .. .l rr tt tt
-		if texture_hwid > 0xffff {
-			panic!("Too many textures. Got id {}", &texture_hwid );
+		// with multi texture support
+		// .. .. .. .. .. .. .l rr t3 t3 t2 t2 t1 t1 tt tt
+
+		if texture_hwids.len() > 4 {
+			panic!("Too many texture channels. {}", texture_hwids.len() );
 		}
 		if effect_id > 0xff {
 			panic!("Too many effects. Got id {}", &effect_id );
 		}
 
-		  ( ( texture_hwid as u128 & 0xffff ) <<   0 )
-		| ( ( effect_id    as u128 &   0xff ) <<  16 )
-		| ( ( layer_id     as u128 & 0x000f ) <<  24 )
+		let mut r = 0u128;
+		let mut shift = 0;
+		for i in 0..4 {
+			if let Some( texture_hwid ) = texture_hwids.get( i ) {
+				if *texture_hwid > 0xffff {
+					panic!("Too many textures. Got id {}", &texture_hwid );
+				}
+				r |= ( ( *texture_hwid as u128 & 0xffff ) <<   shift );
+			}
+			shift += 16;
+		}
+
+		  r
+		| ( ( effect_id    as u128 &   0xff ) <<  ( shift   ) )
+		| ( ( layer_id     as u128 & 0x000f ) <<  ( 8+shift ) )
 	}
 
 	pub fn can_render( &self, key: u128 ) -> bool {
@@ -93,11 +111,11 @@ impl Material {
 	pub fn effect_id( &self ) -> u16 {
 		self.effect_id
 	}
-
+/*
 	pub fn texture_hwid( &self ) -> u16 {
 		self.texture_hwid
 	}
-
+*/
 	pub fn effect_name( &self ) -> &str {
 		&self.effect_name
 	}
@@ -174,7 +192,9 @@ impl Material {
 //			gl::Uniform1i( 0, 0 );
 
 			gl::ActiveTexture( gl::TEXTURE0 );
-			gl::BindTexture( gl::TEXTURE_2D, self.texture_hwid as u32 );
+			if let Some( hwid ) = self.texture_hwids.get( 0 ) {
+				gl::BindTexture( gl::TEXTURE_2D, *hwid as u32 );
+			}
 
 
 //			dbg!(&self.vertices);

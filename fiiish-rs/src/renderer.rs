@@ -101,6 +101,7 @@ impl Vertex {
 	}
 }
 
+const MAX_TEXTURE_CHANNELS: usize = 4;
 #[derive(Debug)]
 pub struct Renderer {
 	frame: u64,
@@ -111,6 +112,8 @@ pub struct Renderer {
 	default_effect_id: u16,
 	active_effect_id: u16,
 	active_layer_id: u8,
+
+	active_textures: [Option< u16 >; MAX_TEXTURE_CHANNELS],
 
 	tex_coords: Vector2,
 
@@ -133,6 +136,7 @@ impl Renderer {
 			default_effect_id: 0,
 			active_effect_id: 0,
 			active_layer_id: 0,
+			active_textures: [None; MAX_TEXTURE_CHANNELS],
 
 			tex_coords: Vector2::zero(),
 			mvp_matrix: Matrix44::identity(),
@@ -154,7 +158,8 @@ impl Renderer {
 	pub fn register_texture( &mut self, mut texture: Texture ) {
 		let index = self.texture_manager.add( texture );
 		if self.texture_manager.len() == 1 {
-			self.texture_manager.set_active( index );
+//			self.texture_manager.set_active( index );
+			self.active_textures[ 0 ] = Some( index as u16 );
 		}
 	}
 
@@ -201,6 +206,10 @@ impl Renderer {
 			let s = String::from_utf8( std::ffi::CStr::from_ptr( s as *const _ ).to_bytes().to_vec() )?;
 			println!("GL Version: {}", s );
 		}
+
+		// ensure we have one texture
+		self.register_texture( Texture::create_canvas( system, "[]", 2 ) );
+
 		Ok(())
 	}
 
@@ -215,7 +224,12 @@ impl Renderer {
 		}
 		// ensure we have at least one material, and it is active
 		if self.material_manager.len() == 0 {
-			let m = Material::new( self.active_layer_id, &self.get_default_effect(), &self.texture_manager.get_active() );
+			let mut textures = Vec::new();
+			for i in 0..MAX_TEXTURE_CHANNELS {
+				let ti = self.active_textures[ i ].unwrap_or( 0 );
+				textures.push( self.texture_manager.get( ti as usize ).unwrap() );
+			}
+			let m = Material::new( self.active_layer_id, &self.get_default_effect(), textures );
 			let i = self.material_manager.add( m );
 			self.material_manager.set_active( i );			
 		}
@@ -309,7 +323,7 @@ impl Renderer {
 	pub fn aspect_ratio( &self ) -> f32 {
 		self.size.x / self.size.y
 	}
-	
+
 	pub fn size( &self ) -> &Vector2 {
 		&self.size
 	}
@@ -335,8 +349,13 @@ impl Renderer {
 //		println!("switch_active_material_if_needed active_effect_name {}", &self.active_effect_name);
 		let lid = self.active_layer_id;
 		let eid = self.get_active_effect().id();
-		let tid = self.texture_manager.get_active().hwid();
-		let key = Material::calculate_key( lid, eid, tid );
+		let mut textures = Vec::new();
+		for i in 0..MAX_TEXTURE_CHANNELS {
+			let ti = self.active_textures[ i ].unwrap_or( 0 );
+			textures.push( self.texture_manager.get( ti as usize ).unwrap() );
+		}
+		let tids = textures.iter().map( |&t| t.hwid() ).collect::<Vec<_>>().to_vec();
+		let key = Material::calculate_key( lid, eid, &tids );
 		let can_render = {
 			let m = self.material_manager.get_active();
 			m.can_render( key )
@@ -353,7 +372,12 @@ impl Renderer {
 					eid,
 					&self.active_effect_id
 				);
-				let m = Material::new( self.active_layer_id, &self.get_active_effect(), &self.texture_manager.get_active() );
+				let mut textures = Vec::new();
+				for i in 0..MAX_TEXTURE_CHANNELS {
+					let ti = self.active_textures[ i ].unwrap_or( 0 );
+					textures.push( self.texture_manager.get( ti as usize ).unwrap() );
+				}
+				let m = Material::new( self.active_layer_id, &self.get_active_effect(), textures );
 				let i = self.material_manager.add( m );
 				self.material_manager.set_active( i );
 			}
@@ -371,6 +395,8 @@ impl Renderer {
 	}
 
 	pub fn use_texture( &mut self, name: &str ) {
+		self.use_texture_in_channel( name, 0 );
+		/*
 		let current_active_texture = self.texture_manager.get_active();
 		if name != current_active_texture.name() {
 //			println!("Switching active texture from {} to {}", &current_active_texture.name(), &name );
@@ -385,7 +411,35 @@ impl Renderer {
 			}
 			self.switch_active_material_if_needed();
 		}
+		*/
 	}
+
+	pub fn disable_texture_for_channel( &mut self, channel: u8 ) {
+		if self.active_textures[ channel as usize ].is_none() {
+			// :TODO: is this ok?
+			return;
+		}
+
+		self.active_textures[ channel as usize ] = None;
+
+		self.switch_active_material_if_needed();
+	}
+
+	pub fn use_texture_in_channel( &mut self, name: &str, channel: u8 ) {
+		// :TODO: avoid changing texture when it is already active
+//		dbg!(&self.texture_manager);
+		let found_texture = match self.texture_manager.find_index(|t: &Texture|{
+//			dbg!(&t.name(), &name);
+			t.name() == name
+		}) {
+			None => todo!("User error"),
+			Some( i ) => {
+				self.active_textures[ channel as usize ] = Some ( i as u16 );
+				self.switch_active_material_if_needed();
+			},
+		};
+	}
+
 
 	pub fn set_tex_coords( &mut self, tex_coords: &Vector2 ) {
 		self.tex_coords = *tex_coords;
@@ -459,7 +513,12 @@ impl Renderer {
 		];
 
 //		let tex_mtx = Matrix32::identity();
-		let tex_mtx = *self.texture_manager.get_active().mtx();
+		let ti = self.active_textures[ 0 ].unwrap_or( 0 );
+		let at = self.texture_manager.get( ti as usize ).unwrap_or(
+			self.texture_manager.get( 0 ).unwrap()
+		);
+
+		let tex_mtx = *at.mtx();
 		let user_tex_mtx = self.tex_matrix;
 
 		let mut v = [0u32;4];
@@ -534,12 +593,23 @@ impl <T>Manager<T> {
 		i
 	}
 
-	pub fn get( &mut self, index: usize ) -> Option< &T > {
+	pub fn get( &self, index: usize ) -> Option< &T > {
 		self.materials.get( index )
 	}
 
 	pub fn get_mut( &mut self, index: usize ) -> Option< &mut T > {
 		self.materials.get_mut( index )
+	}
+
+	pub fn find_index<F>( &mut self, f: F) -> Option< usize >
+		where F: Fn( &T ) -> bool
+	{
+		for (i,m) in self.materials.iter().enumerate() {
+			if f( m ) {
+				return Some( i );
+			}
+		}
+		None
 	}
 
 	pub fn find_mut<F>( &mut self, f: F ) -> Option< &mut T >
@@ -552,6 +622,9 @@ impl <T>Manager<T> {
 		}
 
 		None
+	}
+	pub fn iter( &mut self ) -> std::slice::Iter<'_, T> {
+		self.materials.iter()
 	}
 	pub fn iter_mut( &mut self ) -> std::slice::IterMut<'_, T> {
 		self.materials.iter_mut()

@@ -49,12 +49,15 @@ impl Entity for Background {
 		renderer.use_layer( LayerId::Background as u8 );
 		renderer.use_effect( EffectId::Background as u16 );
 		renderer.use_texture( "background" );
+		renderer.use_texture_in_channel( "background_grad", 1 );
 		let a = renderer.aspect_ratio();
 		let mut mtx = Matrix32::scaling_xy( 1.0*a, 1.0 );
 		mtx.pos.x = - self.pos.x / 1024.0;
 		renderer.set_tex_matrix( &mtx );
 		renderer.render_textured_fullscreen_quad();
+
 		renderer.set_tex_matrix( &Matrix32::identity() );
+		renderer.disable_texture_for_channel( 1 );
 	}
 
 	fn name( &self ) -> &str {

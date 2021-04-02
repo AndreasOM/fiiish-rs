@@ -8,6 +8,7 @@
 	- [x] Fix texture mapping for background
 	- [x] Use correct shader for background
 	- [x] Move background
+	- [ ] Add support for multiple texture channels (:WIP:)
 	- [ ] Add second texture for background
 
 ## TODO
@@ -44,6 +45,8 @@
 
 ## Out of scope (for now)
 
+- [ ] Multitextureing with tex coords for channel 1, or following is currently not supported
+- [ ] Reflect channel 1, and following textures in Material key
 - [ ] Reimplement all Matrix & Vector math
 - [ ] Add multi texture support
 
