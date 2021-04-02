@@ -6,8 +6,9 @@
 - [ ] Add background (:WIP:)
 	- [x] Make background fullscreen
 	- [x] Fix texture mapping for background
-	- [ ] Move background
-	- [ ] Use correct shader for background
+	- [x] Use correct shader for background
+	- [x] Move background
+	- [ ] Add second texture for background
 
 ## TODO
 

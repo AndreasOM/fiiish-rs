@@ -5,5 +5,6 @@ pub enum EffectId {
 	Default = 1,
 	White = 2,
 	Textured = 3,
+	Background = 4,
 }
 

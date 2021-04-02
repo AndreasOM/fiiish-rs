@@ -6,8 +6,8 @@ use crate::math::{
 
 #[derive(Copy,Clone)]
 pub struct Matrix32 {
-	rot: Matrix22,
-	pos: Vector2,
+	pub rot: Matrix22,
+	pub pos: Vector2,
 }
 
 impl Matrix32 {
