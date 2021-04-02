@@ -44,6 +44,19 @@ impl AnimatedTexture {
 	}
 
 	pub fn set_current_frame(&mut self, f: u16 ){
+		let mut f = f;
+		while f < self.first_frame {
+//			todo!("Clip into range");
+			f += self.number_of_frames;
+		}
+		while f >= self.first_frame + self.number_of_frames {
+			f -= self.number_of_frames;
+		}
+
+		if f < self.first_frame || f >= self.first_frame + self.number_of_frames {
+			todo!("how di we get here?");
+		}
+		
 		self.current_frame = f;
 	}
 
