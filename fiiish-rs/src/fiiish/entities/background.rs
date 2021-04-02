@@ -39,8 +39,9 @@ impl Entity for Background {
 		renderer.use_layer( LayerId::Background as u8 );
 		renderer.use_effect( EffectId::Textured as u16 );
 		renderer.use_texture( "background" );
-		let size =Vector2::new( 1024.0, 1024.0 );	// :TODO: actually render fullscreen
-		renderer.render_textured_quad( &self.pos, &size );
+		let size = Vector2::new( 1024.0, 1024.0 );	// :TODO: actually render fullscreen
+//		renderer.render_textured_quad( &self.pos, &size );
+		renderer.render_textured_fullscreen_quad();
 	}
 
 	fn name( &self ) -> &str {

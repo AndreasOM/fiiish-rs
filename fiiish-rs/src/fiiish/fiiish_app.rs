@@ -33,6 +33,7 @@ pub struct FiiishApp {
 	system: System,
 
 	size: Vector2,
+	viewport_size: Vector2,
 	scaling: f32,
 
 	game: Game,
@@ -55,6 +56,7 @@ impl FiiishApp {
 			system: System::new(),
 
 			size: Vector2::zero(),
+			viewport_size: Vector2::zero(),
 			scaling: 1.0,
 
 			game: Game::new(),
@@ -154,14 +156,23 @@ impl FiiishApp {
 		self.count += 1;
 		self.total_time += wuc.time_step;
 
-		self.size = wuc.window_size;
+		self.viewport_size = wuc.window_size;
 
-		let scaling = 1024.0/self.size.y;
-		self.scaling = 0.5*scaling;
+		let scaling = 1024.0/self.viewport_size.y;
+		self.scaling = 1.0 * scaling;	// !!! Do not tweak here
+
+		self.size.x = ( self.scaling ) * self.viewport_size.x;
+		self.size.y = ( self.scaling ) * self.viewport_size.y;
+
+//		dbg!(&self.viewport_size);
+//		dbg!(&self.size);
+
+		self.cursor_pos.x = 0.5 * self.scaling * wuc.window_size.x * ( 2.0*wuc.mouse_pos.x - 1.0 );
+		self.cursor_pos.y = 0.5 * self.scaling * wuc.window_size.y * ( 2.0*wuc.mouse_pos.y - 1.0 );
 
 
-		self.cursor_pos.x = self.scaling * wuc.window_size.x * ( 2.0*wuc.mouse_pos.x - 1.0 );
-		self.cursor_pos.y = self.scaling * wuc.window_size.y * ( 2.0*wuc.mouse_pos.y - 1.0 );
+//		dbg!( &wuc.mouse_pos );
+//		dbg!( &self.cursor_pos );
 
 		let mut auc = AppUpdateContext::new()
 					.set_time_step( wuc.time_step )
@@ -201,11 +212,16 @@ impl FiiishApp {
 
 		match &mut self.renderer {
 			Some( renderer ) => {
+//				dbg!(&self.size);
+				renderer.set_size( &self.size );
+				renderer.set_viewport( &Vector2::zero(), &self.viewport_size );
 				renderer.begin_frame();
 				let color = Color::from_rgba( 0.5 + 0.5*( self.total_time * 0.5 ).sin() as f32, 0.5, 0.5, 1.0 );
 				renderer.clear( &color );
 
-				let scaling = self.scaling;
+//				let scaling = self.scaling * 0.5;
+				let scaling = 0.5;
+//				dbg!(&scaling);
 				let left = -self.size.x * scaling;
 				let right = self.size.x * scaling;
 				let top = self.size.y * scaling;
@@ -213,11 +229,15 @@ impl FiiishApp {
 				let near = 1.0;
 				let far = -1.0;
 
+//				dbg!(&top,&bottom);
+
 				let mvp = Matrix44::ortho(
 					left, right,
 					bottom, top,
 					near, far
 				);
+
+//				dbg!(&mvp);
 
 				renderer.set_mvp_matrix(
 					&mvp

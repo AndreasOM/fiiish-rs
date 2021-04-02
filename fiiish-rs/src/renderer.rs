@@ -109,6 +109,10 @@ pub struct Renderer {
 	tex_coords: Vector2,
 
 	mvp_matrix: Matrix44,
+
+	size: Vector2,
+	viewport_pos: Vector2,
+	viewport_size: Vector2,
 }
 
 impl Renderer {
@@ -125,6 +129,10 @@ impl Renderer {
 
 			tex_coords: Vector2::zero(),
 			mvp_matrix: Matrix44::identity(),
+
+			size: Vector2::zero(),
+			viewport_pos: Vector2::zero(),
+			viewport_size: Vector2::zero(),
 		}
 	}
 
@@ -197,7 +205,7 @@ impl Renderer {
 		for material in self.material_manager.iter_mut() {
 			material.clear();
 		}
-		// enusre we have at least one material, and it is active
+		// ensure we have at least one material, and it is active
 		if self.material_manager.len() == 0 {
 			let m = Material::new( self.active_layer_id, &self.get_default_effect(), &self.texture_manager.get_active() );
 			let i = self.material_manager.add( m );
@@ -205,6 +213,14 @@ impl Renderer {
 		}
 //		let default_effect_name = self.default_effect_name.clone();
 //		self.use_effect( &default_effect_name );
+
+		unsafe {
+			let p = &self.viewport_pos;
+			let s = &self.viewport_size;
+			gl::Viewport( p.x as i32, p.y as i32, s.x as i32, s.y as i32 );
+//			gl::Scissor( self.pos.x as i32, self.pos.y as i32, self.size.x as i32, self.size.y as i32 );
+//			gl::Enable( gl::SCISSOR_TEST );
+		}
 	}
 
 	pub fn end_frame( &mut self ) {
@@ -280,6 +296,15 @@ impl Renderer {
 			gl::ClearColor( color.r, color.g, color.b, color.a );
 			gl::Clear( gl::COLOR_BUFFER_BIT ); // :TODO: clear other buffers?
 		}
+	}
+
+	pub fn set_size( &mut self, size: &Vector2 ) {
+		self.size = *size;
+	}
+
+	pub fn set_viewport( &mut self, pos: &Vector2, size: &Vector2 ) {
+		self.viewport_pos = *pos;
+		self.viewport_size = *size;
 	}
 
 	pub fn set_mvp_matrix( &mut self, mvp_matrix: &Matrix44 ) {
@@ -382,6 +407,12 @@ impl Renderer {
 
 		self.add_triangle( v0, v1, v2 ); // TopLeft, BottomLeft, BottomRight
 		self.add_triangle( v2, v3, v0 ); // BottomRight, TopRight, TopLeft		
+	}
+
+	pub fn render_textured_fullscreen_quad( &mut self ) {
+		let size = self.size;
+		dbg!(&size);
+		self.render_textured_quad( &Vector2::zero(), &size );
 	}
 
 	pub fn render_textured_quad( &mut self, pos: &Vector2, size: &Vector2 ) {

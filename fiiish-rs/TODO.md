@@ -3,9 +3,9 @@
 
 ## In Progress
 
-- [ ] Add render layers
 - [ ] Add background (:WIP:)
-	- [ ] Make background fullscreen
+	- [x] Make background fullscreen
+	- [ ] Fix texture mapping for background
 	- [ ] Move background
 	- [ ] Use correct shader for background
 
@@ -47,6 +47,7 @@
 
 ## DONE
 
+- [x] Add render layers
 - [x] Add some coins
 - [x] Add TextureAtlas
 - [x] Extract demo code out of FiiishApp
