@@ -44,13 +44,7 @@ impl Obstacle {
 impl Entity for Obstacle {
 	fn setup( &mut self, ec: &EntityConfiguration ) {
 		self.size = ec.size;
-		self.animated_texture.setup(
-			&ec.animated_texture_configuration.prefix,
-			ec.animated_texture_configuration.number_of_digits,
-			ec.animated_texture_configuration.first_frame,
-			ec.animated_texture_configuration.last_frame - ec.animated_texture_configuration.first_frame,
-			ec.animated_texture_configuration.fps,
-		);
+		self.animated_texture.setup_from_config( &ec.animated_texture_configuration );
 	}
 
 	fn teardown( &mut self ){
@@ -68,7 +62,6 @@ impl Entity for Obstacle {
 	fn render( &mut self, renderer: &mut Renderer ){
 		renderer.use_layer( LayerId::Obstacles as u8 );
 		renderer.use_effect( EffectId::Textured as u16 );
-//		renderer.use_texture( "coin_01" );
 		self.animated_texture.r#use( renderer );
 		renderer.render_textured_quad_with_rotation( &self.pos, &self.size, self.rotation );
 	}

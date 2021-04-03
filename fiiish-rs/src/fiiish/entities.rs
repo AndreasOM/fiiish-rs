@@ -1,6 +1,7 @@
 mod entity;
 	pub use entity::Entity as Entity;
 mod entity_configuration;
+	pub use entity_configuration::AnimatedTextureConfiguration as AnimatedTextureConfiguration;
 	pub use entity_configuration::EntityConfiguration as EntityConfiguration;
 	pub use entity_configuration::EntityConfigurationManager as EntityConfigurationManager;
 mod entity_ids;

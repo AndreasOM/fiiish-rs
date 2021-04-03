@@ -6,6 +6,8 @@ use crate::renderer::{
 };
 use crate::system::System;
 
+use crate::fiiish::entities::AnimatedTextureConfiguration;
+
 #[derive(Debug)]
 pub struct AnimatedTexture {
 	prefix: String,
@@ -41,6 +43,16 @@ impl AnimatedTexture {
 		self.fps = fps;
 		self.time_per_frame = 1.0/fps;
 		self.current_frame = first_frame;
+	}
+
+	pub fn setup_from_config( &mut self, config: &AnimatedTextureConfiguration ) {
+		self.prefix = config.prefix.clone();
+		self.number_of_digits = config.number_of_digits;
+		self.first_frame = config.first_frame;
+		self.number_of_frames = config.last_frame - config.first_frame;
+		self.fps = config.fps;
+		self.time_per_frame = 1.0/self.fps;
+		self.current_frame = self.first_frame;
 	}
 
 	pub fn set_current_frame(&mut self, f: u16 ){
