@@ -157,6 +157,7 @@ impl Player {
 
 	fn update_waiting_for_start( &mut self, euc: &mut EntityUpdateContext ) {
 		self.animated_texture.update( euc.time_step() );
+		self.movement.x = 0.0;
 	}
 	fn update_swimming( &mut self, euc: &mut EntityUpdateContext ) {
 		self.animated_texture.update( euc.time_step() );
@@ -197,6 +198,8 @@ impl Player {
 	}
 	fn update_dying( &mut self, euc: &mut EntityUpdateContext ) {
 		self.animated_texture_dying.update( euc.time_step() );
+		self.movement.x = 0.0;
+		
 		let ts = euc.time_step() as f32;
 		self.time_since_dying += ts;
 		self.pos.y += 1.5*128.0 * self.time_since_dying * ts;

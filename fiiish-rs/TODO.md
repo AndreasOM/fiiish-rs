@@ -4,7 +4,6 @@
 ## In Progress
 
 
-
 ## TODO
 
 - [ ] Improve entity configuration
@@ -47,6 +46,7 @@
 
 ## DONE
 
+- [x] Fix movement bug
 - [x] Throw some rocks into the water, and add some coins, and seaweed to the mix
 - [x] Add background
 	- [x] Make background fullscreen

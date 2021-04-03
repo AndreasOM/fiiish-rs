@@ -93,7 +93,8 @@ impl Entity for Background {
 	fn update( &mut self, euc: &mut EntityUpdateContext ){
 		self.time += euc.time_step() as f32; // :TODO: wrap for precision
 
-		self.pos.x -= euc.time_step() as f32 * 240.0 * 0.5; // :HACK: speed is roughly guestimated to feel kind of nearly right
+//		self.pos.x -= euc.time_step() as f32 * 240.0 * 0.5; // :HACK: speed is roughly guestimated to feel kind of nearly right
+		self.pos.x += euc.world_movement().x * 0.5;
 		// repeat value to avoid precision loss
 		while self.pos.x < -1024.0 {
 			self.pos.x += 1024.0;
