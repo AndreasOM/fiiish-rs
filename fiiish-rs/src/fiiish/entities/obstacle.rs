@@ -3,6 +3,10 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityConfiguration;
+use crate::fiiish::entities::EntityId;
+use crate::fiiish::entities::entity_ids::*;
+
 use crate::fiiish::EntityUpdateContext;
 use crate::math::Vector2;
 use crate::renderer::{
@@ -23,7 +27,7 @@ pub struct Obstacle {
 impl Obstacle {
 	pub fn new( pos: &Vector2, crc: u32 ) -> Self {
 		Self {
-			name: String::new(),
+			name: "obstacle".to_string(),
 			pos: *pos, //Vector2::zero(),
 			crc: crc,
 			size: Vector2::new( 413.0, 538.0 ),
@@ -38,30 +42,16 @@ impl Obstacle {
 }
 
 impl Entity for Obstacle {
-	fn setup( &mut self, name: &str) {
-		self.name = name.to_owned();
-		self.animated_texture.setup( "rock-f", 0, 0, 1, 25.0 );
-		match self.crc {
-			0xd058353c => self.animated_texture.setup( "rock-a", 0, 0, 1, 25.0 ),
-			0x49516486 => self.animated_texture.setup( "rock-b", 0, 0, 1, 25.0 ),
-			0x3e565410 => self.animated_texture.setup( "rock-c", 0, 0, 1, 25.0 ),
-			0xa032c1b3 => self.animated_texture.setup( "rock-d", 0, 0, 1, 25.0 ),
-			0xd735f125 => self.animated_texture.setup( "rock-e", 0, 0, 1, 25.0 ),
-			0x4e3ca09f => self.animated_texture.setup( "rock-f", 0, 0, 1, 25.0 ),
-			0x6fe93bef => self.animated_texture.setup( "seaweed-a-", -2, 1, 47, 25.0 ),
-			_ => self.animated_texture.setup( "block-1x1", 0, 0, 1, 25.0 ),
-		};
-		match self.crc {
-			0xd058353c => self.size=Vector2::new( 150.0,  89.0 ),
-			0x49516486 => self.size=Vector2::new( 204.0, 220.0 ),
-			0x3e565410 => self.size=Vector2::new( 166.0, 373.0 ),
-			0xa032c1b3 => self.size=Vector2::new( 197.0, 436.0 ),
-			0xd735f125 => self.size=Vector2::new( 175.0, 556.0 ),
-			0x4e3ca09f => self.size=Vector2::new( 413.0, 538.0 ),
-			0x6fe93bef => self.size=Vector2::new( 63.0, 114.0 ),
-			_ => self.size=Vector2::new( 128.0, 128.0 ),
-		};
-}
+	fn setup( &mut self, ec: &EntityConfiguration ) {
+		self.size = ec.size;
+		self.animated_texture.setup(
+			&ec.animated_texture_configuration.prefix,
+			ec.animated_texture_configuration.number_of_digits,
+			ec.animated_texture_configuration.first_frame,
+			ec.animated_texture_configuration.last_frame - ec.animated_texture_configuration.first_frame,
+			ec.animated_texture_configuration.fps,
+		);
+	}
 
 	fn teardown( &mut self ){
 

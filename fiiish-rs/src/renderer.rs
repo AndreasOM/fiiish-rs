@@ -293,7 +293,7 @@ impl Renderer {
 				total_materials_with_vertices += 1;
 			}
 			if debug {
-				println!("Rendered {} vertices for material {:?} with effect {:?}", vc, &material, &e );
+//				println!("Rendered {} vertices for material {:?} with effect {:?}", vc, &material, &e );
 			}
 		}
 
@@ -303,7 +303,7 @@ impl Renderer {
 		}
 
 		if debug {
-			dbg!(&self.material_manager);
+//			dbg!(&self.material_manager);
 			println!("Render Stats: {} {} {}", total_vertices, total_materials_with_vertices, total_materials);
 		}
 		self.frame += 1;

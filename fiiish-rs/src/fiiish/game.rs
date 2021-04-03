@@ -16,6 +16,10 @@ use crate::fiiish::entities::{
 	Obstacle,
 	Player
 };
+use crate::fiiish::entities::{
+	EntityConfiguration,
+	EntityConfigurationManager,
+};
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::Zone;
 
@@ -23,19 +27,25 @@ use crate::fiiish::Zone;
 pub struct Game {
 	players: Vec<Player>,
 	entity_manager: EntityManager,
+	entity_configuration_manager: EntityConfigurationManager,
 	zone: Zone,
 }
 
 impl Game {
 	pub fn new() -> Self {
 		Self {
-			players: Vec::new(),
-			entity_manager: EntityManager::new(),
-			zone: Zone::new(),
+			players: 						Vec::new(),
+			entity_manager:	 	 	 	 	EntityManager::new(),
+			entity_configuration_manager:	EntityConfigurationManager::new(),
+			zone:							Zone::new(),
 		}
 	}
 
 	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer) {
+		// load configuration
+		// :TODO: actually load from a file
+		self.entity_configuration_manager.load( system, "entity_config.whatever" );
+
 		// load texture
 		AnimatedTexture::register_all( system, renderer, "fish_swim", 4 );
 		AnimatedTexture::register_all( system, renderer, "fish_die", 2 );
@@ -47,33 +57,12 @@ impl Game {
 		// load zone(s)
 		self.zone.load( system, "0000_ILoveFiiish" );
 
-//		dbg!(&self.zone);
-//		todo!("die");
-
-/*
-#define	CRC_PICKUPCOIN	0xe4c651aa
-#define	CRC_PICKUPRAIN	0x06fd4c5a
-#define	CRC_PICKUPEXPLOSION	0xf75fd92f
-#define	CRC_PICKUPMAGNET	0x235a41dd
-#define	CRC_ROCKA	0xd058353c
-#define	CRC_ROCKB	0x49516486
-#define	CRC_ROCKC	0x3e565410
-#define	CRC_ROCKD	0xa032c1b3
-#define	CRC_ROCKE	0xd735f125
-#define	CRC_ROCKF	0x4e3ca09f
-
-#define	CRC_SEAWEEDA	0x6fe93bef
-#define	CRC_SEAWEEDB	0xf6e06a55
-#define	CRC_SEAWEEDC	0x81e75ac3
-#define	CRC_SEAWEEDD	0x1f83cf60
-#define	CRC_SEAWEEDE	0x6884fff6
-#define	CRC_SEAWEEDF	0xf18dae4c
-#define	CRC_SEAWEEDG	0x868a9eda
-
-*/
 		// :HACK:
 		for l in self.zone.layer_iter() {
 			for o in l.object_iter() {
+				let ec = self.entity_configuration_manager.get_config( o.crc );
+				dbg!(&ec);
+
 				match o.crc {
 					0xe4c651aa
 					| 0x06fd4c5a
@@ -82,7 +71,7 @@ impl Game {
 					=> {
 						//println!("Coin {:?}", &o );
 						let mut c = Coin::new( &o.pos, 0, o.crc );
-						c.setup( "coin" );
+						c.setup( &ec );
 
 						self.entity_manager.add( Box::new( c ) );
 					},
@@ -102,7 +91,9 @@ impl Game {
 					=> {
 						//println!("Coin {:?}", &o );
 						let mut r = Obstacle::new( &o.pos, o.crc );
-						r.setup( "rock" );
+//						let mut r = Obstacle::new_from_config( &ec );
+						r.setup( &ec );
+//						r.setup( "rock" );
 						r.set_rotation( o.rotation );
 
 						self.entity_manager.add( Box::new( r ) );
@@ -117,31 +108,9 @@ impl Game {
 		self.players.push( p );
 
 		let mut b = Background::new();
-		b.setup( "backround" );
+//		b.setup( "backround" );
 		self.entity_manager.add( Box::new( b ) );
 
-/*
-		let mut rf = Obstacle::new( &Vector2::new( 200.0, -300.0 ) );
-		rf.setup( "rock-f" );
-		self.entity_manager.add( Box::new( rf ) );
-
-		let mut rf = Obstacle::new( &Vector2::new( 400.0, 300.0 ) );
-		rf.setup( "rock-f" );
-		rf.set_rotation( 180.0 );
-		self.entity_manager.add( Box::new( rf ) );
-*/
-/*
-		for i in 0..32 {
-			let r = 80.0+ (i as f32 * 8.0 );
-			let fi = 2.2*( i as f32 )*( 3.14*2.0 )/32.0;
-			let x = fi.sin() * r;
-			let y = fi.cos() * r;
-			let mut c = Coin::new( &Vector2::new( x, y ), i as u16 );
-			c.setup( "coin" );
-
-			self.entity_manager.add( Box::new( c ) );
-		}
-*/		
 	}
 
 	pub fn teardown( &mut self ) {

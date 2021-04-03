@@ -112,7 +112,7 @@ impl TextureAtlas {
 				name_wo_ext.truncate( first_dot );
 
 				let te = Texture::create_from_atlas( &name_wo_ext, &e.mtx, &t );
-				println!("Registering atlas (sub) texture '{}' with renderer {:?}", &name_wo_ext, &te);
+//				println!("Registering atlas (sub) texture '{}' with renderer {:?}", &name_wo_ext, &te);
 				renderer.register_texture( te );
 				total_textures_registered += 1;
 			}

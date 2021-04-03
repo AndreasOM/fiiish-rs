@@ -3,10 +3,10 @@
 
 ## In Progress
 
+- [x] Improve entity configuration
 
 ## TODO
 
-- [ ] Improve entity configuration
 - [ ] Add real Pickups
 
 - [ ] Create generic pickup entity

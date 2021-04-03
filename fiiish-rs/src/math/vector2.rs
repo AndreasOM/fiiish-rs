@@ -38,6 +38,14 @@ impl Vector2 {
 	}
 }
 
+impl From< ( f32, f32 ) > for Vector2 {
+	fn from( t: ( f32, f32 ) ) -> Self {
+		Self {
+			x: t.0,
+			y: t.1,
+		}
+	}
+}
 
 impl std::fmt::Debug for Vector2 {
 	fn fmt( &self, f: &mut std::fmt::Formatter ) -> std::fmt::Result {

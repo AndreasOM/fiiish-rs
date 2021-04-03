@@ -3,6 +3,7 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
 use crate::math::{
 	Matrix32,
@@ -80,8 +81,7 @@ impl Background {
 }
 
 impl Entity for Background {
-	fn setup( &mut self, name: &str) {
-		self.name = name.to_owned();
+	fn setup( &mut self, ec: &EntityConfiguration) {
 		// fake long running time to simulate precision loss
 		self.pos.x = - 2.0 * 60.0 * 60.0 * 60.0 * 240.0 * 0.5;
 	}

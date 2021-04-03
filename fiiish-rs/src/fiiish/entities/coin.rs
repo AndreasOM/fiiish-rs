@@ -3,6 +3,7 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
 use crate::math::Vector2;
 use crate::renderer::{
@@ -33,18 +34,17 @@ impl Coin {
 }
 
 impl Entity for Coin {
-	fn setup( &mut self, name: &str ) {
-		self.name = name.to_owned();
-		match self.crc {
-			0xe4c651aa => self.animated_texture.setup( "coin_", 2, 1, 32, 25.0 ),
-			0x06fd4c5a => self.animated_texture.setup( "coin_blue_", 2, 1, 32, 25.0 ),
-			0xf75fd92f => self.animated_texture.setup( "coin_green_", 2, 1, 32, 25.0 ),
-			0x235a41dd => self.animated_texture.setup( "magnet_", 2, 1, 32, 25.0 ),
-			_ => {},
-		}
-		
-		self.animated_texture.set_current_frame( self.animation_offset );
+	fn setup( &mut self, ec: &EntityConfiguration ) {
+		self.size = ec.size;
+		self.animated_texture.setup(
+			&ec.animated_texture_configuration.prefix,
+			ec.animated_texture_configuration.number_of_digits,
+			ec.animated_texture_configuration.first_frame,
+			ec.animated_texture_configuration.last_frame - ec.animated_texture_configuration.first_frame,
+			ec.animated_texture_configuration.fps,
+		);
 	}
+
 
 	fn teardown( &mut self ){
 
