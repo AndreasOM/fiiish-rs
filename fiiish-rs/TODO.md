@@ -4,8 +4,10 @@
 ## In Progress
 
 
+
 ## TODO
 
+- [ ] Improve entity configuration
 - [ ] Add real Pickups
 
 - [ ] Create generic pickup entity
@@ -22,6 +24,7 @@
 
 ## Future
 
+- [ ] Implement, and use Serializer
 - [ ] Sort Materials on creation instead of every frame
 
 - [ ] Only transfer minimal per Vertex data to GPU (e.g. remove TexCoords where not needed)
@@ -44,6 +47,7 @@
 
 ## DONE
 
+- [x] Throw some rocks into the water, and add some coins, and seaweed to the mix
 - [x] Add background
 	- [x] Make background fullscreen
 	- [x] Fix texture mapping for background

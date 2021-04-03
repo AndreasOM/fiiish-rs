@@ -12,6 +12,7 @@ use crate::renderer::{
 
 pub struct Coin {
 	name: String,
+	crc: u32,
 	pos: Vector2,
 	size: Vector2,
 	animated_texture: AnimatedTexture,
@@ -19,9 +20,10 @@ pub struct Coin {
 }
 
 impl Coin {
-	pub fn new(pos: &Vector2, animation_offset: u16 ) -> Self {
+	pub fn new(pos: &Vector2, animation_offset: u16, crc: u32 ) -> Self {
 		Self {
 			name: String::new(),
+			crc: crc,
 			pos: *pos, //Vector2::zero(),
 			size: Vector2::new( 32.0, 32.0 ),
 			animated_texture: AnimatedTexture::new(),
@@ -31,9 +33,16 @@ impl Coin {
 }
 
 impl Entity for Coin {
-	fn setup( &mut self, name: &str) {
+	fn setup( &mut self, name: &str ) {
 		self.name = name.to_owned();
-		self.animated_texture.setup( "coin_", 2, 1, 32, 25.0 );
+		match self.crc {
+			0xe4c651aa => self.animated_texture.setup( "coin_", 2, 1, 32, 25.0 ),
+			0x06fd4c5a => self.animated_texture.setup( "coin_blue_", 2, 1, 32, 25.0 ),
+			0xf75fd92f => self.animated_texture.setup( "coin_green_", 2, 1, 32, 25.0 ),
+			0x235a41dd => self.animated_texture.setup( "magnet_", 2, 1, 32, 25.0 ),
+			_ => {},
+		}
+		
 		self.animated_texture.set_current_frame( self.animation_offset );
 	}
 
@@ -43,7 +52,7 @@ impl Entity for Coin {
 
 	fn update( &mut self, euc: &mut EntityUpdateContext ){
 		self.animated_texture.update( euc.time_step() );
-		self.pos.x -= euc.time_step() as f32 * 240.0;
+		self.pos.x += euc.world_movement().x;
 		if self.pos.x < -1500.0 {
 			self.pos.x += 2.0* 1500.0;
 		}

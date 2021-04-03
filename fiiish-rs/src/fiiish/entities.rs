@@ -7,5 +7,7 @@ mod background;
 	pub use background::Background as Background;
 mod coin;
 	pub use coin::Coin as Coin;
+mod obstacle;
+	pub use obstacle::Obstacle as Obstacle;
 mod player;
 	pub use player::Player as Player;

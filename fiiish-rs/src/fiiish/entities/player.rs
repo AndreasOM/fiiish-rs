@@ -33,6 +33,7 @@ pub struct Player {
 	state: PlayerState,
 	direction: PlayerDirection,
 	speed: f32,
+	movement: Vector2,
 	time_since_dying: f32,
 	animated_texture: AnimatedTexture,
 	animated_texture_dying: AnimatedTexture,
@@ -48,7 +49,8 @@ impl Player {
 			size: Vector2::new( 128.0, 128.0 ),
 			state: PlayerState::Dead,
 			direction: PlayerDirection::Float,
-			speed: 100.0,
+			speed: 240.0,
+			movement: Vector2::zero(),
 			time_since_dying: f32::MAX,
 			animated_texture: AnimatedTexture::new(),
 			animated_texture_dying: AnimatedTexture::new(),
@@ -78,6 +80,10 @@ impl Player {
 
 	pub fn can_respawn( &self ) -> bool {
 		self.state == PlayerState::Dead
+	}
+
+	pub fn movement( &self ) -> &Vector2 {
+		&self.movement
 	}
 
 	fn goto_state( &mut self, state: PlayerState ) {
@@ -154,6 +160,9 @@ impl Player {
 	}
 	fn update_swimming( &mut self, euc: &mut EntityUpdateContext ) {
 		self.animated_texture.update( euc.time_step() );
+
+		self.movement.x = self.speed * euc.time_step() as f32;
+
 		let ts = euc.time_step() as f32;
 		match self.direction {
 			PlayerDirection::Down => {

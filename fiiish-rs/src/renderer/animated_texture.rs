@@ -9,7 +9,7 @@ use crate::system::System;
 #[derive(Debug)]
 pub struct AnimatedTexture {
 	prefix: String,
-	number_of_digits: u8,
+	number_of_digits: i8,
 	first_frame: u16,
 	number_of_frames: u16,
 	fps: f32,
@@ -33,7 +33,7 @@ impl AnimatedTexture {
 		}
 	}
 
-	pub fn setup( &mut self, prefix: &str, number_of_digits: u8, first_frame: u16, number_of_frames: u16, fps: f32 ) {
+	pub fn setup( &mut self, prefix: &str, number_of_digits: i8, first_frame: u16, number_of_frames: u16, fps: f32 ) {
 		self.prefix = prefix.to_owned();
 		self.number_of_digits = number_of_digits;
 		self.first_frame = first_frame;
@@ -78,10 +78,16 @@ impl AnimatedTexture {
 		renderer.use_texture( &name )
 	}
 
-	fn append_number_with_digits( prefix: &str, number: u16, number_of_digits: u8 ) -> String {
+	fn append_number_with_digits( prefix: &str, number: u16, number_of_digits: i8 ) -> String {
 		match number_of_digits {
+			0 => {
+				format!("{}", &prefix)
+			},
 			2 => {
 				format!("{}{:02}", &prefix, number)
+			},
+			n if n<0 => {
+				format!("{}{}", &prefix, number)
 			},
 			4 => {
 				format!("{}{:04}", &prefix, number)
@@ -91,7 +97,7 @@ impl AnimatedTexture {
 	}
 
 	// :HACK: Scanning the filesystem is a bad idea, the info should come from the config
-	pub fn register_all( system: &mut System, renderer: &mut Renderer, prefix: &str, number_of_digits: u8 ) -> usize {
+	pub fn register_all( system: &mut System, renderer: &mut Renderer, prefix: &str, number_of_digits: i8 ) -> usize {
 
 		let mut fs = system.default_filesystem_mut();
 

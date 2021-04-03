@@ -253,10 +253,11 @@ impl FiiishApp {
 				self.game.render( renderer );
 
 				// :DEBUG: render atlas
+				/*
 				renderer.use_effect( EffectId::Textured as u16 );
 				renderer.use_texture( "game-atlas-0" );
 				renderer.render_textured_quad( &Vector2::zero(), &Vector2::new( 1024.0, 1024.0 ) );
-
+				*/
 				renderer.use_effect( EffectId::Textured as u16 );
 				renderer.use_texture( "cursor" );
 				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 128.0, 128.0 ) );

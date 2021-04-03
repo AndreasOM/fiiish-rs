@@ -45,7 +45,8 @@ impl Window {
 	    let wb = WindowBuilder::new()
 //	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 1080/2 } )
 //	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 512 } )
-	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 700 } )
+//	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 700 } )
+	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1880, height: 700 } )
 //	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 512, height: 512 } )
 	    			.with_title(&self.title);
 
