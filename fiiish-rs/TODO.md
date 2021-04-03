@@ -3,13 +3,13 @@
 
 ## In Progress
 
-- [x] Improve entity configuration
 
 ## TODO
 
-- [ ] Add real Pickups
+- [ ] Cleanup Pickups (remove Coins)
+- [ ] Make Player a real entity
 
-- [ ] Create generic pickup entity
+- [ ] Add Zone management, and progression
 
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
@@ -46,6 +46,8 @@
 
 ## DONE
 
+- [ ] Make Coins collectable, and respawn current zones Pickups via 'r' key
+- [x] Improve entity configuration
 - [x] Fix movement bug
 - [x] Throw some rocks into the water, and add some coins, and seaweed to the mix
 - [x] Add background

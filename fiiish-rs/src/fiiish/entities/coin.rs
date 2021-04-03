@@ -3,6 +3,7 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
 use crate::math::Vector2;
@@ -11,6 +12,7 @@ use crate::renderer::{
 	Renderer
 };
 
+#[derive(Debug)]
 pub struct Coin {
 	name: String,
 	crc: u32,
@@ -18,6 +20,7 @@ pub struct Coin {
 	size: Vector2,
 	animated_texture: AnimatedTexture,
 	animation_offset: u16,
+	alive: bool,
 }
 
 impl Coin {
@@ -29,11 +32,25 @@ impl Coin {
 			size: Vector2::new( 32.0, 32.0 ),
 			animated_texture: AnimatedTexture::new(),
 			animation_offset,
+			alive: true,
 		}
+	}
+
+	pub fn set_pos( &mut self, pos: &Vector2 ) {
+		self.pos = *pos;
+	}
+	pub fn pos( &self ) -> &Vector2 {
+		&self.pos
 	}
 }
 
 impl Entity for Coin {
+	fn as_any(&self) -> &dyn std::any::Any {
+		self
+	}
+	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+		self
+	}
 	fn setup( &mut self, ec: &EntityConfiguration ) {
 		self.size = ec.size;
 		self.animated_texture.setup_from_config( &ec.animated_texture_configuration );
@@ -53,13 +70,27 @@ impl Entity for Coin {
 	}
 
 	fn render( &mut self, renderer: &mut Renderer ){
-		renderer.use_layer( LayerId::Pickups as u8 );
-		renderer.use_effect( EffectId::Textured as u16 );
-		self.animated_texture.r#use( renderer );
-		renderer.render_textured_quad( &self.pos, &self.size );
+		if self.alive {
+			renderer.use_layer( LayerId::Pickups as u8 );
+			renderer.use_effect( EffectId::Textured as u16 );
+			self.animated_texture.r#use( renderer );
+			renderer.render_textured_quad( &self.pos, &self.size );
+		}
+	}
+
+	fn kill( &mut self ) {
+		self.alive = false;
+	}
+
+	fn is_alive( &self ) -> bool {
+		self.alive
 	}
 
 	fn name( &self ) -> &str {
 		&self.name
 	}
+	fn entity_type( &self ) -> EntityType {
+		EntityType::Pickup
+	}
+
 }

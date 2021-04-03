@@ -19,6 +19,7 @@ use crate::fiiish::entities::{
 use crate::fiiish::entities::{
 	EntityConfiguration,
 	EntityConfigurationManager,
+	EntityType,
 };
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::Zone;
@@ -63,32 +64,15 @@ impl Game {
 				let ec = self.entity_configuration_manager.get_config( o.crc );
 				dbg!(&ec);
 
-				match o.crc {
-					0xe4c651aa
-					| 0x06fd4c5a
-					| 0xf75fd92f
-					| 0x235a41dd
-					=> {
+				match ec.entity_type {
+					EntityType::Pickup => {
 						//println!("Coin {:?}", &o );
 						let mut c = Coin::new( &o.pos, 0, o.crc );
 						c.setup( &ec );
 
 						self.entity_manager.add( Box::new( c ) );
 					},
-					0xd058353c
-					| 0x49516486
-					| 0x3e565410
-					| 0xa032c1b3
-					| 0xd735f125
-					| 0x4e3ca09f
-					| 0x6fe93bef
-					| 0xf6e06a55
-					| 0x81e75ac3
-					| 0x1f83cf60
-					| 0x6884fff6
-					| 0xf18dae4c
-					| 0x868a9eda
-					=> {
+					EntityType::Obstacle => {
 						//println!("Coin {:?}", &o );
 						let mut r = Obstacle::new( &o.pos, o.crc );
 //						let mut r = Obstacle::new_from_config( &ec );
@@ -120,6 +104,55 @@ impl Game {
 		}
 	}
 
+	fn spawn_pickups( &mut self ) {
+		for l in self.zone.layer_iter() {
+			for o in l.object_iter() {
+				let ec = self.entity_configuration_manager.get_config( o.crc );
+				dbg!(&ec);
+				if ec.entity_type == EntityType::Pickup {
+					let mut c = Coin::new( &o.pos, 0, o.crc );
+					c.setup( &ec );
+
+					self.entity_manager.add( Box::new( c ) );
+				}
+			}
+		}		
+	}
+
+	fn collect_pickups( &mut self, euc: &EntityUpdateContext ) {
+		for e in self.entity_manager.iter_mut() {
+			if e.entity_type() == EntityType::Pickup {
+				if e.is_alive() {
+					let p: &mut Coin = match e.as_any_mut().downcast_mut::<Coin>() {
+						Some(p) => p,
+        				None => panic!("&e isn't a Coin!"),
+    				};
+
+//    				dbg!(&p);
+					let pp = *p.pos();
+					for f in self.players.iter() {
+						let fp = f.pos();
+
+						let mut delta = pp.sub( &fp );
+						let dist = delta.length();
+//						dbg!(&dist);
+						if dist < 10.0 { // fish over pickup
+							println!("Collected Pickup");
+							p.kill();
+						} else if dist < 200.0 {
+							let magnet_range = 150.0;
+							let magnet_speed = 300.0 * euc.time_step() as f32;
+							let delta = delta.normalized();
+							let delta = delta.scaled( -magnet_speed );
+							let pp = pp.add( &delta );
+							p.set_pos( &pp );
+						}
+					}
+				}
+			}
+		}
+//		todo!("die");
+	}
 	// :TODO: decide if we need the full WindowUpdateContext here
 	pub fn update( &mut self, wuc: &mut WindowUpdateContext ) {
 
@@ -157,6 +190,10 @@ impl Game {
 			euc.enable_change_background_state();
 		}
 
+		if wuc.was_key_pressed( 'r' as u8 ) {
+			self.spawn_pickups();
+		}
+
 		for p in self.players.iter_mut() {
 			p.update( &mut euc );
 		}
@@ -164,6 +201,8 @@ impl Game {
 		for e in self.entity_manager.iter_mut() {
 			e.update( &mut euc );
 		}
+
+		self.collect_pickups( &euc );
 	}
 
 	pub fn render( &mut self, renderer: &mut Renderer) {

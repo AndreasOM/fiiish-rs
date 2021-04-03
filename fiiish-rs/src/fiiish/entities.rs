@@ -6,6 +6,8 @@ mod entity_configuration;
 	pub use entity_configuration::EntityConfigurationManager as EntityConfigurationManager;
 mod entity_ids;
 	pub use entity_ids::EntityId as EntityId;
+mod entity_types;
+	pub use entity_types::EntityType as EntityType;
 mod entity_manager;
 	pub use entity_manager::EntityManager as EntityManager;
 

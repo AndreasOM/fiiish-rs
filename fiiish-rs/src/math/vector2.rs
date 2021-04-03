@@ -22,6 +22,23 @@ impl Vector2 {
 		}
 	}
 
+	pub fn normalized( &self ) -> Self {
+		let l = self.length();
+		Self {
+			x: self.x / l,
+			y: self.y / l,
+		}
+	}
+
+	pub fn scaled( &self, factor: f32 ) -> Self {
+		let l = self.length();
+		Self {
+			x: self.x * factor,
+			y: self.y * factor,
+		}
+	}
+
+
 	pub fn add( &self, o: &Vector2 ) -> Self {
 		Self{
 			x: self.x + o.x,
@@ -29,6 +46,17 @@ impl Vector2 {
 		}
 	}
 
+	pub fn sub( &self, o: &Vector2 ) -> Self {
+		Self{
+			x: self.x - o.x,
+			y: self.y - o.y,
+		}
+	}
+
+	pub fn length( &self ) -> f32 {
+		let sql = self.x * self.x + self.y * self.y;
+		sql.sqrt()
+	}
 
 	pub fn scale_vector2( &self, o: &Vector2 ) -> Self {
 		Self {

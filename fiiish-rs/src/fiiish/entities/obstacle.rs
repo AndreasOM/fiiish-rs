@@ -4,7 +4,8 @@ use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
 use crate::fiiish::entities::EntityConfiguration;
-use crate::fiiish::entities::EntityId;
+//use crate::fiiish::entities::EntityId;
+use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::entity_ids::*;
 
 use crate::fiiish::EntityUpdateContext;
@@ -42,6 +43,12 @@ impl Obstacle {
 }
 
 impl Entity for Obstacle {
+	fn as_any(&self) -> &dyn std::any::Any {
+		self
+	}
+	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+		self
+	}
 	fn setup( &mut self, ec: &EntityConfiguration ) {
 		self.size = ec.size;
 		self.animated_texture.setup_from_config( &ec.animated_texture_configuration );
@@ -69,4 +76,9 @@ impl Entity for Obstacle {
 	fn name( &self ) -> &str {
 		&self.name
 	}
+
+	fn entity_type( &self ) -> EntityType {
+		EntityType::Obstacle
+	}
+
 }

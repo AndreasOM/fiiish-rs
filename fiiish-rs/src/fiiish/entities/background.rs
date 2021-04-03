@@ -3,6 +3,7 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
 use crate::math::{
@@ -81,6 +82,12 @@ impl Background {
 }
 
 impl Entity for Background {
+	fn as_any(&self) -> &dyn std::any::Any {
+		self
+	}
+	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+		self
+	}
 	fn setup( &mut self, ec: &EntityConfiguration) {
 		// fake long running time to simulate precision loss
 		self.pos.x = - 2.0 * 60.0 * 60.0 * 60.0 * 240.0 * 0.5;
@@ -130,5 +137,9 @@ impl Entity for Background {
 
 	fn name( &self ) -> &str {
 		&self.name
+	}
+
+	fn entity_type( &self ) -> EntityType {
+		EntityType::Decoration
 	}
 }

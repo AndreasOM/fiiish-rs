@@ -2,6 +2,7 @@
 use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::EntityUpdateContext;
+use crate::fiiish::entities::EntityType;
 use crate::math::Vector2;
 use crate::renderer::{
 	AnimatedTexture,
@@ -199,7 +200,7 @@ impl Player {
 	fn update_dying( &mut self, euc: &mut EntityUpdateContext ) {
 		self.animated_texture_dying.update( euc.time_step() );
 		self.movement.x = 0.0;
-		
+
 		let ts = euc.time_step() as f32;
 		self.time_since_dying += ts;
 		self.pos.y += 1.5*128.0 * self.time_since_dying * ts;
@@ -252,4 +253,12 @@ impl Player {
 		}
 		renderer.render_textured_quad_with_rotation( &self.pos, &self.size, self.angle );
 	}
+
+	pub fn pos( &self ) -> &Vector2 {
+		&self.pos
+	}
+	fn entity_type( &self ) -> EntityType {
+		EntityType::Player
+	}
+
 }
