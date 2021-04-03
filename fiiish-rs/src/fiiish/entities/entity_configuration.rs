@@ -114,6 +114,9 @@ impl EntityConfigurationManager {
 		self.configs.insert( EntityId::SEAWEEDE as u32, ( EntityType::Obstacle, ( 98.0, 330.0 ).into(), ( "seaweed-e-", -2, 1, 48, 25.0 ).into() ).into() );
 		self.configs.insert( EntityId::SEAWEEDF as u32, ( EntityType::Obstacle, ( 113.0, 375.0 ).into(), ( "seaweed-f-", -2, 1, 48, 25.0 ).into() ).into() );
 		self.configs.insert( EntityId::SEAWEEDG as u32, ( EntityType::Obstacle, ( 115.0, 404.0 ).into(), ( "seaweed-g-", -2, 1, 48, 25.0 ).into() ).into() );
+		self.configs.insert( EntityId::FERRIS as u32, ( EntityType::Decoration, ( 55.0, 41.0 ).into(), ( "ferris", 0, 0, 0, 25.0 ).into() ).into() );
+		self.configs.insert( EntityId::HEART as u32, ( EntityType::Decoration, ( 64.0, 64.0 ).into(), ( "heart", 0, 0, 0, 25.0 ).into() ).into() );
+		self.configs.insert( EntityId::FIIISH as u32, ( EntityType::Decoration, ( 64.0, 64.0 ).into(), ( "fiiish", 0, 0, 0, 25.0 ).into() ).into() );
 		true
 	}
 

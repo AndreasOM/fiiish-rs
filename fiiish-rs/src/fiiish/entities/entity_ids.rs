@@ -58,5 +58,8 @@ pub enum EntityId {
 	CORALCA				= 0xebb04cae,
 	CORALCB				= 0x72b91d14,
 	ANCHOR				= 0x6751117d,
+	FERRIS				= 0xd5cd9198,
+	HEART				= 0x60ecc3e6,
+	FIIISH				= 0xbd1ed3a1,
 	BLOCK1X1			= 0xe37ce24d,
 }

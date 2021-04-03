@@ -22,6 +22,7 @@ pub struct Obstacle {
 	size: Vector2,
 	rotation: f32,
 	animated_texture: AnimatedTexture,
+	layer: LayerId,
 }
 
 // rock-f 413 x 538
@@ -34,11 +35,16 @@ impl Obstacle {
 			size: Vector2::new( 413.0, 538.0 ),
 			rotation: 0.0,
 			animated_texture: AnimatedTexture::new(),
+			layer: LayerId::Obstacles,
 		}
 	}
 
 	pub fn set_rotation( &mut self, rotation: f32 ) {
 		self.rotation = rotation;
+	}
+
+	pub fn set_layer( &mut self, layer: LayerId ) {
+		self.layer = layer;
 	}
 }
 
@@ -67,7 +73,7 @@ impl Entity for Obstacle {
 	}
 
 	fn render( &mut self, renderer: &mut Renderer ){
-		renderer.use_layer( LayerId::Obstacles as u8 );
+		renderer.use_layer( self.layer as u8 );
 		renderer.use_effect( EffectId::Textured as u16 );
 		self.animated_texture.r#use( renderer );
 		renderer.render_textured_quad_with_rotation( &self.pos, &self.size, self.rotation );

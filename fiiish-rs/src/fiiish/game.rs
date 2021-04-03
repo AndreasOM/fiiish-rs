@@ -22,6 +22,7 @@ use crate::fiiish::entities::{
 	EntityType,
 };
 use crate::fiiish::EntityUpdateContext;
+use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::Zone;
 
 #[derive(Debug)]
@@ -56,7 +57,7 @@ impl Game {
 		self.entity_manager.setup();
 
 		// load zone(s)
-		self.zone.load( system, "0000_ILoveFiiish" );
+		self.zone.load( system, "0000_ILoveFiiishAndRust" );
 
 		// :HACK:
 		for l in self.zone.layer_iter() {
@@ -79,6 +80,14 @@ impl Game {
 						r.setup( &ec );
 //						r.setup( "rock" );
 						r.set_rotation( o.rotation );
+
+						self.entity_manager.add( Box::new( r ) );
+					},
+					EntityType::Decoration => {
+						let mut r = Obstacle::new( &o.pos, o.crc );
+						r.setup( &ec );
+						r.set_rotation( o.rotation );
+						r.set_layer( LayerId::DecorationFront );
 
 						self.entity_manager.add( Box::new( r ) );
 					},

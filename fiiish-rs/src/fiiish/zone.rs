@@ -87,11 +87,12 @@ impl Zone {
 	pub fn layer_iter( &self ) -> std::slice::Iter<'_, Layer> {
 		self.layers.iter()
 	}
-	
+
 	pub fn load(&mut self, system: &mut System, name: &str) -> bool {
 		let filename = format!("{}.nzne", name);
 		let mut f = system.default_filesystem_mut().open( &filename );
 		if !f.is_valid() {
+			println!("Error: Couldn't open zone {}", &filename);
 			return false;
 		}
 

@@ -18,6 +18,7 @@ omt-atlas combine --border 1 --size 2048 \
 		../fiiish-content/pickups/magnet/magnet_*.png \
 		../fiiish-content/obstacles/rocks/rock-?.png \
 		../fiiish-content/obstacles/seaweed/seaweed-*.png \
+		../fiiish-content/decorations/*.png \
 		../fiiish-content/obstacles/blocks/block-*.png
 
 
