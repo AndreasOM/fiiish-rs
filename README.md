@@ -18,3 +18,10 @@ You can check the colletion here:
 
 I will add all videos to Youtube too - when I find the time.
 
+## Progress
+### April 2021
+First version that actually starts to look like something.
+Coins are already collectable.
+
+![2021-04-03](screenshots/2021-04-03.png)
+
