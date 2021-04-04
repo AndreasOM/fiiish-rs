@@ -63,7 +63,7 @@ impl Game {
 		for l in self.zone.layer_iter() {
 			for o in l.object_iter() {
 				let ec = self.entity_configuration_manager.get_config( o.crc );
-				dbg!(&ec);
+//				dbg!(&ec);
 
 				match ec.entity_type {
 					EntityType::Pickup => {
@@ -91,7 +91,9 @@ impl Game {
 
 						self.entity_manager.add( Box::new( r ) );
 					},
-					_ => {},
+					_ => {
+						println!("Unhandled entity {:?} with config {:?}", &o, &ec)
+					},
 				}
 			}
 		}

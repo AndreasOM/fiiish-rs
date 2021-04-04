@@ -146,7 +146,7 @@ impl Texture {
 			let filename = format!("{}{}", name, e);
 			let mut f = system.default_filesystem_mut().open( &filename );
 			if f.is_valid() {
-				println!("Loading {} from {}.", &name, &filename);
+				println!("Loading {} from {} ({}).", &name, &filename, &f.name());
 				let mut buf = Vec::new();
 				while !f.eof() {
 					let c = f.read_u8();
@@ -193,7 +193,7 @@ impl Texture {
 	glGenerateMipmap(GL_TEXTURE_2D);
 */							
 						}
-						dbg!(&h,&w);
+//						dbg!(&h,&w);
 //						dbg!(&i);
 //						todo!("die");
 

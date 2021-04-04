@@ -3,10 +3,10 @@
 
 ## In Progress
 
-- [ ] Load data from _linked in_ packfile
 
 ## TODO
 
+- [ ] Improve loading speed for assets from disk
 - [ ] Add Zone management, and progression
 
 - [ ] Create release builds via github actions (cheat mode)
@@ -51,6 +51,8 @@
 
 ## DONE
 
+- [x] Link pakfiles in if they exist at build time
+- [x] Load data from _linked in_ packfile
 - [x] Load data from pakfile (.omar)
 - [x] Make Coins collectable, and respawn current zones Pickups via 'r' key
 - [x] Improve entity configuration

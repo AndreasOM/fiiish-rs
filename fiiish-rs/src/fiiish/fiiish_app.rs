@@ -71,65 +71,59 @@ impl FiiishApp {
 		}
 	}
 
+	fn add_filesystem_disk( &mut self, lfs: &mut FilesystemLayered, path: &str ) {
+		let cwd = std::env::current_dir().unwrap();
+		let cwd = cwd.to_string_lossy();
+
+		let datadir = format!("{}/{}", &cwd, &path);
+		let dfs = FilesystemDisk::new( &datadir );
+		lfs.add_filesystem( Box::new( dfs ) );
+	}
+	fn add_pakfile_from_data( &mut self, lfs: &mut FilesystemLayered, name: &str, data: &Vec< u8 > ) {
+		if data.len() > 0 {
+			let mut mfs = FilesystemMemory::new();
+			let mut omar_file = mfs.open_from_data( name, &data.to_vec() );
+
+			let afs = FilesystemArchive::new_from_file( &mut omar_file );
+			lfs.add_filesystem( Box::new( afs ) );
+		}
+	}
+
+	// without archive
+	#[cfg(not(fiiish_with_fiiish_omar))]
+	fn get_fiiish_data_omar_data( ) -> &'static [u8] {
+		&[0;0]
+	}
+	// with archive
+	#[cfg(fiiish_with_fiiish_omar)]
+	fn get_fiiish_data_omar_data( ) -> &'static [u8] {
+		include_bytes!("../../fiiish-data.omar")
+	}
+
+	#[cfg(not(fiiish_with_dummy_omar))]
+	fn get_dummy_data_omar_data( ) -> &'static [u8] {
+		&[0;0]
+	}
+
+	#[cfg(fiiish_with_dummy_omar)]
+	fn get_dummy_data_omar_data( ) -> &'static [u8] {
+		include_bytes!("../../dummy-data.omar")
+	}
+
 	pub fn setup( &mut self, window: &mut Window ) -> anyhow::Result<()> {
 		// :TODO: make configurable via command line, or environment
 
-		let cwd = std::env::current_dir()?;
-		let cwd = cwd.to_string_lossy();
-		let datadir = format!("{}/../fiiish-data", &cwd);
-		let dfs_fiiish = FilesystemDisk::new( &datadir );
-
-		let datadir = format!("{}/../dummy-data", &cwd);
-		let dfs_dummy = FilesystemDisk::new( &datadir );
-
-
 		// new filesytem based on linked in data
-		let mut mfs = FilesystemMemory::new();
-
-		let afs_fiiish = {
-			/*
-			let mut dfs_working_dir = FilesystemDisk::new( "." );
-			let mut omar_file = dfs_working_dir.open( "fiiish-data.omar" );
-
-			let afs = FilesystemArchive::new_from_file( &mut omar_file );
-			*/
-			let bytes = include_bytes!("../../fiiish-data.omar");
-			println!("Loaded {} bytes from omar", bytes.len());
-			let mut omar_file = mfs.open_from_data( "fiiish-data.omar", &bytes.to_vec() );
-
-			let afs = FilesystemArchive::new_from_file( &mut omar_file );
-
-//			dbg!(&afs);
-//			todo!("die");
-			afs
-		};
-
-		let afs_dummy = {
-			/*
-			let mut dfs_working_dir = FilesystemDisk::new( "." );
-			let mut omar_file = dfs_working_dir.open( "dummy-data.omar" );
-
-			let afs = FilesystemArchive::new_from_file( &mut omar_file );
-			*/
-			let bytes = include_bytes!("../../dummy-data.omar");
-			println!("Loaded {} bytes from omar", bytes.len());
-			let mut omar_file = mfs.open_from_data( "fiiish-data.omar", &bytes.to_vec() );
-
-			let afs = FilesystemArchive::new_from_file( &mut omar_file );
-
-//			dbg!(&afs);
-//			todo!("die");
-			afs
-		};
 
 		let mut lfs = FilesystemLayered::new();
 		// Note: Filesystems will be searched last to first (lifo)
-		lfs.add_filesystem( Box::new( afs_dummy ) );
-		lfs.add_filesystem( Box::new( afs_fiiish ) );
+
+		self.add_pakfile_from_data( &mut lfs, "dummy-data.omar", &FiiishApp::get_dummy_data_omar_data().to_vec() );
+		self.add_pakfile_from_data( &mut lfs, "fiiish-data.omar", &FiiishApp::get_fiiish_data_omar_data().to_vec() );
 
 		// check local files first for faster development (and easier modding)
-		lfs.add_filesystem( Box::new( dfs_dummy ) );
-		lfs.add_filesystem( Box::new( dfs_fiiish ) );
+		self.add_filesystem_disk( &mut lfs, "../dummy-data" );
+		self.add_filesystem_disk( &mut lfs, "../fiiish-data" );
 
 		self.system.set_default_filesystem( Box::new( lfs ) );
 
@@ -138,22 +132,6 @@ impl FiiishApp {
 		let fs = self.system.default_filesystem_mut();
 		dbg!(&fs);
 
-//		let mut f = fs.open("test.txt");
-		let mut f = fs.open("default_vs.glsl");
-		println!("Testfile has size {}", f.size() );
-		println!("Testfile has pos {}", f.pos() );
-		f.set_pos( 10 );
-		println!("Testfile has pos {}", f.pos() );
-		f.set_pos( 0 );
-		dbg!(&f);
-
-		while !f.eof() {
-			let c = f.read_u8();
-			print!("{}", c as char);
-		}
-		println!("");
-
-		println!("Testfile has pos {}", f.pos() );
 
 		window.set_title("Fiiish! RS");
 		let mut renderer = Renderer::new();
