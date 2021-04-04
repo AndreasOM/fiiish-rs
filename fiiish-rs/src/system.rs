@@ -30,10 +30,13 @@ pub mod filesystem_stream;
 pub mod filesystem_archive;
 pub mod filesystem_stream_archive;
 
+pub mod filesystem_disk;
+pub mod filesystem_stream_disk;
+
 pub mod filesystem_empty;
 pub mod filesystem_stream_empty;
 
-pub mod filesystem_disk;
-pub mod filesystem_stream_disk;
+pub mod filesystem_memory;
+pub mod filesystem_stream_memory;
 
 pub mod filesystem_layered;

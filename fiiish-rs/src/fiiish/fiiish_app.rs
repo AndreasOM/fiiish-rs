@@ -13,6 +13,7 @@ use crate::system::filesystem::Filesystem;
 use crate::system::filesystem_archive::FilesystemArchive;
 use crate::system::filesystem_disk::FilesystemDisk;
 use crate::system::filesystem_layered::FilesystemLayered;
+use crate::system::filesystem_memory::FilesystemMemory;
 
 use crate::fiiish::app_update_context::AppUpdateContext;
 
@@ -83,28 +84,40 @@ impl FiiishApp {
 
 
 		// new filesytem based on linked in data
-//		let bytes = include_bytes!("../../fiiish-data.omar");
-//		println!("Loaded {} bytes from omar", bytes.len());
-//		dbg!(&bytes);
-//		let afs1 = FilesystemArchive::new( &bytes );
+		let mut mfs = FilesystemMemory::new();
+
 		let afs_fiiish = {
+			/*
 			let mut dfs_working_dir = FilesystemDisk::new( "." );
 			let mut omar_file = dfs_working_dir.open( "fiiish-data.omar" );
 
 			let afs = FilesystemArchive::new_from_file( &mut omar_file );
+			*/
+			let bytes = include_bytes!("../../fiiish-data.omar");
+			println!("Loaded {} bytes from omar", bytes.len());
+			let mut omar_file = mfs.open_from_data( "fiiish-data.omar", &bytes.to_vec() );
 
-			dbg!(&afs);
+			let afs = FilesystemArchive::new_from_file( &mut omar_file );
+
+//			dbg!(&afs);
 //			todo!("die");
 			afs
 		};
 
 		let afs_dummy = {
+			/*
 			let mut dfs_working_dir = FilesystemDisk::new( "." );
 			let mut omar_file = dfs_working_dir.open( "dummy-data.omar" );
 
 			let afs = FilesystemArchive::new_from_file( &mut omar_file );
+			*/
+			let bytes = include_bytes!("../../dummy-data.omar");
+			println!("Loaded {} bytes from omar", bytes.len());
+			let mut omar_file = mfs.open_from_data( "fiiish-data.omar", &bytes.to_vec() );
 
-			dbg!(&afs);
+			let afs = FilesystemArchive::new_from_file( &mut omar_file );
+
+//			dbg!(&afs);
 //			todo!("die");
 			afs
 		};
@@ -113,6 +126,8 @@ impl FiiishApp {
 		// Note: Filesystems will be searched last to first (lifo)
 		lfs.add_filesystem( Box::new( afs_dummy ) );
 		lfs.add_filesystem( Box::new( afs_fiiish ) );
+
+		// check local files first for faster development (and easier modding)
 		lfs.add_filesystem( Box::new( dfs_dummy ) );
 		lfs.add_filesystem( Box::new( dfs_fiiish ) );
 
