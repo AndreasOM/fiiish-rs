@@ -1,5 +1,8 @@
 # fiiish-rs
 
+## Status
+![Check](https://github.com/AndreasOM/fiiish-rs/actions/workflows/check.yml/badge.svg)
+
 [Fiiish!](http://fiiish.omnimad.net/) is a little game I have been working on,
 and using as a testbed for various ideas for a while now.
 
