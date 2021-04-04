@@ -6,6 +6,8 @@ use crate::fiiish::entities::Entity;
 use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
+use crate::fiiish::game::GameState;
+
 use crate::math::{
 	Matrix32,
 	Vector2
@@ -14,6 +16,7 @@ use crate::renderer::{
 	Renderer
 };
 
+#[derive(Debug,Eq,PartialEq)]
 enum State {
 	FadedOut,
 	FadedIn,
@@ -114,7 +117,19 @@ impl Entity for Background {
 		self.phase = s*self.phase + (1.0-s)*target_phase;	// :TODO: use time_step();
 
 		// :HACK: needs game logic first
+		/*
 		if euc.change_background_state() {
+			self.goto_next_state();
+		}
+		*/
+		let expected_state = match euc.game_state() {
+			GameState::WaitForStart | GameState::Playing
+				=> State::FadedIn,
+			GameState::Dead => State::Black,
+			_ => State::FadedOut,
+		};
+
+		if expected_state != self.state {
 			self.goto_next_state();
 		}
 	}

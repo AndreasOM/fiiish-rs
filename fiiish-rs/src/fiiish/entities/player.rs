@@ -9,8 +9,8 @@ use crate::renderer::{
 	Renderer,
 };
 
-#[derive(Debug,PartialEq,Eq)]
-enum PlayerState {
+#[derive(Debug,Copy,Clone,PartialEq,Eq)]
+pub enum PlayerState {
 	WaitForStart,
 	Swimming,
 	Dying,
@@ -85,6 +85,10 @@ impl Player {
 
 	pub fn movement( &self ) -> &Vector2 {
 		&self.movement
+	}
+
+	pub fn state( &self ) -> PlayerState {
+		self.state
 	}
 
 	fn goto_state( &mut self, state: PlayerState ) {

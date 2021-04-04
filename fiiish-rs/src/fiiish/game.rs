@@ -25,12 +25,21 @@ use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::Zone;
 
+#[derive(Debug,Copy,Clone)]
+pub enum GameState {
+	None,
+	WaitForStart,
+	Playing,
+	Dead,
+}
+
 #[derive(Debug)]
 pub struct Game {
 	players: Vec<Player>,
 	entity_manager: EntityManager,
 	entity_configuration_manager: EntityConfigurationManager,
 	zone: Zone,
+	state: GameState,
 }
 
 impl Game {
@@ -40,6 +49,7 @@ impl Game {
 			entity_manager:	 	 	 	 	EntityManager::new(),
 			entity_configuration_manager:	EntityConfigurationManager::new(),
 			zone:							Zone::new(),
+			state:							GameState::WaitForStart,
 		}
 	}
 
@@ -142,6 +152,10 @@ impl Game {
 //    				dbg!(&p);
 					let pp = *p.pos();
 					for f in self.players.iter() {
+						if !f.is_alive() {
+							// dead fish don't collect coins
+							continue;
+						}
 						let fp = f.pos();
 
 						let mut delta = pp.sub( &fp );
@@ -172,6 +186,7 @@ impl Game {
 			if p.name() == "player" {
 				fish_movement = *p.movement();
 				if p.is_alive() {
+					self.state = GameState::Playing;
 					if wuc.is_space_pressed {
 						p.turn_down();
 					} else {
@@ -185,6 +200,9 @@ impl Game {
 					if p.can_respawn() {
 						println!("Respawn");
 						p.respawn();
+						self.state = GameState::WaitForStart;
+					} else {
+						self.state = GameState::Dead;
 					}
 				}
 			}
@@ -196,6 +214,8 @@ impl Game {
 						.set_time_step( wuc.time_step );
 
 		euc.set_world_movement( &Vector2::new( -fish_movement.x, 0.0 ) );
+
+		euc.set_game_state( &self.state );
 		// :HACK: for testing background state transitions
 		if wuc.was_key_pressed( 'b' as u8 ) {
 			euc.enable_change_background_state();

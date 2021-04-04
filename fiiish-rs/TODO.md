@@ -27,6 +27,9 @@
 
 ## Future
 
+- [ ] Implement UI system
+- [ ] Add collision with obstacles 
+
 - [ ] Implement block wise reading for FilesystemStreams
 - [ ] Implement, and use Serializer
 - [ ] Sort Materials on creation instead of every frame
@@ -51,6 +54,7 @@
 
 ## DONE
 
+- [x] Synchronise Background with game state
 - [x] Link pakfiles in if they exist at build time
 - [x] Load data from _linked in_ packfile
 - [x] Load data from pakfile (.omar)
