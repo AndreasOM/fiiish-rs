@@ -3,13 +3,17 @@
 
 ## In Progress
 
+- [ ] Load data from _linked in_ packfile
 
 ## TODO
+
+- [ ] Add Zone management, and progression
+
+- [ ] Create release builds via github actions (cheat mode)
 
 - [ ] Cleanup Pickups (remove Coins)
 - [ ] Make Player a real entity
 
-- [ ] Add Zone management, and progression
 
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
@@ -23,6 +27,7 @@
 
 ## Future
 
+- [ ] Implement block wise reading for FilesystemStreams
 - [ ] Implement, and use Serializer
 - [ ] Sort Materials on creation instead of every frame
 
@@ -46,7 +51,8 @@
 
 ## DONE
 
-- [ ] Make Coins collectable, and respawn current zones Pickups via 'r' key
+- [x] Load data from pakfile (.omar)
+- [x] Make Coins collectable, and respawn current zones Pickups via 'r' key
 - [x] Improve entity configuration
 - [x] Fix movement bug
 - [x] Throw some rocks into the water, and add some coins, and seaweed to the mix

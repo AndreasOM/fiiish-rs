@@ -29,6 +29,7 @@ impl Filesystem for FilesystemLayered {
 		}
 
 		if let Some( fs ) = self.filesystems.get_mut( 0 ) {
+//			todo!("File not found: {}", name );
 			fs.open( name )
 		} else {
 			panic!( "Error: FilesystemLayered tried to open file without any filesystem" );

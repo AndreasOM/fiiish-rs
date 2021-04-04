@@ -139,7 +139,8 @@ impl Texture {
 	}
 
 	fn load( &mut self, system: &mut System, name: &str ) -> bool {
-		let extensions = [ ".jpg", ".png" ];
+//		let extensions = [ ".jpg", ".png" ];
+		let extensions = [ /*".jpg", */ ".png" ];
 
 		for e in extensions.iter() {
 			let filename = format!("{}{}", name, e);
@@ -151,6 +152,7 @@ impl Texture {
 					let c = f.read_u8();
 					buf.push( c );
 				}
+
 				let buf: &[u8] = buf.as_slice();
 				let dummy_buf = [ 0xffffffffu32, 0x0, 0xffffffff, 0x0 ];
 

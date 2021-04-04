@@ -9,6 +9,8 @@ use crate::renderer::{
 	TextureAtlas,
 };
 use crate::system::System;
+use crate::system::filesystem::Filesystem;
+use crate::system::filesystem_archive::FilesystemArchive;
 use crate::system::filesystem_disk::FilesystemDisk;
 use crate::system::filesystem_layered::FilesystemLayered;
 
@@ -74,15 +76,45 @@ impl FiiishApp {
 		let cwd = std::env::current_dir()?;
 		let cwd = cwd.to_string_lossy();
 		let datadir = format!("{}/../fiiish-data", &cwd);
-		let dfs1 = FilesystemDisk::new( &datadir );
+		let dfs_fiiish = FilesystemDisk::new( &datadir );
 
 		let datadir = format!("{}/../dummy-data", &cwd);
-		let dfs2 = FilesystemDisk::new( &datadir );
+		let dfs_dummy = FilesystemDisk::new( &datadir );
+
+
+		// new filesytem based on linked in data
+//		let bytes = include_bytes!("../../fiiish-data.omar");
+//		println!("Loaded {} bytes from omar", bytes.len());
+//		dbg!(&bytes);
+//		let afs1 = FilesystemArchive::new( &bytes );
+		let afs_fiiish = {
+			let mut dfs_working_dir = FilesystemDisk::new( "." );
+			let mut omar_file = dfs_working_dir.open( "fiiish-data.omar" );
+
+			let afs = FilesystemArchive::new_from_file( &mut omar_file );
+
+			dbg!(&afs);
+//			todo!("die");
+			afs
+		};
+
+		let afs_dummy = {
+			let mut dfs_working_dir = FilesystemDisk::new( "." );
+			let mut omar_file = dfs_working_dir.open( "dummy-data.omar" );
+
+			let afs = FilesystemArchive::new_from_file( &mut omar_file );
+
+			dbg!(&afs);
+//			todo!("die");
+			afs
+		};
 
 		let mut lfs = FilesystemLayered::new();
 		// Note: Filesystems will be searched last to first (lifo)
-		lfs.add_filesystem( Box::new( dfs2 ) );
-		lfs.add_filesystem( Box::new( dfs1 ) );
+		lfs.add_filesystem( Box::new( afs_dummy ) );
+		lfs.add_filesystem( Box::new( afs_fiiish ) );
+		lfs.add_filesystem( Box::new( dfs_dummy ) );
+		lfs.add_filesystem( Box::new( dfs_fiiish ) );
 
 		self.system.set_default_filesystem( Box::new( lfs ) );
 
@@ -118,6 +150,7 @@ impl FiiishApp {
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Background as u16 , "Background" , "background_vs.glsl", "background_fs.glsl" ) );
 
 		TextureAtlas::load_all( &mut self.system, &mut renderer, "game-atlas-%d" );
+//		todo!("die");
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_1" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "cursor" ) );
