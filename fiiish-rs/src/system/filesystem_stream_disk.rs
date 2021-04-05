@@ -1,13 +1,14 @@
 
 use std::fs::File;
-use std::io::SeekFrom;
+use std::io::{BufReader,SeekFrom};
 use std::io::prelude::*;
 
 use crate::system::filesystem_stream::FilesystemStream;
 
 pub struct FilesystemStreamDisk {
 	filename: String,	// only needed for better debugging
-	file: Option< File >,
+	file: Option< BufReader< File > >,
+//	file: Option< File >,
 	size: usize,
 	pos: usize,
 }
@@ -27,6 +28,8 @@ impl FilesystemStreamDisk {
 				s.size = p as usize
 			} else {
 			}
+			let f = BufReader::new(f);
+
 			s.file = Some( f );
 		};
 

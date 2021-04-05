@@ -84,7 +84,7 @@ impl FiiishApp {
 			let mut mfs = FilesystemMemory::new();
 			let mut omar_file = mfs.open_from_data( name, &data.to_vec() );
 
-			let afs = FilesystemArchive::new_from_file( &mut omar_file );
+			let afs = FilesystemArchive::new_from_file( name, &mut omar_file );
 			lfs.add_filesystem( Box::new( afs ) );
 		}
 	}
@@ -92,21 +92,25 @@ impl FiiishApp {
 	// without archive
 	#[cfg(not(fiiish_with_fiiish_omar))]
 	fn get_fiiish_data_omar_data( ) -> &'static [u8] {
+		println!("Loading fiiish-data from disk.");
 		&[0;0]
 	}
 	// with archive
 	#[cfg(fiiish_with_fiiish_omar)]
 	fn get_fiiish_data_omar_data( ) -> &'static [u8] {
+		println!("Loading fiiish-data from memory.");
 		include_bytes!("../../fiiish-data.omar")
 	}
 
 	#[cfg(not(fiiish_with_dummy_omar))]
 	fn get_dummy_data_omar_data( ) -> &'static [u8] {
+		println!("Loading dummy-data from disk.");
 		&[0;0]
 	}
 
 	#[cfg(fiiish_with_dummy_omar)]
 	fn get_dummy_data_omar_data( ) -> &'static [u8] {
+		println!("Loading dummy-data from memory.");
 		include_bytes!("../../dummy-data.omar")
 	}
 
@@ -143,7 +147,7 @@ impl FiiishApp {
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Background as u16 , "Background" , "background_vs.glsl", "background_fs.glsl" ) );
 
 		TextureAtlas::load_all( &mut self.system, &mut renderer, "game-atlas-%d" );
-//		todo!("die");
+
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_1" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "cursor" ) );

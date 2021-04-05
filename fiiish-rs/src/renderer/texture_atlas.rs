@@ -136,7 +136,6 @@ impl TextureAtlas {
 		println!("Loading atlas from {}", &name );
 
 		let magic = f.read_u16();
-		dbg!(&magic);
 		if magic != 0x4f53 {
 			println!("Got broken magic expected 0x4f53 got {:X}", magic);
 			return false

@@ -6,7 +6,6 @@
 
 ## TODO
 
-- [ ] Improve loading speed for assets from disk
 - [ ] Add Zone management, and progression
 
 - [ ] Create release builds via github actions (cheat mode)
@@ -54,6 +53,7 @@
 
 ## DONE
 
+- [x] Improve loading speed for assets from disk (~15s -> ~0.5s)
 - [x] Synchronise Background with game state
 - [x] Link pakfiles in if they exist at build time
 - [x] Load data from _linked in_ packfile

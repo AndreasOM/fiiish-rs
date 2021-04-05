@@ -50,14 +50,16 @@ impl Entry {
 
 }
 pub struct FilesystemArchive {
+	name: String,
 	entries: HashMap<u32, Entry>,
 	data: Rc< Vec< u8 > >,
 }
 
 impl FilesystemArchive {
 	// :TODO: optimize out extra copying of data
-	pub fn new_from_file( file: &mut Box< dyn FilesystemStream > ) -> Self {
+	pub fn new_from_file( name: &str, file: &mut Box< dyn FilesystemStream > ) -> Self {
 		let mut s = Self {
+			name: name.to_owned(),
 			entries: HashMap::new(),
 			data: Rc::new( Vec::new() ),
 		};
@@ -98,7 +100,7 @@ impl FilesystemArchive {
 		}
 
 		let number_of_files = file.read_u32();
-		println!("Reading {:?} files from archive", number_of_files );
+		println!("Reading {:?} files from archive {}", number_of_files, &self.name );
 
 		for _e in 0..number_of_files {
 			let mut entry = Entry::new();
@@ -111,7 +113,7 @@ impl FilesystemArchive {
 		let l = self.entries.len();
 		let data_start = file.pos();
 		for ( i, entry ) in self.entries.values_mut().enumerate() {
-			println!("{}/{}", i, l);
+//			println!("{}/{}", i, l);
 			// adjust file position
 			let entry_start = data_start + entry.pos as usize;
 			file.set_pos( entry_start );
@@ -172,7 +174,7 @@ impl Filesystem for FilesystemArchive {
 	}
 
 	fn name( &self ) -> &str {
-		""
+		&self.name
 	}
 	
 	fn filesystem_type( &self ) -> &str {

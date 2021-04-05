@@ -59,8 +59,11 @@ impl Game {
 		self.entity_configuration_manager.load( system, "entity_config.whatever" );
 
 		// load texture
-		AnimatedTexture::register_all( system, renderer, "fish_swim", 4 );
-		AnimatedTexture::register_all( system, renderer, "fish_die", 2 );
+
+		// not needed since they are in the global atlas already
+//		AnimatedTexture::register_all( system, renderer, "fish_swim", 4 );
+//		AnimatedTexture::register_all( system, renderer, "fish_die", 2 );
+
 		renderer.register_texture( Texture::create( system, "background" ) );
 		renderer.register_texture( Texture::create( system, "background_grad" ) );
 
@@ -162,7 +165,7 @@ impl Game {
 						let dist = delta.length();
 //						dbg!(&dist);
 						if dist < 10.0 { // fish over pickup
-							println!("Collected Pickup");
+//							println!("Collected Pickup");
 							p.kill();
 						} else if dist < 200.0 {
 							let magnet_range = 150.0;

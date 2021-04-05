@@ -372,12 +372,14 @@ impl Renderer {
 				m.can_render( key )
 			});
 			if !found_material {
+				/*
 				println!(
 					"Didn't find material for layer id {} effect id {} active_effect_id {}",
 					lid,
 					eid,
 					&self.active_effect_id
 				);
+				*/
 				let mut textures = Vec::new();
 				for i in 0..MAX_TEXTURE_CHANNELS {
 					let ti = self.active_textures[ i ].unwrap_or( 0 );
