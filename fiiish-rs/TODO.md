@@ -3,13 +3,14 @@
 
 ## In Progress
 
-- [ ] Make Player a real entity (and rename player to fiiish)
+- [ ] Add Zone progression
 
 ## TODO
 
+- [ ] Add fadeout for entities
+- [ ] Fix Windows build (cheat mode, keyword: shader-crusher)
 - [ ] Expand EntityConfiguration to allow multiple AnimatedTextures
 
-- [ ] Add Zone management, and progression
 - [ ] Create release builds via github actions (cheat mode)
 - [ ] Cleanup Pickups (remove Coins)
 - [ ] Split renderer context from window
@@ -43,6 +44,8 @@
 
 ## DONE
 
+- [x] Add Zone management
+- [x] Make Player a real entity (and rename player to fiiish)
 - [x] Improve loading speed for assets from disk (~15s -> ~0.5s)
 - [x] Synchronise Background with game state
 - [x] Link pakfiles in if they exist at build time

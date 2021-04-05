@@ -24,6 +24,7 @@ pub struct Obstacle {
 	rotation: f32,
 	animated_texture: AnimatedTexture,
 	layer: LayerId,
+	alive: bool,
 }
 
 // rock-f 413 x 538
@@ -37,6 +38,7 @@ impl Obstacle {
 			rotation: 0.0,
 			animated_texture: AnimatedTexture::new(),
 			layer: LayerId::Obstacles,
+			alive: true,
 		}
 	}
 
@@ -69,15 +71,27 @@ impl Entity for Obstacle {
 		self.animated_texture.update( euc.time_step() );
 		self.pos.x += euc.world_movement().x;
 		if self.pos.x < -1500.0 {
-			self.pos.x += 2.0* 1500.0;
+			// :TODO: decide if self destruction is a good idea
+			self.kill();
 		}
 	}
 
 	fn render( &mut self, renderer: &mut Renderer ){
+		if !self.is_alive() {
+			return;
+		}
 		renderer.use_layer( self.layer as u8 );
 		renderer.use_effect( EffectId::Textured as u16 );
 		self.animated_texture.r#use( renderer );
 		renderer.render_textured_quad_with_rotation( &self.pos, &self.size, self.rotation );
+	}
+
+	fn kill( &mut self ) {
+		self.alive = false;
+	}
+
+	fn is_alive( &self ) -> bool {
+		self.alive
 	}
 
 	fn name( &self ) -> &str {

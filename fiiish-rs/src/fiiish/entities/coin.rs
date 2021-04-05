@@ -65,7 +65,8 @@ impl Entity for Coin {
 		self.animated_texture.update( euc.time_step() );
 		self.pos.x += euc.world_movement().x;
 		if self.pos.x < -1500.0 {
-			self.pos.x += 2.0* 1500.0;
+			// :TODO: decide if self destruction is a good idea
+			self.kill();
 		}
 	}
 

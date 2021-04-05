@@ -23,7 +23,16 @@ pub trait Entity {
 }
 
 impl std::fmt::Debug for dyn Entity {
-	fn fmt(&self, _: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-		todo!()
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+		writeln!(
+			f, "[Trait] Entity: {} [{:?}] {}",
+			self.name(),
+			self.entity_type(),
+			if self.is_alive() {
+				"[ALIVE]"
+			} else {
+				"[DEAD]"
+			}
+		)
 	}
 }

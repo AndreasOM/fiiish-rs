@@ -88,6 +88,10 @@ impl Zone {
 		self.layers.iter()
 	}
 
+	pub fn size( &self ) -> &Vector2 {
+		&self.size
+	}
+
 	pub fn load(&mut self, system: &mut System, name: &str) -> bool {
 		let filename = format!("{}.nzne", name);
 		let mut f = system.default_filesystem_mut().open( &filename );

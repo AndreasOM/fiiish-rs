@@ -45,8 +45,8 @@ impl Window {
 	    let wb = WindowBuilder::new()
 //	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 1080/2 } )
 //	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 512 } )
-//	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1920/2, height: 700 } )
-	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1880, height: 700 } )
+	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1400, height: 700 } )
+//	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 1880, height: 700 } )
 //	    			.with_inner_size( glutin::dpi::PhysicalSize{ width: 512, height: 512 } )
 	    			.with_title(&self.title);
 
@@ -56,6 +56,8 @@ impl Window {
 
 	    println!("Pixel format of the window's GL context: {:?}", windowed_context.get_pixel_format());
 
+//	    let window = windowed_context.window();
+//	    window.set_outer_position( glutin::dpi::PhysicalPosition{ x: 2300, y: 100 } );
 	    self.el = Some( el );
 	    self.windowed_context = Some( windowed_context );
 
@@ -103,6 +105,10 @@ impl Window {
 	                WindowEvent::Resized(physical_size) => {
 	                	dbg!(&physical_size);
 	                	windowed_context.resize(physical_size)
+	                },
+	                WindowEvent::Moved(physical_size) => {
+	                	dbg!(&physical_size);
+//	                	windowed_context.resize(physical_size)
 	                },
 	                WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
 	                WindowEvent::CursorMoved { position, .. } => {

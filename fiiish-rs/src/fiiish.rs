@@ -11,6 +11,8 @@ pub mod game;
 
 mod zone;
 	pub use zone::Zone as Zone;
+mod zone_manager;
+	pub use zone_manager::ZoneManager as ZoneManager;
 
 pub mod demo;
 pub mod mixel;

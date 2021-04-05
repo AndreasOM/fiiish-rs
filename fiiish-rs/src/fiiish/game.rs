@@ -12,21 +12,19 @@ use crate::fiiish::entities::{
 	Background,
 	Coin,
 	Entity,
-	EntityManager,
-	Fish,
-	Obstacle,
-};
-use crate::fiiish::entities::{
 //	EntityConfiguration,
 	EntityConfigurationManager,
 	EntityId,
+	EntityManager,
 	EntityType,
+	Fish,
+	Obstacle,
 };
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::layer_ids::LayerId;
-use crate::fiiish::Zone;
+use crate::fiiish::ZoneManager;
 
-#[derive(Debug,Copy,Clone)]
+#[derive(Debug,Copy,Clone,Eq,PartialEq)]
 pub enum GameState {
 	None,
 	WaitForStart,
@@ -39,7 +37,7 @@ pub struct Game {
 	fishes: Vec<Fish>,
 	entity_manager: EntityManager,
 	entity_configuration_manager: EntityConfigurationManager,
-	zone: Zone,
+	zone_manager: ZoneManager,
 	state: GameState,
 }
 
@@ -49,7 +47,7 @@ impl Game {
 			fishes: 						Vec::new(),
 			entity_manager:	 	 	 	 	EntityManager::new(),
 			entity_configuration_manager:	EntityConfigurationManager::new(),
-			zone:							Zone::new(),
+			zone_manager:					ZoneManager::new(),
 			state:							GameState::WaitForStart,
 		}
 	}
@@ -70,47 +68,9 @@ impl Game {
 
 		self.entity_manager.setup();
 
-		// load zone(s)
-		self.zone.load( system, "0000_ILoveFiiishAndRust" );
+		self.zone_manager.setup();
 
-		// :HACK:
-		for l in self.zone.layer_iter() {
-			for o in l.object_iter() {
-				let ec = self.entity_configuration_manager.get_config( o.crc );
-//				dbg!(&ec);
-
-				match ec.entity_type {
-					EntityType::Pickup => {
-						//println!("Coin {:?}", &o );
-						let mut c = Coin::new( &o.pos, 0, o.crc );
-						c.setup( &ec );
-
-						self.entity_manager.add( Box::new( c ) );
-					},
-					EntityType::Obstacle => {
-						//println!("Coin {:?}", &o );
-						let mut r = Obstacle::new( &o.pos, o.crc );
-//						let mut r = Obstacle::new_from_config( &ec );
-						r.setup( &ec );
-//						r.setup( "rock" );
-						r.set_rotation( o.rotation );
-
-						self.entity_manager.add( Box::new( r ) );
-					},
-					EntityType::Decoration => {
-						let mut r = Obstacle::new( &o.pos, o.crc );
-						r.setup( &ec );
-						r.set_rotation( o.rotation );
-						r.set_layer( LayerId::DecorationFront );
-
-						self.entity_manager.add( Box::new( r ) );
-					},
-					_ => {
-						println!("Unhandled entity {:?} with config {:?}", &o, &ec)
-					},
-				}
-			}
-		}
+		self.zone_manager.load_zones( system );
 
 		let mut p = Fish::new();
 		let ec = self.entity_configuration_manager.get_config( EntityId::FIIISH as u32 );
@@ -128,21 +88,6 @@ impl Game {
 		for p in self.fishes.iter_mut() {
 			p.teardown( );
 		}
-	}
-
-	fn spawn_pickups( &mut self ) {
-		for l in self.zone.layer_iter() {
-			for o in l.object_iter() {
-				let ec = self.entity_configuration_manager.get_config( o.crc );
-				dbg!(&ec);
-				if ec.entity_type == EntityType::Pickup {
-					let mut c = Coin::new( &o.pos, 0, o.crc );
-					c.setup( &ec );
-
-					self.entity_manager.add( Box::new( c ) );
-				}
-			}
-		}		
 	}
 
 	fn collect_pickups( &mut self, euc: &EntityUpdateContext ) {
@@ -208,6 +153,11 @@ impl Game {
 						self.state = GameState::WaitForStart;
 					} else {
 						self.state = GameState::Dead;
+						for e in self.entity_manager.iter_mut() {
+							// :TODO: fade out or something
+							e.kill();
+						}
+						self.zone_manager.clear_zone();
 					}
 				}
 			}
@@ -227,7 +177,9 @@ impl Game {
 		}
 
 		if wuc.was_key_pressed( 'r' as u8 ) {
-			self.spawn_pickups();
+//			self.spawn_pickups();
+			self.zone_manager.spawn_pickups( &self.entity_configuration_manager, &mut self.entity_manager );
+
 		}
 
 		for p in self.fishes.iter_mut() {
@@ -238,7 +190,16 @@ impl Game {
 			e.update( &mut euc );
 		}
 
-		self.collect_pickups( &euc );
+		self.entity_manager.remove_dead();
+
+		if self.state == GameState::Playing {
+			self.zone_manager.update( &mut euc );
+			if self.zone_manager.is_zone_done() {
+	//			println!("Reached end of zone, spawning new zone");
+				self.zone_manager.next_zone( &self.entity_configuration_manager, &mut self.entity_manager, &Vector2::new(1500.0,0.0) );
+			}
+			self.collect_pickups( &euc );
+		}
 	}
 
 	pub fn render( &mut self, renderer: &mut Renderer) {

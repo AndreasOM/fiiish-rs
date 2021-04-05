@@ -28,4 +28,18 @@ impl EntityManager {
 	pub fn iter_mut( &mut self ) -> std::slice::IterMut<'_, Box<(dyn Entity + 'static)>> {
 		self.entities.iter_mut()
 	}
+
+	pub fn remove_dead( &mut self ) {
+//		let ni = self.entities.len();
+		for i in ( 0..self.entities.len() ).rev() {
+			if !self.entities[ i ].is_alive() {
+//				println!("Cleaning dead {:?}", &self.entities[ i ] );
+				self.entities.swap_remove( i );
+			}
+		}
+//		let ri = ni - self.entities.len();
+//		if ri > 0 {
+//			println!("Removed {} entities. Now have {}.", ri, self.entities.len() );
+//		}
+	}
 }
