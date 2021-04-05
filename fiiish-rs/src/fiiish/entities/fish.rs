@@ -1,6 +1,8 @@
 
 use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
+use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::entities::EntityType;
 use crate::math::Vector2;
@@ -43,7 +45,7 @@ pub struct Fish {
 impl Fish {
 	pub fn new() -> Self {
 		Self {
-			name: String::new(),
+			name: "fish".to_string(),
 			spawn_pos: Vector2::new( -512.0, 0.0 ),
 			pos: Vector2::zero(),
 			angle: 0.0,
@@ -56,16 +58,6 @@ impl Fish {
 			animated_texture: AnimatedTexture::new(),
 			animated_texture_dying: AnimatedTexture::new(),
 		}
-	}
-
-	pub fn setup( &mut self, name: &str ) {
-		self.name = name.to_owned();
-		self.animated_texture.setup( "fish_swim", 4, 0, 27, 25.0 );
-		self.animated_texture_dying.setup( "fish_die", 2, 0, 2, 25.0 );
-	}
-
-	pub fn teardown( &mut self ) {
-
 	}
 
 	pub fn name( &self ) -> &str {
@@ -233,7 +225,34 @@ impl Fish {
 		}
 	}
 
-	pub fn update( &mut self, euc: &mut EntityUpdateContext ) {
+
+
+	pub fn pos( &self ) -> &Vector2 {
+		&self.pos
+	}
+
+}
+
+impl Entity for Fish {
+	fn as_any(&self) -> &dyn std::any::Any {
+		self
+	}
+	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+		self
+	}
+
+	fn setup( &mut self, _ec: &EntityConfiguration ) {
+		// self.name = name.to_owned();
+		self.animated_texture.setup( "fish_swim", 4, 0, 27, 25.0 );
+		self.animated_texture_dying.setup( "fish_die", 2, 0, 2, 25.0 );
+//		self.animated_texture.setup_from_config( &ec.animated_texture_configuration );
+	}
+
+	fn teardown( &mut self ) {
+
+	}
+
+	fn update( &mut self, euc: &mut EntityUpdateContext ) {
 		// :TODO: time step
 		match self.state {
 			PlayerState::WaitForStart => self.update_waiting_for_start( euc ),
@@ -243,7 +262,7 @@ impl Fish {
 		}
 	}
 
-	pub fn render( &mut self, renderer: &mut Renderer ) {
+	fn render( &mut self, renderer: &mut Renderer ) {
 		if self.state == PlayerState::Dead {
 			// dead means offscreen, nothing to be rendered
 			return;
@@ -258,9 +277,10 @@ impl Fish {
 		renderer.render_textured_quad_with_rotation( &self.pos, &self.size, self.angle );
 	}
 
-	pub fn pos( &self ) -> &Vector2 {
-		&self.pos
+	fn name( &self ) -> &str {
+		&self.name
 	}
+
 	fn entity_type( &self ) -> EntityType {
 		EntityType::Player
 	}

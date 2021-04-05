@@ -19,6 +19,7 @@ use crate::fiiish::entities::{
 use crate::fiiish::entities::{
 //	EntityConfiguration,
 	EntityConfigurationManager,
+	EntityId,
 	EntityType,
 };
 use crate::fiiish::EntityUpdateContext;
@@ -112,7 +113,8 @@ impl Game {
 		}
 
 		let mut p = Fish::new();
-		p.setup( "fish" );
+		let ec = self.entity_configuration_manager.get_config( EntityId::FIIISH as u32 );
+		p.setup( &ec );
 		self.fishes.push( p );
 
 		let b = Background::new();

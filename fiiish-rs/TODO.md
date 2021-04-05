@@ -7,40 +7,30 @@
 
 ## TODO
 
+- [ ] Expand EntityConfiguration to allow multiple AnimatedTextures
+
 - [ ] Add Zone management, and progression
-
 - [ ] Create release builds via github actions (cheat mode)
-
 - [ ] Cleanup Pickups (remove Coins)
-
-
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
-
 - [ ] Add basic ResourceManager
-
 - [ ] Refactor WindowUpdateContext
 - [ ] Avoid duplication in texture manager
-
 - [ ] Write better formatter for Matrix?? and Vector?
 
 ## Future
 
 - [ ] Implement UI system
 - [ ] Add collision with obstacles 
-
 - [ ] Implement block wise reading for FilesystemStreams
 - [ ] Implement, and use Serializer
 - [ ] Sort Materials on creation instead of every frame
-
 - [ ] Only transfer minimal per Vertex data to GPU (e.g. remove TexCoords where not needed)
-
 - [ ] Remember window size, and position
 - [ ] Retain info of open FilesystemStreams in Filesystems to allow cleanup, e.g. via Rc or Arc
-
 - [ ] Add Read, BufRead, and Seek trait to FilesystemStream
 - [ ] Add Angle helpers
-
 - [ ] Fix linkage between TextureAtlas sub Texture via hwid
 - [ ] Play music
 - [ ] Add SFX
