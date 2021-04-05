@@ -1,4 +1,5 @@
 
+use rand::prelude::*;
 use std::rc::Rc;
 
 use crate::fiiish::entities::{
@@ -57,14 +58,28 @@ impl ZoneManager {
 	}
 	pub fn next_zone( &mut self, ecm: &EntityConfigurationManager, em: &mut EntityManager, offset: &Vector2 ) {
 		// select zone
+		let n = self.zones.len();
+		let r = rand::random::<f64>();
+		let zi = ( n as f64 * r ).floor() as usize;
+		dbg!(&zi);
 		let mut next_zone: Option< Rc< Zone > > = None;
-		for z in self.zones.iter() {
-			// :TODO: add logic to select zone
-			next_zone = Some( Rc::clone( z ) );
+		for ( i, z ) in self.zones.iter().enumerate() {
+			// :TODO: add actual logic to select zone
+			if self.active_zone.is_none() {
+				// always return the first one first
+				next_zone = Some( Rc::clone( z ) );				
+				break;
+			} else if i == 0 && n > 0  {
+				continue;
+			}
+			if i >= zi {
+				next_zone = Some( Rc::clone( z ) );
+				break;
+			}
 		}
 
 		if let Some( next_zone ) = next_zone {
-			println!("Found next zone!");
+			println!("Found next zone: {}", next_zone.name() );
 			self.active_zone = Some( next_zone );
 			self.pos.x = 0.0;
 			self.spawn_zone( ecm, em, offset );
@@ -141,16 +156,21 @@ impl ZoneManager {
 		self.zones.push( Rc::new( zone ) );
 	}
 	pub fn load_zones( &mut self, system: &mut System ) {
-		self.load_zone( system, "0000_ILoveFiiishAndRust" );		
+		// :TODO: use config file to load all zone
+		self.load_zone( system, "0000_ILoveFiiishAndRust" );
+		self.load_zone( system, "0001_ZigZag" );
+		self.load_zone( system, "0002_ZigZag-B" );
+		self.load_zone( system, "0003_ZigZag-C" );
+		self.load_zone( system, "0004_ZigZag-D" );
+		self.load_zone( system, "0005_ZigZag-E" );
+		self.load_zone( system, "0006_ZigZag-F" );
+		self.load_zone( system, "0010_Tunnel" );
+		self.load_zone( system, "0020_Funnel" );
+		self.load_zone( system, "1001_SeaweedAgain" );
+		self.load_zone( system, "2001_SmoothBump" );
+		self.load_zone( system, "2002_BigRockFlow" );
+		self.load_zone( system, "2003_QuickDip" );
+		self.load_zone( system, "2004_Curves" );
+		self.load_zone( system, "2005_GoUp" );
 	}
-
-	/*
-		for l in self.zone.layer_iter() {
-			for o in l.object_iter() {
-				let ec = self.entity_configuration_manager.get_config( o.crc );
-//				dbg!(&ec);
-
-			}
-		}
-*/	
 }

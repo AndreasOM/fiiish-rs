@@ -3,10 +3,11 @@
 
 ## In Progress
 
-- [ ] Add Zone progression
 
 ## TODO
 
+- [ ] Improve next zone selection
+- [ ] Add skip to next zone button
 - [ ] Add fadeout for entities
 - [ ] Fix Windows build (cheat mode, keyword: shader-crusher)
 - [ ] Expand EntityConfiguration to allow multiple AnimatedTextures
@@ -44,6 +45,7 @@
 
 ## DONE
 
+- [x] Add Zone progression
 - [x] Add Zone management
 - [x] Make Player a real entity (and rename player to fiiish)
 - [x] Improve loading speed for assets from disk (~15s -> ~0.5s)

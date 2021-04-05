@@ -92,6 +92,10 @@ impl Zone {
 		&self.size
 	}
 
+	pub fn name( &self ) -> &str {
+		&self.name
+	}
+
 	pub fn load(&mut self, system: &mut System, name: &str) -> bool {
 		let filename = format!("{}.nzne", name);
 		let mut f = system.default_filesystem_mut().open( &filename );
