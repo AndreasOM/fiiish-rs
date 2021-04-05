@@ -3,10 +3,9 @@
 
 ## In Progress
 
+- [ ] Make Player a real entity (and rename player to fiiish)
 
 ## TODO
-
-- [ ] Make Player a real entity
 
 - [ ] Add Zone management, and progression
 

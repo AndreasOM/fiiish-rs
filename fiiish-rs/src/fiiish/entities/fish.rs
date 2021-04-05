@@ -25,7 +25,7 @@ enum PlayerDirection {
 }
 
 #[derive(Debug)]
-pub struct Player {
+pub struct Fish {
 	name: String,
 	spawn_pos: Vector2,
 	pos: Vector2,
@@ -40,7 +40,7 @@ pub struct Player {
 	animated_texture_dying: AnimatedTexture,
 }
 
-impl Player {
+impl Fish {
 	pub fn new() -> Self {
 		Self {
 			name: String::new(),
@@ -182,7 +182,7 @@ impl Player {
 
 		// :TODO: port over angle limiting logic from original game
 
-		let ( min_a, max_a ) = Player::get_angle_range_for_y( self.pos.y );
+		let ( min_a, max_a ) = Fish::get_angle_range_for_y( self.pos.y );
 
 //		self.angle = MAX( minAngle, MIN( maxAngle, m_angle ) );
 		self.angle = self.angle.clamp( min_a, max_a );

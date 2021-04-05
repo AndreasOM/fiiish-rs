@@ -13,8 +13,8 @@ use crate::fiiish::entities::{
 	Coin,
 	Entity,
 	EntityManager,
+	Fish,
 	Obstacle,
-	Player
 };
 use crate::fiiish::entities::{
 //	EntityConfiguration,
@@ -35,7 +35,7 @@ pub enum GameState {
 
 #[derive(Debug)]
 pub struct Game {
-	players: Vec<Player>,
+	fishes: Vec<Fish>,
 	entity_manager: EntityManager,
 	entity_configuration_manager: EntityConfigurationManager,
 	zone: Zone,
@@ -45,7 +45,7 @@ pub struct Game {
 impl Game {
 	pub fn new() -> Self {
 		Self {
-			players: 						Vec::new(),
+			fishes: 						Vec::new(),
 			entity_manager:	 	 	 	 	EntityManager::new(),
 			entity_configuration_manager:	EntityConfigurationManager::new(),
 			zone:							Zone::new(),
@@ -111,9 +111,9 @@ impl Game {
 			}
 		}
 
-		let mut p = Player::new();
-		p.setup( "player" );
-		self.players.push( p );
+		let mut p = Fish::new();
+		p.setup( "fish" );
+		self.fishes.push( p );
 
 		let b = Background::new();
 //		b.setup( "backround" );
@@ -123,7 +123,7 @@ impl Game {
 
 	pub fn teardown( &mut self ) {
 		self.entity_manager.teardown();
-		for p in self.players.iter_mut() {
+		for p in self.fishes.iter_mut() {
 			p.teardown( );
 		}
 	}
@@ -154,7 +154,7 @@ impl Game {
 
 //    				dbg!(&p);
 					let pp = *p.pos();
-					for f in self.players.iter() {
+					for f in self.fishes.iter() {
 						if !f.is_alive() {
 							// dead fish don't collect coins
 							continue;
@@ -185,8 +185,8 @@ impl Game {
 	pub fn update( &mut self, wuc: &mut WindowUpdateContext ) {
 
 		let mut fish_movement = Vector2::zero();
-		for p in self.players.iter_mut() {
-			if p.name() == "player" {
+		for p in self.fishes.iter_mut() {
+			if p.name() == "fish" {
 				fish_movement = *p.movement();
 				if p.is_alive() {
 					self.state = GameState::Playing;
@@ -228,7 +228,7 @@ impl Game {
 			self.spawn_pickups();
 		}
 
-		for p in self.players.iter_mut() {
+		for p in self.fishes.iter_mut() {
 			p.update( &mut euc );
 		}
 
@@ -240,7 +240,7 @@ impl Game {
 	}
 
 	pub fn render( &mut self, renderer: &mut Renderer) {
-		for p in self.players.iter_mut() {
+		for p in self.fishes.iter_mut() {
 			p.render( renderer );
 		}
 		for e in self.entity_manager.iter_mut() {

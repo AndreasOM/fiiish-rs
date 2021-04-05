@@ -17,5 +17,5 @@ mod coin;
 	pub use coin::Coin as Coin;
 mod obstacle;
 	pub use obstacle::Obstacle as Obstacle;
-mod player;
-	pub use player::Player as Player;
+mod fish;
+	pub use fish::Fish as Fish;
