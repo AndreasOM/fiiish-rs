@@ -27,7 +27,7 @@ jobs:
           override: true
       - name: Check
         run: cd fiiish-rs && cargo check --release
-  build-windows:
+  build-macos:
     runs-on: macos-latest
     steps:
       - name: Checkout
