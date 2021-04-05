@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use crate::math::{ 
 	Matrix22,
 	Matrix32,
-	Matrix33,
+//	Matrix33,
 	Matrix44,
 	Vector2
 };
@@ -148,14 +148,14 @@ impl Renderer {
 		}
 	}
 
-	pub fn register_effect( &mut self, mut effect: Effect ) {
+	pub fn register_effect( &mut self, effect: Effect ) {
 		if self.effects.len() == 0 { 
 			self.default_effect_id = effect.id();
 		}
 		self.effects.insert(effect.id(), effect);
 	}
 
-	pub fn register_texture( &mut self, mut texture: Texture ) {
+	pub fn register_texture( &mut self, texture: Texture ) {
 		let index = self.texture_manager.add( texture );
 		if self.texture_manager.len() == 1 {
 //			self.texture_manager.set_active( index );
@@ -180,26 +180,8 @@ impl Renderer {
 		}
 	}
 
-	pub fn setup( &mut self, window: &Window, system: &mut System ) -> anyhow::Result<()> {
+	pub fn setup( &mut self, window: &Window, _system: &mut System ) -> anyhow::Result<()> {
 		gl::load_with(|s| window.get_proc_address(s) as *const _); // :TODO: maybe use CFBundleGetFunctionPointerForName directly
-
-		// :HACK: create one effect
-		/*
-		let e = Effect::create( system, "Default", "default_vs.glsl", "default_fs.glsl" );
-		self.default_effect_name = e.name().to_string();
-		self.active_effect_name = e.name().to_string();
-		self.register_effect( e );
-
-		let e = Effect::create( system, "White", "default_vs.glsl", "white_fs.glsl" );
-		self.register_effect( e );
-		*/
-		// :HACK: create one material
-
-		/*
-		let e = self.get_mut_default_effect();
-		let m = Material::new( e );
-		self.material_manager.add( m );
-		*/
 
 		unsafe {
 			let s = gl::GetString( gl::VERSION );
@@ -208,7 +190,7 @@ impl Renderer {
 		}
 
 		// ensure we have one texture
-		self.register_texture( Texture::create_canvas( system, "[]", 2 ) );
+		self.register_texture( Texture::create_canvas( "[]", 2 ) );
 
 		Ok(())
 	}
@@ -347,7 +329,7 @@ impl Renderer {
 
 	pub fn set_uniform_float( &mut self, name: &str, value: f32 ) {
 		// :HACK:
-		let mut m = self.material_manager.get_mut_active();
+		let m = self.material_manager.get_mut_active();
 		m.set_uniform( name, &Uniform::F32( value ) );
 	}
 	
@@ -436,7 +418,7 @@ impl Renderer {
 	pub fn use_texture_in_channel( &mut self, name: &str, channel: u8 ) {
 		// :TODO: avoid changing texture when it is already active
 //		dbg!(&self.texture_manager);
-		let found_texture = match self.texture_manager.find_index(|t: &Texture|{
+		match self.texture_manager.find_index(|t: &Texture|{
 //			dbg!(&t.name(), &name);
 			t.name() == name
 		}) {
@@ -566,6 +548,7 @@ struct Manager<T> {
 	active_index: usize,
 }
 
+#[allow(dead_code)]
 impl <T>Manager<T> {
 	pub fn new() -> Self {
 		println!("Creating manager for {}", std::any::type_name::<T>());
@@ -632,7 +615,7 @@ impl <T>Manager<T> {
 		None
 	}
 	pub fn iter( &mut self ) -> std::slice::Iter<'_, T> {
-		self.materials.iter()
+	self.materials.iter()
 	}
 	pub fn iter_mut( &mut self ) -> std::slice::IterMut<'_, T> {
 		self.materials.iter_mut()

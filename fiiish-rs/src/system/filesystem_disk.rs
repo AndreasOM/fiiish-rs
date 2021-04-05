@@ -18,7 +18,7 @@ impl FilesystemDisk {
 impl Filesystem for FilesystemDisk {
 	fn open( &mut self, name: &str ) -> Box< dyn FilesystemStream > {
 		let fullname = format!("{}/{}", &self.basedir, &name);
-		let mut stream = FilesystemStreamDisk::open( &fullname );
+		let stream = FilesystemStreamDisk::open( &fullname );
 
 		Box::new( stream )
 	}

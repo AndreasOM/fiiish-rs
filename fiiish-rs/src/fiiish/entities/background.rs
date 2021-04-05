@@ -91,7 +91,7 @@ impl Entity for Background {
 	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
 		self
 	}
-	fn setup( &mut self, ec: &EntityConfiguration) {
+	fn setup( &mut self, _ec: &EntityConfiguration) {
 		// fake long running time to simulate precision loss
 		self.pos.x = - 2.0 * 60.0 * 60.0 * 60.0 * 240.0 * 0.5;
 	}

@@ -14,7 +14,7 @@ impl FilesystemMemory {
 		}
 	}
 	pub fn open_from_data( &mut self, name: &str, data: &Vec< u8 > ) -> Box< dyn FilesystemStream > {
-		let mut stream = FilesystemStreamMemory::open( name, data );
+		let stream = FilesystemStreamMemory::open( name, data );
 
 		Box::new( stream )
 	}
@@ -22,7 +22,7 @@ impl FilesystemMemory {
 
 impl Filesystem for FilesystemMemory {
 	fn open( &mut self, name: &str ) -> Box< dyn FilesystemStream > {
-		let mut stream = FilesystemStreamMemory::open( name, &Vec::new() );
+		let stream = FilesystemStreamMemory::open( name, &Vec::new() );
 
 		Box::new( stream )
 	}

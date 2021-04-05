@@ -6,7 +6,7 @@ use crate::fiiish::entities::Entity;
 use crate::fiiish::entities::EntityConfiguration;
 //use crate::fiiish::entities::EntityId;
 use crate::fiiish::entities::EntityType;
-use crate::fiiish::entities::entity_ids::*;
+//use crate::fiiish::entities::entity_ids::*;
 
 use crate::fiiish::EntityUpdateContext;
 use crate::math::Vector2;
@@ -15,6 +15,7 @@ use crate::renderer::{
 	Renderer
 };
 
+#[derive(Debug)]
 pub struct Obstacle {
 	name: String,
 	crc: u32,

@@ -2,6 +2,7 @@
 
 use crate::system::filesystem_stream::FilesystemStream;
 
+#[derive(Debug)]
 pub struct FilesystemStreamArchive {
 	crc: u32,
 	name: String,
@@ -39,7 +40,7 @@ impl FilesystemStream for FilesystemStreamArchive {
 	fn read_u8( &mut self ) -> u8 {
 		match self.data.get( self.pos ) {
 			None => {
-				todo!( "Failed to get u8 for {}", &self.name );
+				println!( "Warning: Failed to get u8 for {}", &self.name );
 				0
 			},
 			Some( b ) => {

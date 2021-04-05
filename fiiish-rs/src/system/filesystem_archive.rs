@@ -1,7 +1,7 @@
 
-use std::fs::File;
+//use std::fs::File;
 use std::rc::Rc;
-use std::io::prelude::*;
+//use std::io::prelude::*;
 use std::collections::HashMap;
 
 use crate::system::filesystem::Filesystem;
@@ -34,13 +34,7 @@ impl Entry {
 	}
 
 	pub fn load_from_file( &mut self, file: &mut Box< dyn FilesystemStream > ) -> bool {
-		/*
-		let start = self.pos as usize;
-		let end = start + self.size as usize;
-		self.data.resize( self.size as usize, 0 );
-		self.data.clone_from_slice(&data[start..end]);
-		*/
-		for n in 0..self.size {
+		for _n in 0..self.size {
 			let b = file.read_u8();
 			self.data.push( b );
 		}
@@ -110,9 +104,9 @@ impl FilesystemArchive {
 			}
 			self.entries.insert( entry.crc, entry );
 		}
-		let l = self.entries.len();
+//		let l = self.entries.len();
 		let data_start = file.pos();
-		for ( i, entry ) in self.entries.values_mut().enumerate() {
+		for ( _i, entry ) in self.entries.values_mut().enumerate() {
 //			println!("{}/{}", i, l);
 			// adjust file position
 			let entry_start = data_start + entry.pos as usize;
@@ -156,7 +150,7 @@ impl Filesystem for FilesystemArchive {
 				Box::new( stream )				
 			},
 			Some( entry ) => {
-				let mut stream = FilesystemStreamArchive::open( entry.crc, &entry.data );
+				let stream = FilesystemStreamArchive::open( entry.crc, &entry.data );
 				Box::new( stream )
 			},
 		}
@@ -190,10 +184,10 @@ impl std::fmt::Debug for Entry {
 
 impl std::fmt::Debug for FilesystemArchive {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-		writeln!( f, "FilesystemArchive:\n\tsize: {}", self.data.len() );
+		writeln!( f, "FilesystemArchive:\n\tsize: {}", self.data.len() ).unwrap();
 
 		for ( k, e ) in self.entries.iter() {
-			writeln!( f, "\t0x{:08X}\t{:?}", k, &e );
+			writeln!( f, "\t0x{:08X}\t{:?}", k, &e ).unwrap();
 		}
 
 		writeln!(f, "")

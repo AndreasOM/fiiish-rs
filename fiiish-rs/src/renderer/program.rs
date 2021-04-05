@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use crate::renderer::{
 	Debug,
 	gl,
-	Uniform,
+//	Uniform,
 };
 
 #[derive(Debug,Copy,Clone,PartialEq,Eq,Hash)]
@@ -45,7 +45,7 @@ impl Program {
 		let gl_shader_type = match shader_type {
 			ShaderType::Vertex => gl::VERTEX_SHADER,
 			ShaderType::Fragment => gl::FRAGMENT_SHADER,
-			_ => todo!("{:?}", &shader_type),
+//			_ => todo!("{:?}", &shader_type),
 		};
 
 		unsafe {

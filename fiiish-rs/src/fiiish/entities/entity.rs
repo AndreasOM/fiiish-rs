@@ -9,7 +9,7 @@ pub trait Entity {
 	fn as_any(&self) -> &dyn std::any::Any;
 	fn as_any_mut(&mut self) -> &mut dyn std::any::Any;
 
-	fn setup( &mut self, ec: &EntityConfiguration ){}
+	fn setup( &mut self, _ec: &EntityConfiguration ){}
 	fn teardown( &mut self );
 	fn update( &mut self, euc: &mut EntityUpdateContext );
 	fn render( &mut self, renderer: &mut Renderer );
@@ -22,7 +22,7 @@ pub trait Entity {
 	fn kill( &mut self ) {}
 }
 
-impl std::fmt::Debug for Entity {
+impl std::fmt::Debug for dyn Entity {
 	fn fmt(&self, _: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
 		todo!()
 	}

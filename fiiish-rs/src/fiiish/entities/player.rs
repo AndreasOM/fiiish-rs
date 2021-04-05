@@ -146,7 +146,7 @@ impl Player {
         let m = limit*( 1.0-a*a*a*a );
         // float m = limit*( 1.0-a*a*a*a );
         
-        if( y<0.0 )
+        if y<0.0
         {
         	( -limit, m )
 //            *pMinAngle = -limit;

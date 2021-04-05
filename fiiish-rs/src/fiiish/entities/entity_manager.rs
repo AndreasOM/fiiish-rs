@@ -21,7 +21,7 @@ impl EntityManager {
 
 	}
 
-	pub fn add( &mut self, entity: Box< Entity > ) {
+	pub fn add( &mut self, entity: Box< dyn Entity > ) {
 		self.entities.push( entity );
 	}
 

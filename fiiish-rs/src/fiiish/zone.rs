@@ -35,7 +35,7 @@ impl Object {
 		}
 	}
 
-	pub fn load(&mut self, f: &mut Box< FilesystemStream > ) -> bool {
+	pub fn load(&mut self, f: &mut Box< dyn FilesystemStream > ) -> bool {
 		self.id = f.read_u16();
 		self.crc = f.read_u32();
 		self.pos.x = f.read_f32();
@@ -58,14 +58,14 @@ impl Layer {
 		self.objects.iter()
 	}
 
-	pub fn load(&mut self, f: &mut Box< FilesystemStream > ) -> bool {
+	pub fn load(&mut self, f: &mut Box< dyn FilesystemStream > ) -> bool {
 		self.name = f.read_as_fixed_string( 16 );
 		let first_zero = self.name.find( "\u{0}" ).unwrap_or( self.name.len() );
 		self.name.truncate( first_zero );
 
 		let object_count = f.read_u16();
 
-		for o in 0..object_count {
+		for _o in 0..object_count {
 			let mut object = Object::new();
 			object.load( f );
 			self.objects.push( object );
@@ -141,7 +141,7 @@ impl Zone {
 
 		let layer_count = f.read_u16();
 
-		for l in 0..layer_count {
+		for _l in 0..layer_count {
 			let mut layer = Layer::new();
 			layer.load( &mut f );
 			self.layers.push( layer );

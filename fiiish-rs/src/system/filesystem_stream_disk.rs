@@ -24,7 +24,7 @@ impl FilesystemStreamDisk {
 
 		if let Ok( mut f ) = File::open( &s.filename ) {
 			if let Ok( p ) =  f.seek(SeekFrom::End(0)) {
-				f.seek( SeekFrom::Start( 0 ) );
+				f.seek( SeekFrom::Start( 0 ) ).unwrap();
 				s.size = p as usize
 			} else {
 			}
@@ -48,7 +48,7 @@ impl FilesystemStream for FilesystemStreamDisk {
 	fn set_pos( &mut self, pos: usize ) {
 		match &mut self.file {
 			Some( f ) => {
-				f.seek( SeekFrom::Start( pos as u64 ) );
+				f.seek( SeekFrom::Start( pos as u64 ) ).unwrap();
 				if let Ok( p ) = f.stream_position() {
 					self.pos = p as usize;
 				} else {

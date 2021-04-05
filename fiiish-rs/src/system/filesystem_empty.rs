@@ -17,7 +17,7 @@ impl FilesystemEmpty {
 
 impl Filesystem for FilesystemEmpty {
 	fn open( &mut self, name: &str ) -> Box< dyn FilesystemStream > {
-		let mut stream = FilesystemStreamEmpty::open();
+		let stream = FilesystemStreamEmpty::open( name );
 
 		Box::new( stream )
 	}

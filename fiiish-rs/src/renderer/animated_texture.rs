@@ -111,7 +111,7 @@ impl AnimatedTexture {
 	// :HACK: Scanning the filesystem is a bad idea, the info should come from the config
 	pub fn register_all( system: &mut System, renderer: &mut Renderer, prefix: &str, number_of_digits: i8 ) -> usize {
 
-		let mut fs = system.default_filesystem_mut();
+		let fs = system.default_filesystem_mut();
 
 		let mut to_load = Vec::new();
 		let mut i = 0;

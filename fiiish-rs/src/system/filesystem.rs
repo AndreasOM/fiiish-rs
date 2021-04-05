@@ -5,7 +5,7 @@ use crate::system::filesystem_stream::FilesystemStream;
 pub trait Filesystem {
 
 	fn open( &mut self, name: &str ) -> Box< dyn FilesystemStream >;
-	fn exists( &mut self, name: &str ) -> bool {
+	fn exists( &mut self, _name: &str ) -> bool {
 		false
 	}
 

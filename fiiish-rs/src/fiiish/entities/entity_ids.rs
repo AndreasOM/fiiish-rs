@@ -1,5 +1,5 @@
 
-
+/* Note: use the enum below instead
 pub const ENTITYID_BUBBLE			:u32	= 0xeb20f1f7;
 pub const ENTITYID_PICKUPCOIN		:u32	= 0xe4c651aa;
 pub const ENTITYID_PICKUPRAIN		:u32	= 0x06fd4c5a;
@@ -28,6 +28,7 @@ pub const ENTITYID_CORALCA			:u32	= 0xebb04cae;
 pub const ENTITYID_CORALCB			:u32	= 0x72b91d14;
 pub const ENTITYID_ANCHOR			:u32	= 0x6751117d;
 pub const ENTITYID_BLOCK1X1			:u32	= 0xe37ce24d;
+*/
 
 #[derive(Debug)]
 pub enum EntityId {

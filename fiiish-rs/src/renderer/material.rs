@@ -3,11 +3,11 @@ use std::collections::HashMap;
 
 use crate::math::Matrix44;
 use crate::renderer::{
-	Debug,
+//	Debug,
 	Effect,
 	gl,
-	Program,
-	ShaderType,
+//	Program,
+//	ShaderType,
 	Texture,
 	Uniform,
 	Vertex,
@@ -89,10 +89,12 @@ impl Material {
 		let mut shift = 0;
 		for i in 0..4 {
 			if let Some( texture_hwid ) = texture_hwids.get( i ) {
+				/* :TODO: reenable if we change type, or extend maximum number of textures
 				if *texture_hwid > 0xffff {
 					panic!("Too many textures. Got id {}", &texture_hwid );
 				}
-				r |= ( ( *texture_hwid as u128 & 0xffff ) <<   shift );
+				*/
+				r |= ( *texture_hwid as u128 & 0xffff ) << shift;
 			}
 			shift += 16;
 		}
@@ -193,7 +195,7 @@ impl Material {
 							Uniform::F32( v ) => {
 								gl::Uniform1f( l, *v );
 							},
-							_ => todo!("Uniform type not supported. {:?}", v ),
+//							_ => todo!("Uniform type not supported. {:?}", v ),
 
 						}
 					},

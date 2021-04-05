@@ -21,7 +21,7 @@ pub trait FilesystemStream {
 
 	fn read_as_fixed_string(&mut self, size: u16) -> String {
 		let mut s = String::new();
-		for n in 0..size {
+		for _n in 0..size {
 			let c = self.read_u8() as char;
 			s.push( c );
 		}

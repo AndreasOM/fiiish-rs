@@ -6,12 +6,13 @@
 
 ## TODO
 
+- [ ] Make Player a real entity
+
 - [ ] Add Zone management, and progression
 
 - [ ] Create release builds via github actions (cheat mode)
 
 - [ ] Cleanup Pickups (remove Coins)
-- [ ] Make Player a real entity
 
 
 - [ ] Split renderer context from window

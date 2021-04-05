@@ -28,7 +28,7 @@ impl Texture {
 		t
 	}
 
-	pub fn create_canvas( system: &mut System, name: &str, size: u32 ) -> Self {
+	pub fn create_canvas( name: &str, size: u32 ) -> Self {
 		let mut t = Texture::new( name );
 		t.make_canvas( size );
 		t.update_canvas();
@@ -154,7 +154,7 @@ impl Texture {
 				}
 
 				let buf: &[u8] = buf.as_slice();
-				let dummy_buf = [ 0xffffffffu32, 0x0, 0xffffffff, 0x0 ];
+//				let dummy_buf = [ 0xffffffffu32, 0x0, 0xffffffff, 0x0 ];
 
 				match image::load_from_memory( buf ) {
 					Ok( i ) => {
@@ -184,18 +184,7 @@ impl Texture {
 							Debug::check_gl_error( std::file!(), std::line!() );
 
 //							gl::GenerateMipmap( gl::TEXTURE_2D );
-/*
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-*/							
 						}
-//						dbg!(&h,&w);
-//						dbg!(&i);
-//						todo!("die");
 
 						return true;
 

@@ -77,7 +77,7 @@ fn simple_format_u32( f: &str, n: u32 ) -> String {
 
 impl TextureAtlas {
 	pub fn load_all( system: &mut System, renderer: &mut Renderer, template: &str ) -> usize {
-		let mut fs = system.default_filesystem_mut();
+		let fs = system.default_filesystem_mut();
 
 		let mut to_load = Vec::new();
 		let mut i = 0;

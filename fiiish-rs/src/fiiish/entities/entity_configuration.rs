@@ -82,7 +82,7 @@ impl EntityConfigurationManager {
 		}
 	}
 
-	pub fn load( &mut self, system: &mut System, name: &str ) -> bool {
+	pub fn load( &mut self, _system: &mut System, _name: &str ) -> bool {
 		/*
 		self.configs.insert(
 			EntityId::ROCKA as u32,

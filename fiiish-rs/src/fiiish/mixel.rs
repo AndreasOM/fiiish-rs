@@ -3,7 +3,7 @@
 use crate::math::Vector2;
 use crate::renderer::{
 	Color,
-	Effect,
+//	Effect,
 	Renderer,
 	Texture,
 };
@@ -43,13 +43,13 @@ impl Mixel {
 		}
 	}
 
-	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer) {
+	pub fn setup(&mut self, _system: &mut System, renderer: &mut Renderer) {
 //		renderer.register_texture( Texture::create( system, "fish_die00" ) );
 //		canvas.set_texel( &Vector2::new( 15.0, 15.0 ), 0x0000ffff );
 //		canvas.set_texel( &Vector2::new( 1.0, 1.0 ), 0xffff0000 );
 //		canvas.update_canvas();
-		renderer.register_texture( Texture::create_canvas( system, "m_canvas", self.size.into() ) );
-		renderer.register_texture( Texture::create_canvas( system, "m_cursor", self.size.into() ) );
+		renderer.register_texture( Texture::create_canvas( "m_canvas", self.size.into() ) );
+		renderer.register_texture( Texture::create_canvas( "m_cursor", self.size.into() ) );
 	}
 
 	pub fn teardown( &mut self ) {

@@ -31,7 +31,6 @@ impl Vector2 {
 	}
 
 	pub fn scaled( &self, factor: f32 ) -> Self {
-		let l = self.length();
 		Self {
 			x: self.x * factor,
 			y: self.y * factor,

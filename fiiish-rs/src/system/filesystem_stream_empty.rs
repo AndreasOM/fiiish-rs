@@ -3,13 +3,13 @@
 use crate::system::filesystem_stream::FilesystemStream;
 
 pub struct FilesystemStreamEmpty {
-
+	name: String,
 }
 
 impl FilesystemStreamEmpty {
-	pub fn open() -> Self {
+	pub fn open( name: &str ) -> Self {
 		Self {
-
+			name: name.to_owned(),
 		}
 	}
 }
@@ -34,7 +34,7 @@ impl FilesystemStream for FilesystemStreamEmpty {
 		true
 	}
 	fn name( &self ) -> &str {
-		""
+		&self.name
 	}
 	fn filesystem_stream_type( &self ) -> &str {
 		"Empty"

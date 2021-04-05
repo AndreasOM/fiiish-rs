@@ -1,7 +1,7 @@
 
 use crate::math::Vector2;
 use crate::renderer::{
-	AnimatedTexture,
+//	AnimatedTexture,
 	Renderer,
 	Texture,
 };
@@ -17,7 +17,7 @@ use crate::fiiish::entities::{
 	Player
 };
 use crate::fiiish::entities::{
-	EntityConfiguration,
+//	EntityConfiguration,
 	EntityConfigurationManager,
 	EntityType,
 };
@@ -115,7 +115,7 @@ impl Game {
 		p.setup( "player" );
 		self.players.push( p );
 
-		let mut b = Background::new();
+		let b = Background::new();
 //		b.setup( "backround" );
 		self.entity_manager.add( Box::new( b ) );
 
@@ -159,16 +159,16 @@ impl Game {
 							// dead fish don't collect coins
 							continue;
 						}
+						let magnet_range = 200.0;
 						let fp = f.pos();
 
-						let mut delta = pp.sub( &fp );
+						let delta = pp.sub( &fp );
 						let dist = delta.length();
 //						dbg!(&dist);
 						if dist < 10.0 { // fish over pickup
 //							println!("Collected Pickup");
 							p.kill();
-						} else if dist < 200.0 {
-							let magnet_range = 150.0;
+						} else if dist < magnet_range {
 							let magnet_speed = 300.0 * euc.time_step() as f32;
 							let delta = delta.normalized();
 							let delta = delta.scaled( -magnet_speed );

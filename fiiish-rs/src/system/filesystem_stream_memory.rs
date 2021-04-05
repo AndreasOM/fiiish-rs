@@ -31,7 +31,7 @@ impl FilesystemStream for FilesystemStreamMemory {
 	fn read_u8( &mut self ) -> u8 {
 		match self.data.get( self.pos ) {
 			None => {
-				todo!( "Failed to get u8 for MemoryStream" );
+				println!( "Warning: Failed to get u8 for MemoryStream" );
 				0
 			},
 			Some( b ) => {
