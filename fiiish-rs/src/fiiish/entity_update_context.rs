@@ -1,7 +1,12 @@
+use std::rc::Rc;
+use std::cell::RefCell;
+
 
 use crate::math::Vector2;
 
 use crate::fiiish::game::GameState;
+
+use crate::DebugRenderer;
 
 #[derive(Debug)]
 pub struct EntityUpdateContext {
@@ -9,6 +14,7 @@ pub struct EntityUpdateContext {
 	world_movement: Vector2,
 	change_background_state: bool,
 	game_state: GameState,
+	pub debug_renderer: Rc< Option< RefCell< DebugRenderer > > >,
 }
 
 impl EntityUpdateContext {
@@ -18,6 +24,7 @@ impl EntityUpdateContext {
 			world_movement: Vector2::zero(),
 			change_background_state: false,
 			game_state: GameState::None,
+			debug_renderer: Rc::new( None ),
 		}
 	}
 
@@ -40,6 +47,10 @@ impl EntityUpdateContext {
 
 	pub fn set_game_state(&mut self, game_state: &GameState ) {
 		self.game_state = *game_state;
+	}
+
+	pub fn set_debug_renderer( &mut self, debug_renderer: &Rc< Option< RefCell< DebugRenderer > > > ) {
+		self.debug_renderer = Rc::clone( debug_renderer );
 	}
 
 	pub fn game_state( &self ) -> &GameState {

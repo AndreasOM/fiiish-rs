@@ -1,3 +1,5 @@
+use std::rc::Rc;
+use std::cell::RefCell;
 
 use crate::math::Vector2;
 use crate::renderer::{
@@ -21,8 +23,10 @@ use crate::fiiish::entities::{
 	Obstacle,
 };
 use crate::fiiish::EntityUpdateContext;
-use crate::fiiish::layer_ids::LayerId;
+//use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::ZoneManager;
+
+use crate::DebugRenderer;
 
 #[derive(Debug,Copy,Clone,Eq,PartialEq)]
 pub enum GameState {
@@ -39,6 +43,8 @@ pub struct Game {
 	entity_configuration_manager: EntityConfigurationManager,
 	zone_manager: ZoneManager,
 	state: GameState,
+
+	debug_renderer: Rc < Option < RefCell< DebugRenderer >  > >,
 }
 
 impl Game {
@@ -49,7 +55,16 @@ impl Game {
 			entity_configuration_manager:	EntityConfigurationManager::new(),
 			zone_manager:					ZoneManager::new(),
 			state:							GameState::WaitForStart,
+			debug_renderer:					Rc::new( None ),
 		}
+	}
+
+	pub fn enable_debug_renderer( &mut self, debug_renderer: &Rc< Option< RefCell< DebugRenderer > > > ) {
+		self.debug_renderer = Rc::clone( debug_renderer );
+	}
+
+	pub fn disable_debug_renderer( &mut self ) {
+		self.debug_renderer = Rc::new( None );
 	}
 
 	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer) {
@@ -171,6 +186,8 @@ impl Game {
 		euc.set_world_movement( &Vector2::new( -fish_movement.x, 0.0 ) );
 
 		euc.set_game_state( &self.state );
+		euc.set_debug_renderer( &self.debug_renderer );
+
 		// :HACK: for testing background state transitions
 		if wuc.was_key_pressed( 'b' as u8 ) {
 			euc.enable_change_background_state();

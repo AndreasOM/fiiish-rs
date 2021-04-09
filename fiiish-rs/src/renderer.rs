@@ -238,6 +238,7 @@ impl Renderer {
 //			gl::Disable(gl::CULL_FACE);
 			gl::Enable(gl::CULL_FACE);
 			gl::Disable(gl::DEPTH_TEST);
+//			gl::PolygonMode( gl::FRONT_AND_BACK, gl::LINE );
 		}
 
 //		println!("---");

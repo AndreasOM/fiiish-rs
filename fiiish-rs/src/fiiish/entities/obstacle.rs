@@ -1,4 +1,3 @@
-
 use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
@@ -74,6 +73,13 @@ impl Entity for Obstacle {
 			// :TODO: decide if self destruction is a good idea
 			self.kill();
 		}
+
+		if let Some( debug_renderer ) = &*euc.debug_renderer {
+			let mut debug_renderer = debug_renderer.borrow_mut();
+			debug_renderer.add_line( &self.pos, &Vector2::zero(), 1.0 );
+			debug_renderer.add_frame( &self.pos, &self.size, 2.0 );
+		}
+
 	}
 
 	fn render( &mut self, renderer: &mut Renderer ){

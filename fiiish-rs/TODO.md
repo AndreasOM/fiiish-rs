@@ -45,6 +45,7 @@
 
 ## DONE
 
+- [x] Add debug renderner, lines, and frames
 - [x] Add Zone progression
 - [x] Add Zone management
 - [x] Make Player a real entity (and rename player to fiiish)

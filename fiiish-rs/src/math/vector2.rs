@@ -37,6 +37,13 @@ impl Vector2 {
 		}
 	}
 
+	pub fn scaled_vector2( &self, factor: &Vector2 ) -> Self {
+		Self {
+			x: self.x * factor.x,
+			y: self.y * factor.y,
+		}
+	}
+
 
 	pub fn add( &self, o: &Vector2 ) -> Self {
 		Self{

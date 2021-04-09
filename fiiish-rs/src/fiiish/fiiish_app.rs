@@ -1,5 +1,9 @@
-use super::effect_ids::EffectId;
 
+use std::rc::Rc;
+use std::cell::RefCell;
+
+use super::effect_ids::EffectId;
+use crate::fiiish::layer_ids::LayerId;
 use crate::math::{ Matrix44, Vector2 };
 use crate::renderer::{
 	Color,
@@ -21,6 +25,8 @@ use crate::window::Window;
 use crate::window_update_context::WindowUpdateContext;
 
 use crate::fiiish::game::Game;
+
+use crate::DebugRenderer;
 
 use super::demo::Demo;
 use super::mixel::Mixel;
@@ -46,6 +52,8 @@ pub struct FiiishApp {
 
 	mixel: Mixel,
 	mixel_enabled: bool,
+
+	debug_renderer: Rc< Option< RefCell< DebugRenderer >  > >,
 }
 
 impl FiiishApp {
@@ -68,6 +76,8 @@ impl FiiishApp {
 			demo_enabled: false,
 			mixel: Mixel::new(),
 			mixel_enabled: false,
+
+			debug_renderer: Rc::new( None ),
 		}
 	}
 
@@ -182,6 +192,27 @@ impl FiiishApp {
 
 	pub fn update( &mut self, wuc: &mut WindowUpdateContext ) {
 //		println!("Update {}", &wuc.time_step );
+		if wuc.was_key_pressed( 'i' as u8 ) {
+			if self.debug_renderer.is_none() {
+				self.debug_renderer = Rc::new( Some( RefCell::new(
+											DebugRenderer::new(
+												LayerId::DebugRenderer as u8,
+												EffectId::White as u16
+											)
+										) ) );
+				self.game.enable_debug_renderer( &self.debug_renderer );
+			} else {
+				self.debug_renderer = Rc::new( None );
+				self.game.disable_debug_renderer();
+			}
+		}
+
+
+		if let Some( debug_renderer ) = &*self.debug_renderer {
+			let mut debug_renderer = debug_renderer.borrow_mut();
+			debug_renderer.begin_frame();
+		}
+
 
 		self.count += 1;
 		self.total_time += wuc.time_step;
@@ -199,6 +230,11 @@ impl FiiishApp {
 
 		self.cursor_pos.x = 0.5 * self.scaling * wuc.window_size.x * ( 2.0*wuc.mouse_pos.x - 1.0 );
 		self.cursor_pos.y = 0.5 * self.scaling * wuc.window_size.y * ( 2.0*wuc.mouse_pos.y - 1.0 );
+
+		if let Some( debug_renderer ) = &*self.debug_renderer {
+			let mut debug_renderer = debug_renderer.borrow_mut();
+			debug_renderer.add_line( &self.cursor_pos, &Vector2::new( 12.0, 34.0 ), 3.0 );
+		}
 
 
 //		dbg!( &wuc.mouse_pos );
@@ -234,6 +270,12 @@ impl FiiishApp {
 		if self.mixel_enabled {
 			self.mixel.update( wuc );
 		}
+
+		if let Some( debug_renderer ) = &*self.debug_renderer {
+			let mut debug_renderer = debug_renderer.borrow_mut();
+			debug_renderer.end_frame();
+		}
+
 	}
 
 	pub fn render( &mut self ) {
@@ -291,6 +333,11 @@ impl FiiishApp {
 				renderer.use_effect( EffectId::Textured as u16 );
 				renderer.use_texture( "cursor" );
 				renderer.render_textured_quad( &self.cursor_pos, &Vector2::new( 128.0, 128.0 ) );
+
+				if let Some( debug_renderer ) = &*self.debug_renderer {
+					let debug_renderer = debug_renderer.borrow();
+					debug_renderer.render( renderer );
+				}
 
 				renderer.end_frame();
 			},
