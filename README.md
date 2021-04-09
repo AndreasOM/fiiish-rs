@@ -19,7 +19,8 @@ All of the development is done live on Twitch.
 You can check the colletion here:
 [Fiiish! RS on Twitch](https://www.twitch.tv/collections/XxePhbQUchYSmA)
 
-I will add all videos to Youtube too - when I find the time.
+
+I will add all videos to [Youtube](https://www.youtube.com/playlist?list=PLenn25nziJHsBdDjIZw_f5sidQgru04PP) too - when I find the time.
 
 ## Progress
 ### April 2021
