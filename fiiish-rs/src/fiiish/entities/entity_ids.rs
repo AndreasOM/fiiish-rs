@@ -30,8 +30,9 @@ pub const ENTITYID_ANCHOR			:u32	= 0x6751117d;
 pub const ENTITYID_BLOCK1X1			:u32	= 0xe37ce24d;
 */
 
-#[derive(Debug,Eq,PartialEq,Hash)]
+#[derive(Debug,Copy,Clone,Eq,PartialEq,Hash)]
 pub enum EntityId {
+	NONE				= 0x00000000,
 	FISHSWIM			= 0x12345678, // :TODO: fix me to use correct CRC
 	BUBBLE				= 0xeb20f1f7,
 	PICKUPCOIN			= 0xe4c651aa,

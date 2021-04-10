@@ -3,7 +3,7 @@ use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
 use crate::fiiish::entities::EntityConfiguration;
-//use crate::fiiish::entities::EntityId;
+use crate::fiiish::entities::EntityId;
 use crate::fiiish::entities::EntityType;
 //use crate::fiiish::entities::entity_ids::*;
 
@@ -25,6 +25,7 @@ pub struct Obstacle {
 	animated_texture: AnimatedTexture,
 	layer: LayerId,
 	alive: bool,
+	entity_id: EntityId,
 }
 
 // rock-f 413 x 538
@@ -39,6 +40,7 @@ impl Obstacle {
 			animated_texture: AnimatedTexture::new(),
 			layer: LayerId::Obstacles,
 			alive: true,
+			entity_id: EntityId::NONE,
 		}
 	}
 
@@ -54,9 +56,21 @@ impl Obstacle {
 		&self.pos
 	}
 
+	pub fn size( &self ) -> &Vector2 {
+		&self.size
+	}
+
+	pub fn rotation( &self ) -> f32 {
+		self.rotation
+	}
+
 	pub fn radius( &self ) -> f32 {
 		self.size.length() * 0.5
-	}	
+	}
+
+	pub fn entity_id( &self ) -> EntityId {
+		self.entity_id
+	}
 }
 
 impl Entity for Obstacle {
@@ -69,6 +83,7 @@ impl Entity for Obstacle {
 	fn setup( &mut self, ec: &EntityConfiguration ) {
 		self.size = ec.size;
 		self.animated_texture.setup_from_config( &ec.animated_texture_configuration );
+		self.entity_id = ec.entity_id;
 	}
 
 	fn teardown( &mut self ){

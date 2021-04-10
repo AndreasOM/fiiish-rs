@@ -129,7 +129,7 @@ impl Game {
 
 	fn collide_with_obstacles( &mut self, euc: &EntityUpdateContext ) {
 		let fc = Color::from_rgba( 0.8, 0.8, 0.5, 0.8 );
-		let oc = Color::from_rgba( 0.2, 0.8, 0.2, 0.8 );
+		let oc = Color::from_rgba( 0.2, 0.5, 0.2, 0.4 );
 		let foc = Color::from_rgba( 0.5, 0.2, 0.8, 0.8 );
 
 		for f in self.fishes.iter_mut() {
@@ -169,6 +169,14 @@ impl Game {
 						}
 
 						if fo_collide {
+							if let Some( fish_shape ) = self.shape_cache.find( EntityId::FISHSWIM ) {
+								fish_shape.debug_render( &*self.debug_renderer, &Vector2::new( -64.0, -64.0 ), &fp, 0.0 );
+								if let Some( obstacle_shape ) = self.shape_cache.find( o.entity_id() ) {
+									let offset = o.size().scaled( -0.5 );
+									let rot = o.rotation();
+									obstacle_shape.debug_render( &*self.debug_renderer, &offset, &op, rot );
+								}
+							};
 							// :TODO: add precise detection here
 //							f.kill();
 						}
@@ -320,9 +328,6 @@ impl Game {
 			}
 		}
 
-		if let Some(shape) = &self.shape {
-			shape.debug_render( &*self.debug_renderer, &Vector2::new( -512.0-64.0, 0.0-64.0 ) ); // :TODO: where does this offset come from
-		}
 	}
 
 	pub fn render( &mut self, renderer: &mut Renderer) {

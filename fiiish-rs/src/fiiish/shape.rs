@@ -3,6 +3,8 @@ use std::cell::RefCell;
 use crate::DebugRenderer;
 
 use crate::math::Vector2;
+use crate::math::Matrix22;
+
 use crate::system::System;
 //use crate::system::filesystem_stream::FilesystemStream;
 
@@ -138,7 +140,7 @@ impl Shape {
 		true
 	}
 
-	pub fn debug_render( &self, debug_renderer: &Option < RefCell< DebugRenderer >  >, pos: &Vector2 ) {
+	pub fn debug_render( &self, debug_renderer: &Option < RefCell< DebugRenderer >  >, offset: &Vector2, pos: &Vector2, rotation: f32 ) {
 		if let Some( dr ) = debug_renderer {
 			let mut debug_renderer = dr.borrow_mut();
 			let color = Color::from_rgba( 0.9, 0.5, 0.5, 0.8 );
@@ -146,6 +148,14 @@ impl Shape {
 				for i in 0..ss.vertices.len() {
 					let v0 = ss.vertices[ i ];
 					let v1 = ss.vertices[ ( i+1 ) % ss.vertices.len() ];
+
+					let v0 = v0.add( &offset );
+					let v1 = v1.add( &offset );
+					
+					let mtx = Matrix22::z_rotation( rotation * 0.0174 );
+
+					let v0 = mtx.mul_vector2( &v0 );
+					let v1 = mtx.mul_vector2( &v1 );
 
 					let v0 = pos.add( &v0 );
 					let v1 = pos.add( &v1 );

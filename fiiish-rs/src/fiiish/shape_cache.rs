@@ -22,4 +22,8 @@ impl ShapeCache {
 		shape.load( system, name );
 		self.shapes.insert( entity_id, shape );
 	}
+
+	pub fn find( &self, entity_id: EntityId ) -> Option< &Shape > {
+		self.shapes.get( &entity_id )
+	}
 }

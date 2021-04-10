@@ -6,7 +6,6 @@
 
 ## TODO
 
-- [ ] Load shapes
 - [ ] Use shapes for collision detection
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
@@ -47,8 +46,10 @@
 
 ## DONE
 
+- [x] Visualise collision shapes
 - [x] Add cache for collision shapes
 - [x] Add pause to game (use keyboard 'P')
+- [x] Load shapes
 - [x] Move fish via mouse when paused for debugging
 - [x] Add collision between fish & obstacle bounding circles
 - [x] Add circles to the debug renderer
