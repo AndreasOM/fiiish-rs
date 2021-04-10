@@ -4,6 +4,7 @@ use std::cell::RefCell;
 use crate::math::Vector2;
 use crate::renderer::{
 //	AnimatedTexture,
+	Color,
 	Renderer,
 	Texture,
 };
@@ -106,28 +107,40 @@ impl Game {
 	}
 
 	fn collect_pickups( &mut self, euc: &EntityUpdateContext ) {
-		for e in self.entity_manager.iter_mut() {
-			if e.entity_type() == EntityType::Pickup {
-				if e.is_alive() {
-					let p: &mut Coin = match e.as_any_mut().downcast_mut::<Coin>() {
-						Some(p) => p,
-        				None => panic!("&e isn't a Coin!"),
-    				};
+		/*
+*/
+		for f in self.fishes.iter() {
+			if !f.is_alive() {
+				// dead fish don't collect coins
+				continue;
+			}
+			let pickup_range = 10.0;
+			let magnet_range = 200.0;
+			let fp = f.pos();
 
-//    				dbg!(&p);
-					let pp = *p.pos();
-					for f in self.fishes.iter() {
-						if !f.is_alive() {
-							// dead fish don't collect coins
-							continue;
-						}
-						let magnet_range = 200.0;
-						let fp = f.pos();
+			if let Some( debug_renderer ) = &*euc.debug_renderer {
+				let mut debug_renderer = debug_renderer.borrow_mut();
+				let color = Color::from_rgba( 0.9, 0.9, 0.1, 0.8 );
+				debug_renderer.add_circle( &fp, magnet_range, 5.0, &color );
+				debug_renderer.add_circle( &fp, pickup_range, 2.0, &color );
+			}
+
+
+			for e in self.entity_manager.iter_mut() {
+				if e.entity_type() == EntityType::Pickup {
+					if e.is_alive() {
+						let p: &mut Coin = match e.as_any_mut().downcast_mut::<Coin>() {
+							Some(p) => p,
+	        				None => panic!("&e isn't a Coin!"),
+	    				};
+
+	//    				dbg!(&p);
+						let pp = *p.pos();
 
 						let delta = pp.sub( &fp );
 						let dist = delta.length();
 //						dbg!(&dist);
-						if dist < 10.0 { // fish over pickup
+						if dist < pickup_range { // fish over pickup
 //							println!("Collected Pickup");
 							p.kill();
 						} else if dist < magnet_range {

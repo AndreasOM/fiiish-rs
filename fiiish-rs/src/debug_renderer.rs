@@ -1,4 +1,5 @@
 
+use crate::math::Matrix22;
 use crate::math::Vector2;
 
 use crate::renderer::{
@@ -64,7 +65,7 @@ impl DebugRenderer {
 //			println!("{} + {} = {}", l.start.y, vl.y, v2.y );
 
 			renderer.set_color( &l.color );
-			
+
 			let v0 = renderer.add_vertex( &v0 );
 			let v1 = renderer.add_vertex( &v1 );
 			let v2 = renderer.add_vertex( &v2 );
@@ -91,5 +92,31 @@ impl DebugRenderer {
 		self.add_line( &Vector2::new( bottom_right.x, top_left.y ), &Vector2::new( bottom_right.x, bottom_right.y ), width, color );
 		self.add_line( &Vector2::new( top_left.x, top_left.y ), &Vector2::new( bottom_right.x, top_left.y ), width, color );
 		self.add_line( &Vector2::new( top_left.x, bottom_right.y ), &Vector2::new( bottom_right.x, bottom_right.y ), width, color );
+	}
+	pub fn add_circle( &mut self, pos: &Vector2, radius: f32, width: f32, color: &Color ) {
+		let mut vr = Vector2::new( radius, 0.0 );
+
+		// we could add some code to decide on the number of segments here
+		let n = 24;
+		let r_step = 360.0 / n as f32;
+		// rotate
+		let mtx = Matrix22::z_rotation( r_step * 0.01745329252); // DEG to RAD
+
+
+		let mut vertices = Vec::new();
+
+		for _ in 0..n {
+			let v = pos.add( &vr );
+			vertices.push( v );
+
+			vr = mtx.mul_vector2( &vr );
+		}
+
+		for i in 0..vertices.len() {
+			let v0 = vertices[ i ];
+			let v1 = vertices[ ( i + 1 ) % vertices.len() ];
+			self.add_line( &v0, &v1, width, color );
+		} 
+
 	}
 }
