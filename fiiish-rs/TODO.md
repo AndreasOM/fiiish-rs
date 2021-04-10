@@ -3,6 +3,7 @@
 
 ## In Progress
 
+- [ ] Add circles to the debug renderer
 
 ## TODO
 
@@ -45,6 +46,7 @@
 
 ## DONE
 
+- [x] Add color to debug renderer
 - [x] Add debug renderner, lines, and frames
 - [x] Add Zone progression
 - [x] Add Zone management

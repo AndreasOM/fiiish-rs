@@ -5,9 +5,11 @@ use crate::fiiish::entities::Entity;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::entities::EntityType;
+use crate::math::Matrix22;
 use crate::math::Vector2;
 use crate::renderer::{
 	AnimatedTexture,
+	Color,
 	Renderer,
 };
 
@@ -260,6 +262,21 @@ impl Entity for Fish {
 			PlayerState::Dying => self.update_dying( euc ),
 			_ => {},
 		}
+
+		if let Some( debug_renderer ) = &*euc.debug_renderer {
+			let mut debug_renderer = debug_renderer.borrow_mut();
+			let color = Color::from_rgba( 0.8, 0.6, 0.3, 0.8 );
+			debug_renderer.add_line( &self.pos, &Vector2::zero(), 1.0, &color );
+			debug_renderer.add_frame( &self.pos, &self.size, 5.0, &color );
+			let target = &Vector2::new( 250.0, 0.0 );
+			// rotate
+			let mtx = Matrix22::z_rotation( self.angle * 0.01745329252); // DEG to RAD
+			let target = mtx.mul_vector2( &target );
+
+			let target = self.pos.add( &target );
+			debug_renderer.add_line( &self.pos, &target, 3.0, &color );
+		}
+
 	}
 
 	fn render( &mut self, renderer: &mut Renderer ) {

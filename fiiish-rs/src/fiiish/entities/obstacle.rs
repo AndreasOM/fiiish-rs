@@ -11,6 +11,7 @@ use crate::fiiish::EntityUpdateContext;
 use crate::math::Vector2;
 use crate::renderer::{
 	AnimatedTexture,
+	Color,
 	Renderer
 };
 
@@ -76,8 +77,9 @@ impl Entity for Obstacle {
 
 		if let Some( debug_renderer ) = &*euc.debug_renderer {
 			let mut debug_renderer = debug_renderer.borrow_mut();
-			debug_renderer.add_line( &self.pos, &Vector2::zero(), 1.0 );
-			debug_renderer.add_frame( &self.pos, &self.size, 2.0 );
+			let color = Color::from_rgba( 0.1, 0.5, 0.1, 0.8 );
+			debug_renderer.add_line( &self.pos, &Vector2::zero(), 1.0, &color );
+			debug_renderer.add_frame( &self.pos, &self.size, 5.0, &color );
 		}
 
 	}

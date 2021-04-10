@@ -13,7 +13,7 @@ use crate::window::Window;
 
 //use material::Material;
 
-#[derive(Debug)]
+#[derive(Debug,Copy,Clone)]
 pub struct Color {
 	pub r: f32,
 	pub g: f32,
@@ -22,6 +22,15 @@ pub struct Color {
 }
 
 impl Color {
+	pub fn white() -> Self {
+		Self {
+			r: 1.0,
+			g: 1.0,
+			b: 1.0,
+			a: 1.0,
+		}
+	}
+
 	pub fn red() -> Self {
 		Self {
 			r: 1.0,
@@ -99,6 +108,13 @@ impl Vertex {
 			color: [ 1.0, 1.0, 1.0, 1.0 ],
 		}
 	}
+	pub fn from_pos_with_tex_coords_and_color( pos: &Vector2, tex_coords: &Vector2, color: &Color ) -> Self {
+		Self {
+			pos: [ pos.x, pos.y, 0.0 ],
+			tex_coords: [ tex_coords.x, tex_coords.y ],
+			color: [ color.r, color.g, color.b, color.a ],
+		}
+	}
 }
 
 const MAX_TEXTURE_CHANNELS: usize = 4;
@@ -116,6 +132,7 @@ pub struct Renderer {
 	active_textures: [Option< u16 >; MAX_TEXTURE_CHANNELS],
 
 	tex_coords: Vector2,
+	color: Color,
 
 	mvp_matrix: Matrix44,
 	tex_matrix: Matrix32,
@@ -139,6 +156,7 @@ impl Renderer {
 			active_textures: [None; MAX_TEXTURE_CHANNELS],
 
 			tex_coords: Vector2::zero(),
+			color: Color::white(),
 			mvp_matrix: Matrix44::identity(),
 			tex_matrix: Matrix32::identity(),
 
@@ -225,6 +243,8 @@ impl Renderer {
 //			gl::Scissor( self.pos.x as i32, self.pos.y as i32, self.size.x as i32, self.size.y as i32 );
 //			gl::Enable( gl::SCISSOR_TEST );
 		}
+
+		self.color = Color::white();
 	}
 
 	pub fn end_frame( &mut self ) {
@@ -432,11 +452,16 @@ impl Renderer {
 	}
 
 
+	pub fn set_color( &mut self, color: &Color ) {
+		self.color = *color;
+	}
+
 	pub fn set_tex_coords( &mut self, tex_coords: &Vector2 ) {
 		self.tex_coords = *tex_coords;
 	}
+
 	pub fn add_vertex( &mut self, pos: &Vector2 ) -> u32 {
-		let v = Vertex::from_pos_with_tex_coords( pos, &self.tex_coords );
+		let v = Vertex::from_pos_with_tex_coords_and_color( pos, &self.tex_coords, &self.color );
 		self.vertices.push( v );
 		self.vertices.len() as u32 - 1
 	}

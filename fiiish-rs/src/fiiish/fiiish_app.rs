@@ -153,6 +153,7 @@ impl FiiishApp {
 
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Default as u16  , "Default"  , "default_vs.glsl", "default_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::White as u16    , "White"    , "default_vs.glsl", "white_fs.glsl" ) );
+		renderer.register_effect( Effect::create( &mut self.system, EffectId::Colored as u16    , "Colored"    , "colored_vs.glsl", "colored_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Textured as u16 , "Textured" , "textured_vs.glsl", "textured_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Background as u16 , "Background" , "background_vs.glsl", "background_fs.glsl" ) );
 
@@ -197,7 +198,7 @@ impl FiiishApp {
 				self.debug_renderer = Rc::new( Some( RefCell::new(
 											DebugRenderer::new(
 												LayerId::DebugRenderer as u8,
-												EffectId::White as u16
+												EffectId::Colored as u16
 											)
 										) ) );
 				self.game.enable_debug_renderer( &self.debug_renderer );
@@ -233,7 +234,7 @@ impl FiiishApp {
 
 		if let Some( debug_renderer ) = &*self.debug_renderer {
 			let mut debug_renderer = debug_renderer.borrow_mut();
-			debug_renderer.add_line( &self.cursor_pos, &Vector2::new( 12.0, 34.0 ), 3.0 );
+			debug_renderer.add_line( &self.cursor_pos, &Vector2::zero(), 3.0, &Color::white() );
 		}
 
 

@@ -177,6 +177,7 @@ impl Material {
 
 			let attrib_pos_index = 0;
 			let attrib_tex_coords_index = 1;
+			let attrib_color_index = 2;
 
 			gl::EnableVertexAttribArray( attrib_pos_index );
 			gl::VertexAttribPointer( attrib_pos_index, 3, gl::FLOAT, gl::FALSE, vertex_size as i32, 0 as *const _ );
@@ -184,6 +185,10 @@ impl Material {
 			// :TODO: only enable when needed
 			gl::EnableVertexAttribArray( attrib_tex_coords_index );
 			gl::VertexAttribPointer( attrib_tex_coords_index, 2, gl::FLOAT, gl::FALSE, vertex_size as i32, ( 3 * 4 ) as *const _ );
+
+			// :TODO: only enable when needed
+			gl::EnableVertexAttribArray( attrib_color_index );
+			gl::VertexAttribPointer( attrib_color_index, 4, gl::FLOAT, gl::FALSE, vertex_size as i32, ( ( 3+2 ) * 4 ) as *const _ );
 
 			effect.r#use();
 			// :HACK:
