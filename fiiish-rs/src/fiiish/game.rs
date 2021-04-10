@@ -106,6 +106,57 @@ impl Game {
 		}
 	}
 
+	fn collide_with_obstacles( &mut self, euc: &EntityUpdateContext ) {
+		let fc = Color::from_rgba( 0.8, 0.8, 0.5, 0.8 );
+		let oc = Color::from_rgba( 0.2, 0.8, 0.2, 0.8 );
+		let foc = Color::from_rgba( 0.5, 0.2, 0.8, 0.8 );
+
+		for f in self.fishes.iter_mut() {
+			if !f.is_alive() {
+				// dead fish don't collect coins
+				continue;
+			}
+			let fp = f.pos().clone();
+			let fr = f.radius();
+			if let Some( debug_renderer ) = &*euc.debug_renderer {
+				let mut debug_renderer = debug_renderer.borrow_mut();
+				debug_renderer.add_circle( &fp, fr, 5.0, &fc );
+			}
+
+			for e in self.entity_manager.iter_mut() {
+				if e.entity_type() == EntityType::Obstacle {
+					if e.is_alive() {
+						let o: &mut Obstacle = match e.as_any_mut().downcast_mut::<Obstacle>() {
+							Some(o) => o,
+	        				None => panic!("{:?} isn't a Obstacle!", &e ),
+	    				};
+						let op = o.pos();
+						let or = o.radius();
+
+						let fo = op.sub( &fp );
+						let fod = fo.length();
+						let fo_collide = fod < fr + or;
+
+						if let Some( debug_renderer ) = &*euc.debug_renderer {
+							let mut debug_renderer = debug_renderer.borrow_mut();
+							if !fo_collide {
+								debug_renderer.add_circle( &op, or, 5.0, &oc );
+							} else {
+								debug_renderer.add_circle( &op, or, 5.0, &foc );
+								debug_renderer.add_line( &fp, &fp.add( &fo ), 3.0, &foc );
+							}
+						}
+
+						if fo_collide {
+							// :TODO: add precise detection here
+//							f.kill();
+						}
+	    			}
+	    		}
+	    	}
+		}
+	}
+
 	fn collect_pickups( &mut self, euc: &EntityUpdateContext ) {
 		/*
 */
@@ -228,6 +279,7 @@ impl Game {
 	//			println!("Reached end of zone, spawning new zone");
 				self.zone_manager.next_zone( &self.entity_configuration_manager, &mut self.entity_manager, &Vector2::new(1500.0,0.0) );
 			}
+			self.collide_with_obstacles( &euc );
 			self.collect_pickups( &euc );
 		}
 	}

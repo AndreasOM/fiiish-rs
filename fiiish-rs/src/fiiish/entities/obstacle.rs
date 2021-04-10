@@ -49,6 +49,14 @@ impl Obstacle {
 	pub fn set_layer( &mut self, layer: LayerId ) {
 		self.layer = layer;
 	}
+
+	pub fn pos( &self ) -> &Vector2 {
+		&self.pos
+	}
+
+	pub fn radius( &self ) -> f32 {
+		self.size.length() * 0.5
+	}	
 }
 
 impl Entity for Obstacle {
@@ -80,8 +88,8 @@ impl Entity for Obstacle {
 			let color = Color::from_rgba( 0.1, 0.5, 0.1, 0.8 );
 			debug_renderer.add_line( &self.pos, &Vector2::zero(), 1.0, &color );
 			debug_renderer.add_frame( &self.pos, &self.size, 5.0, &color );
-			let radius = self.size.length() * 0.5;
-			debug_renderer.add_circle( &self.pos, radius, 5.0, &color );
+//			let radius = self.size.length() * 0.5;
+//			debug_renderer.add_circle( &self.pos, radius, 5.0, &color );
 		}
 
 	}

@@ -4,8 +4,11 @@
 ## In Progress
 
 
+
 ## TODO
 
+- [ ] Load shapes
+- [ ] Use shapes for collision detection
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
 - [ ] Add fadeout for entities
@@ -45,6 +48,7 @@
 
 ## DONE
 
+- [x] Add collision between fish & obstacle bounding circles
 - [x] Add circles to the debug renderer
 - [x] Add color to debug renderer
 - [x] Add debug renderner, lines, and frames

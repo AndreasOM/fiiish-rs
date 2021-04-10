@@ -233,6 +233,10 @@ impl Fish {
 		&self.pos
 	}
 
+	pub fn radius( &self ) -> f32 {
+		self.size.length() * 0.5
+	}
+
 }
 
 impl Entity for Fish {
@@ -275,6 +279,9 @@ impl Entity for Fish {
 
 			let target = self.pos.add( &target );
 			debug_renderer.add_line( &self.pos, &target, 3.0, &color );
+
+//			let radius = self.size.length() * 0.5;
+//			debug_renderer.add_circle( &self.pos, radius, 5.0, &color );
 		}
 
 	}
