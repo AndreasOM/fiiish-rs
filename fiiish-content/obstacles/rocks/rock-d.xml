@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- created with http://www.physicseditor.de -->
+<bodydef version="1.0">
+	<bodies>
+
+		<body name="rock-d">
+            <anchorpoint>0.0000,0.0000</anchorpoint>
+			<fixtures>
+
+				<fixture>
+					<density>2</density>
+					<friction>0</friction>
+					<restitution>0</restitution>
+					<filter_categoryBits>1</filter_categoryBits>
+					<filter_groupIndex>0</filter_groupIndex>
+					<filter_maskBits>65535</filter_maskBits>
+					<fixture_type>POLYGON</fixture_type>
+
+
+					<polygons>
+
+                        <polygon>  9.0000, 0.0000  ,  189.0000, 0.0000  ,  183.0000, 107.0000  ,  156.0000, 195.0000  ,  16.0000, 172.0000 </polygon>
+
+                        <polygon>  89.0000, 423.0000  ,  61.0000, 371.0000  ,  45.0000, 217.0000  ,  107.0000, 355.0000 </polygon>
+
+                        <polygon>  156.0000, 195.0000  ,  142.0000, 290.0000  ,  124.0000, 335.0000  ,  16.0000, 172.0000 </polygon>
+
+                        <polygon>  107.0000, 355.0000  ,  45.0000, 217.0000  ,  124.0000, 335.0000 </polygon>
+
+					</polygons>
+
+				</fixture>
+
+			</fixtures>
+		</body>
+
+	</bodies>
+	<metadata>
+		<format>1</format>
+		<ptm_ratio>32</ptm_ratio>
+	</metadata>
+</bodydef>
+
+
+

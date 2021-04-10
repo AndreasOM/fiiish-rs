@@ -10,6 +10,7 @@ use crate::renderer::{
 };
 use crate::system::System;
 use crate::window_update_context::WindowUpdateContext;
+use crate::fiiish::app_update_context::AppUpdateContext;
 
 use crate::fiiish::entities::{
 	Background,
@@ -25,6 +26,8 @@ use crate::fiiish::entities::{
 };
 use crate::fiiish::EntityUpdateContext;
 //use crate::fiiish::layer_ids::LayerId;
+use crate::fiiish::Shape;
+use crate::fiiish::ShapeCache;
 use crate::fiiish::ZoneManager;
 
 use crate::DebugRenderer;
@@ -43,7 +46,10 @@ pub struct Game {
 	entity_manager: EntityManager,
 	entity_configuration_manager: EntityConfigurationManager,
 	zone_manager: ZoneManager,
+	shape: Option< Shape >, // :HACK:
+	shape_cache: ShapeCache,
 	state: GameState,
+	is_paused: bool,
 
 	debug_renderer: Rc < Option < RefCell< DebugRenderer >  > >,
 }
@@ -55,7 +61,10 @@ impl Game {
 			entity_manager:	 	 	 	 	EntityManager::new(),
 			entity_configuration_manager:	EntityConfigurationManager::new(),
 			zone_manager:					ZoneManager::new(),
+			shape:							None,
+			shape_cache:					ShapeCache::new(),
 			state:							GameState::WaitForStart,
+			is_paused:						false,
 			debug_renderer:					Rc::new( None ),
 		}
 	}
@@ -81,6 +90,18 @@ impl Game {
 
 		renderer.register_texture( Texture::create( system, "background" ) );
 		renderer.register_texture( Texture::create( system, "background_grad" ) );
+
+		self.shape_cache.load_shape( system, "fish_swim", EntityId::FISHSWIM );
+		self.shape_cache.load_shape( system, "rock-a", EntityId::ROCKA );
+		self.shape_cache.load_shape( system, "rock-b", EntityId::ROCKB );
+		self.shape_cache.load_shape( system, "rock-c", EntityId::ROCKC );
+		self.shape_cache.load_shape( system, "rock-d", EntityId::ROCKD );
+		self.shape_cache.load_shape( system, "rock-e", EntityId::ROCKE );
+		self.shape_cache.load_shape( system, "rock-f", EntityId::ROCKF );
+
+		let mut shape = Shape::new();
+		shape.load( system, "fish_swim" );
+		self.shape = Some( shape );
 
 		self.entity_manager.setup();
 
@@ -208,7 +229,7 @@ impl Game {
 //		todo!("die");
 	}
 	// :TODO: decide if we need the full WindowUpdateContext here
-	pub fn update( &mut self, wuc: &mut WindowUpdateContext ) {
+	pub fn update( &mut self, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
 
 		let mut fish_movement = Vector2::zero();
 		for p in self.fishes.iter_mut() {
@@ -243,7 +264,6 @@ impl Game {
 		}
 
 
-
 		let mut euc = EntityUpdateContext::new()
 						.set_time_step( wuc.time_step );
 
@@ -263,24 +283,45 @@ impl Game {
 
 		}
 
-		for p in self.fishes.iter_mut() {
-			p.update( &mut euc );
+		if wuc.was_key_pressed( 'p' as u8 ) {
+			self.is_paused = !self.is_paused;
 		}
 
-		for e in self.entity_manager.iter_mut() {
-			e.update( &mut euc );
-		}
-
-		self.entity_manager.remove_dead();
-
-		if self.state == GameState::Playing {
-			self.zone_manager.update( &mut euc );
-			if self.zone_manager.is_zone_done() {
-	//			println!("Reached end of zone, spawning new zone");
-				self.zone_manager.next_zone( &self.entity_configuration_manager, &mut self.entity_manager, &Vector2::new(1500.0,0.0) );
+		if !self.is_paused {
+			for p in self.fishes.iter_mut() {
+				p.update( &mut euc );
 			}
+
+			for e in self.entity_manager.iter_mut() {
+				e.update( &mut euc );
+			}
+
+			self.entity_manager.remove_dead();
+
+			if self.state == GameState::Playing {
+				self.zone_manager.update( &mut euc );
+				if self.zone_manager.is_zone_done() {
+		//			println!("Reached end of zone, spawning new zone");
+					self.zone_manager.next_zone( &self.entity_configuration_manager, &mut self.entity_manager, &Vector2::new(1500.0,0.0) );
+				}
+				self.collide_with_obstacles( &euc );
+				self.collect_pickups( &euc );
+			}
+		} else {
+			// :HACK: for visualising collisions even when paused
 			self.collide_with_obstacles( &euc );
-			self.collect_pickups( &euc );
+			if wuc.mouse_buttons[ 0 ] {
+				let pos = auc.cursor_pos();
+				for p in self.fishes.iter_mut() {
+					if p.name() == "fish" {
+						p.set_pos( &pos );
+					}
+				}
+			}
+		}
+
+		if let Some(shape) = &self.shape {
+			shape.debug_render( &*self.debug_renderer, &Vector2::new( -512.0-64.0, 0.0-64.0 ) ); // :TODO: where does this offset come from
 		}
 	}
 

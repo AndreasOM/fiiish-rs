@@ -229,6 +229,10 @@ impl Fish {
 
 
 
+	pub fn set_pos( &mut self, pos: &Vector2 ) {
+		self.pos = *pos;
+	}
+	
 	pub fn pos( &self ) -> &Vector2 {
 		&self.pos
 	}

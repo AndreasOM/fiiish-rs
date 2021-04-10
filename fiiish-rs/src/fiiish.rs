@@ -9,6 +9,10 @@ mod entity_update_context;
 pub mod fiiish_app;
 pub mod game;
 
+mod shape;
+	pub use shape::Shape as Shape;
+mod shape_cache;
+	pub use shape_cache::ShapeCache as ShapeCache;
 mod zone;
 	pub use zone::Zone as Zone;
 mod zone_manager;

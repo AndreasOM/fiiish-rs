@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- created with http://www.physicseditor.de -->
+<bodydef version="1.0">
+	<bodies>
+
+		<body name="fish_swim-ALL_MUL">
+            <anchorpoint>0.0000,0.0000</anchorpoint>
+			<fixtures>
+
+				<fixture>
+					<density>2</density>
+					<friction>0</friction>
+					<restitution>0</restitution>
+					<filter_categoryBits>1</filter_categoryBits>
+					<filter_groupIndex>0</filter_groupIndex>
+					<filter_maskBits>65535</filter_maskBits>
+					<fixture_type>POLYGON</fixture_type>
+
+
+					<polygons>
+
+                        <polygon>  68.0000, 108.0000  ,  79.0000, 85.0000  ,  121.0000, 67.0000  ,  102.0000, 99.0000 </polygon>
+
+                        <polygon>  125.0000, 49.0000  ,  121.0000, 67.0000  ,  79.0000, 85.0000  ,  45.0000, 88.0000  ,  52.0000, 75.0000  ,  85.9206, 48.0144  ,  114.0000, 44.0000 </polygon>
+
+                        <polygon>  45.0000, 88.0000  ,  12.0000, 74.0000  ,  12.0000, 61.0000  ,  52.0000, 75.0000 </polygon>
+
+					</polygons>
+
+				</fixture>
+
+			</fixtures>
+		</body>
+
+	</bodies>
+	<metadata>
+		<format>1</format>
+		<ptm_ratio>32</ptm_ratio>
+	</metadata>
+</bodydef>
+
+
+
