@@ -11,6 +11,7 @@ pub mod game;
 
 mod shape;
 	pub use shape::Shape as Shape;
+	pub use shape::SubShape as SubShape;
 mod shape_cache;
 	pub use shape_cache::ShapeCache as ShapeCache;
 mod zone;

@@ -37,6 +37,13 @@ impl Vector2 {
 		}
 	}
 
+	pub fn cross( &self, other: &Vector2 ) -> Self {
+		Self {
+			x: self.y*other.x - self.x*other.y,
+			y: self.x*other.y - self.y*other.x,
+		}	
+	}
+
 	pub fn scaled_vector2( &self, factor: &Vector2 ) -> Self {
 		Self {
 			x: self.x * factor.x,

@@ -26,11 +26,15 @@ use crate::fiiish::entities::{
 };
 use crate::fiiish::EntityUpdateContext;
 //use crate::fiiish::layer_ids::LayerId;
-use crate::fiiish::Shape;
+use crate::fiiish::{ Shape, SubShape };
 use crate::fiiish::ShapeCache;
 use crate::fiiish::ZoneManager;
 
 use crate::DebugRenderer;
+use crate::{
+	OverlapChecker,
+	OverlapCheckerItem,
+};
 
 #[derive(Debug,Copy,Clone,Eq,PartialEq)]
 pub enum GameState {
@@ -64,7 +68,7 @@ impl Game {
 			shape:							None,
 			shape_cache:					ShapeCache::new(),
 			state:							GameState::WaitForStart,
-			is_paused:						false,
+			is_paused:						!false,
 			debug_renderer:					Rc::new( None ),
 		}
 	}
@@ -118,6 +122,11 @@ impl Game {
 //		b.setup( "backround" );
 		self.entity_manager.add( Box::new( b ) );
 
+		let mut test_rock = Obstacle::new( &Vector2::zero(), EntityId::ROCKF as u32 );
+		let test_rock_config = self.entity_configuration_manager.get_config( EntityId::ROCKF as u32 );
+		test_rock.setup( &test_rock_config );
+		test_rock.set_rotation( 30.0 );
+		self.entity_manager.add( Box::new( test_rock ) );
 	}
 
 	pub fn teardown( &mut self ) {
@@ -126,6 +135,7 @@ impl Game {
 			p.teardown( );
 		}
 	}
+
 
 	fn collide_with_obstacles( &mut self, euc: &EntityUpdateContext ) {
 		let fc = Color::from_rgba( 0.8, 0.8, 0.5, 0.8 );
@@ -175,6 +185,36 @@ impl Game {
 									let offset = o.size().scaled( -0.5 );
 									let rot = o.rotation();
 									obstacle_shape.debug_render( &*self.debug_renderer, &offset, &op, rot );
+									let a = OverlapCheckerItem {
+										shape: &fish_shape,
+										pos: &fp,
+										offset: &Vector2::new( -64.0, -64.0 ),
+										rotation: 0.0,
+									};
+									let a = OverlapCheckerItem {
+										shape: &fish_shape,
+										pos: &fp,
+										offset: &Vector2::new( -64.0, -64.0 ),
+										rotation: 0.0,
+									};
+									let b = OverlapCheckerItem {
+										shape: &obstacle_shape,
+										pos: &op,
+										offset: &offset,
+										rotation: rot,
+									};
+
+									OverlapChecker::do_shapes_overlap( &a, &b, &*self.debug_renderer );
+									/*
+									// test all sub-shapes against all sub-shapes
+									for a in obstacle_shape.sub_shape_iter() {
+										for b in fish_shape.sub_shape_iter() {
+											OverlapChecker::do_sub_shapes_overlap( &op, &a, &fp, &b, &*self.debug_renderer );
+										}
+									}
+									*/
+									// get normal and distance for plane
+
 								}
 							};
 							// :TODO: add precise detection here

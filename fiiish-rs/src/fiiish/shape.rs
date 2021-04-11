@@ -140,6 +140,10 @@ impl Shape {
 		true
 	}
 
+	pub fn sub_shape_iter( &self ) -> std::slice::Iter<'_, SubShape> {
+		self.sub_shapes.iter()
+	}
+
 	pub fn debug_render( &self, debug_renderer: &Option < RefCell< DebugRenderer >  >, offset: &Vector2, pos: &Vector2, rotation: f32 ) {
 		if let Some( dr ) = debug_renderer {
 			let mut debug_renderer = dr.borrow_mut();

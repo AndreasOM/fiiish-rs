@@ -3,10 +3,10 @@
 
 ## In Progress
 
+- [ ] Use shapes for collision detection
 
 ## TODO
 
-- [ ] Use shapes for collision detection
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
 - [ ] Add fadeout for entities
