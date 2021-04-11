@@ -195,7 +195,7 @@ impl Game {
 										shape: &fish_shape,
 										pos: &fp,
 										offset: &Vector2::new( -64.0, -64.0 ),
-										rotation: 0.0,
+										rotation: f.rotation(),
 									};
 									let b = OverlapCheckerItem {
 										shape: &obstacle_shape,
@@ -204,21 +204,11 @@ impl Game {
 										rotation: rot,
 									};
 
-									OverlapChecker::do_shapes_overlap( &a, &b, &*self.debug_renderer );
-									/*
-									// test all sub-shapes against all sub-shapes
-									for a in obstacle_shape.sub_shape_iter() {
-										for b in fish_shape.sub_shape_iter() {
-											OverlapChecker::do_sub_shapes_overlap( &op, &a, &fp, &b, &*self.debug_renderer );
-										}
+									if OverlapChecker::do_shapes_overlap( &a, &b, &*self.debug_renderer ) {
+//										f.kill();
 									}
-									*/
-									// get normal and distance for plane
-
 								}
 							};
-							// :TODO: add precise detection here
-//							f.kill();
 						}
 	    			}
 	    		}

@@ -237,6 +237,10 @@ impl Fish {
 		&self.pos
 	}
 
+	pub fn rotation( &self ) -> f32 {
+		self.angle
+	}
+	
 	pub fn radius( &self ) -> f32 {
 		self.size.length() * 0.5
 	}

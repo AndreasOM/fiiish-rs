@@ -73,75 +73,90 @@ impl OverlapChecker {
 		segments_a		
 	}
 
-	fn do_sub_shapes_overlap( a: &OverlapCheckerSubItem, b: &OverlapCheckerSubItem, debug_renderer: &Option < RefCell< DebugRenderer >  > ) -> bool {
-		let segments_a = OverlapChecker::get_segments( &a );
-		let segments_b = OverlapChecker::get_segments( &b );
+	fn get_side( s: &Vector2, e: &Vector2, p: &Vector2, debug_renderer: &Option < RefCell< DebugRenderer >  > ) -> Side {
+		let sv = e.sub( &s );
+		let sp = p.sub( &s );
 
-		let color_l = Color::green();
-		let color_r = Color::red();
-
+		let cp = sp.cross( &sv );
+		let is_left = cp.x > 0.0;
 		if let Some( debug_renderer ) = debug_renderer {
 			let mut debug_renderer = debug_renderer.borrow_mut();
+			let color_l = Color::green();
+			let color_r = Color::red();
+
 			let color = Color::green();
 			let mut color_dim = color;
 			color_dim.a *= 0.25;
 
-			let mut n = 0;
-			let mut any_inside = false;
+			let off = s;
 
-			for sa in segments_a.iter() {
-				let p = sa.start;
-				let mut last_side = Side::None;
-
-				for sb in segments_b.iter() {
-					// check if p is left or right of sb
-					let sv = sb.end.sub( &sb.start );
-					let sp = p.sub( &sb.start );
-
-					let cp = sp.cross( &sv );
-					let is_left = cp.x > 0.0;
-
-					if is_left && last_side == Side::Right {
-						any_inside = true;
-//						break;
-					} else if !is_left && last_side == Side::Left {
-						any_inside = true;
-//						break;
-					}
-
-					last_side = if is_left { Side::Left } else { Side::Right };
-
-					if n < 5 {
-						let off = Vector2::new( 350.0, 0.0 ).scaled( n as f32 - 2.5 );
-
-						debug_renderer.add_line( &Vector2::zero().add( &off ), &sv.add( &off ), 5.0, &color );
-						if is_left {
-							debug_renderer.add_line( &Vector2::zero().add( &off ), &sp.add( &off ), 5.0, &color_l );
-						} else {
-							debug_renderer.add_line( &Vector2::zero().add( &off ), &sp.add( &off ), 5.0, &color_r );							
-						}
-						debug_renderer.add_line( &sb.end, &sv.add( &off ), 1.0, &color_dim );
-					}
-
-					n += 1;
-				}
-			}
-
-			let result_color = if any_inside {
-				Color::from_rgba( 0.8, 0.2, 0.8, 0.5 )
+			debug_renderer.add_line( &Vector2::zero().add( &off ), &sv.add( &off ), 5.0, &color );
+			if is_left {
+				debug_renderer.add_line( &Vector2::zero().add( &off ), &sp.add( &off ), 5.0, &color_l );
 			} else {
-				Color::from_rgba( 0.2, 0.8, 0.2, 0.5 )
-			};
-
-			for s in segments_a.iter() {
-				debug_renderer.add_line( &s.start, &s.end, 2.0, &result_color );
+				debug_renderer.add_line( &Vector2::zero().add( &off ), &sp.add( &off ), 5.0, &color_r );							
 			}
-			for s in segments_b.iter() {
-				debug_renderer.add_line( &s.start, &s.end, 2.0, &result_color );
+			debug_renderer.add_line( &e, &sv.add( &off ), 1.0, &color_dim );
+			debug_renderer.add_line( &p, &sv.add( &off ), 1.0, &color_dim );
+		}
+
+		if is_left { Side::Left } else { Side::Right }
+	}
+
+	// :TODO: fix name to "is any point in a on the same side of all segments in b"" ... or something like that
+	fn any_points_in_polygon( points_a: &Vec< Segment >, polygon_b: &Vec< Segment >, debug_renderer: &Option < RefCell< DebugRenderer >  > ) -> bool {
+		let mut any_inside = false;
+
+		for sa in points_a.iter() {
+			let p = sa.start;
+			let mut last_side = Side::None;
+
+			let mut all_same_side = true;
+			for sb in polygon_b.iter() {
+				let side = OverlapChecker::get_side( &sb.start, &sb.end, &p, &None /*debug_renderer*/ );
+				if last_side != Side::None {
+					if last_side != side {
+						all_same_side = false;
+						// break;
+					}
+				};
+				last_side = side;
+			}
+			if all_same_side {
+				any_inside = true;
 			}
 		}
 
-		false
+		any_inside
+	}
+
+	fn do_sub_shapes_overlap( a: &OverlapCheckerSubItem, b: &OverlapCheckerSubItem, debug_renderer: &Option < RefCell< DebugRenderer >  > ) -> bool {
+		let segments_a = OverlapChecker::get_segments( &a );
+		let segments_b = OverlapChecker::get_segments( &b );
+
+		let any_inside = OverlapChecker::any_points_in_polygon( &segments_a, &segments_b, debug_renderer )
+							|| OverlapChecker::any_points_in_polygon( &segments_b, &segments_a, debug_renderer );
+
+		if let Some( debug_renderer ) = debug_renderer {
+			let mut debug_renderer = debug_renderer.borrow_mut();
+
+			let result_color = if any_inside {
+				Color::from_rgba( 0.8, 0.2, 0.8, 0.5 )
+//				Color::white()
+			} else {
+				Color::from_rgba( 0.2, 0.8, 0.2, 0.5 )
+//				Color::blue()
+			};
+
+			for s in segments_a.iter() {
+				debug_renderer.add_line( &s.start, &s.end, 15.0, &result_color );
+			}
+			for s in segments_b.iter() {
+				debug_renderer.add_line( &s.start, &s.end, 15.0, &result_color );
+			}
+		}
+
+		any_inside
 	}
 
 	pub fn do_shapes_overlap( a: &OverlapCheckerItem, b: &OverlapCheckerItem, debug_renderer: &Option < RefCell< DebugRenderer >  > ) -> bool {
@@ -162,7 +177,7 @@ impl OverlapChecker {
 					offset: b.offset,
 					rotation: b.rotation,
 				};
-				let maybe_dr = if n < 1 {
+				let maybe_dr = if n < 100 {
 					debug_renderer
 				} else {
 					&None
@@ -170,13 +185,17 @@ impl OverlapChecker {
 
 				if OverlapChecker::do_sub_shapes_overlap( &sa, &sb, maybe_dr ) {
 					any_overlap = true;
+					break;
 					// :TODO: we could early out here
 				}
 
 				n += 1;
-			}			
+			}
+			if any_overlap {
+				break;
+			}
 		}
-		false
+		any_overlap
 	}
 
 }

@@ -3,7 +3,6 @@
 
 ## In Progress
 
-- [ ] Use shapes for collision detection
 
 ## TODO
 
@@ -46,6 +45,7 @@
 
 ## DONE
 
+- [x] Use shapes for collision detection
 - [x] Visualise collision shapes
 - [x] Add cache for collision shapes
 - [x] Add pause to game (use keyboard 'P')
