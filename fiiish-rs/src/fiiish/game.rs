@@ -26,7 +26,7 @@ use crate::fiiish::entities::{
 };
 use crate::fiiish::EntityUpdateContext;
 //use crate::fiiish::layer_ids::LayerId;
-use crate::fiiish::{ Shape, SubShape };
+//use crate::fiiish::{ Shape, SubShape };
 use crate::fiiish::ShapeCache;
 use crate::fiiish::ZoneManager;
 
@@ -50,7 +50,6 @@ pub struct Game {
 	entity_manager: EntityManager,
 	entity_configuration_manager: EntityConfigurationManager,
 	zone_manager: ZoneManager,
-	shape: Option< Shape >, // :HACK:
 	shape_cache: ShapeCache,
 	state: GameState,
 	is_paused: bool,
@@ -65,10 +64,9 @@ impl Game {
 			entity_manager:	 	 	 	 	EntityManager::new(),
 			entity_configuration_manager:	EntityConfigurationManager::new(),
 			zone_manager:					ZoneManager::new(),
-			shape:							None,
 			shape_cache:					ShapeCache::new(),
 			state:							GameState::WaitForStart,
-			is_paused:						!false,
+			is_paused:						false,
 			debug_renderer:					Rc::new( None ),
 		}
 	}
@@ -96,6 +94,8 @@ impl Game {
 		renderer.register_texture( Texture::create( system, "background_grad" ) );
 
 		self.shape_cache.load_shape( system, "fish_swim", EntityId::FISHSWIM );
+		self.shape_cache.load_shape( system, "block-1x1", EntityId::BLOCK1X1 );
+
 		self.shape_cache.load_shape( system, "rock-a", EntityId::ROCKA );
 		self.shape_cache.load_shape( system, "rock-b", EntityId::ROCKB );
 		self.shape_cache.load_shape( system, "rock-c", EntityId::ROCKC );
@@ -103,9 +103,13 @@ impl Game {
 		self.shape_cache.load_shape( system, "rock-e", EntityId::ROCKE );
 		self.shape_cache.load_shape( system, "rock-f", EntityId::ROCKF );
 
-		let mut shape = Shape::new();
-		shape.load( system, "fish_swim" );
-		self.shape = Some( shape );
+		self.shape_cache.load_shape( system, "seaweed-a", EntityId::SEAWEEDA );
+		self.shape_cache.load_shape( system, "seaweed-b", EntityId::SEAWEEDB );
+		self.shape_cache.load_shape( system, "seaweed-c", EntityId::SEAWEEDC );
+		self.shape_cache.load_shape( system, "seaweed-d", EntityId::SEAWEEDD );
+		self.shape_cache.load_shape( system, "seaweed-e", EntityId::SEAWEEDE );
+		self.shape_cache.load_shape( system, "seaweed-f", EntityId::SEAWEEDF );
+		self.shape_cache.load_shape( system, "seaweed-g", EntityId::SEAWEEDG );
 
 		self.entity_manager.setup();
 
@@ -122,11 +126,13 @@ impl Game {
 //		b.setup( "backround" );
 		self.entity_manager.add( Box::new( b ) );
 
+		/* test rock for collision debugging
 		let mut test_rock = Obstacle::new( &Vector2::zero(), EntityId::ROCKF as u32 );
 		let test_rock_config = self.entity_configuration_manager.get_config( EntityId::ROCKF as u32 );
 		test_rock.setup( &test_rock_config );
 		test_rock.set_rotation( 30.0 );
 		self.entity_manager.add( Box::new( test_rock ) );
+		*/
 	}
 
 	pub fn teardown( &mut self ) {
@@ -205,7 +211,7 @@ impl Game {
 									};
 
 									if OverlapChecker::do_shapes_overlap( &a, &b, &*self.debug_renderer ) {
-//										f.kill();
+										f.kill();
 									}
 								}
 							};
