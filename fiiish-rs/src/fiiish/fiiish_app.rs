@@ -25,6 +25,7 @@ use crate::window::Window;
 use crate::window_update_context::WindowUpdateContext;
 
 use crate::fiiish::game::Game;
+use crate::fiiish::GameUi;
 
 use crate::DebugRenderer;
 
@@ -46,6 +47,7 @@ pub struct FiiishApp {
 	scaling: f32,
 
 	game: Game,
+	game_ui: GameUi,
 
 	demo: Demo,
 	demo_enabled: bool,
@@ -71,6 +73,7 @@ impl FiiishApp {
 			scaling: 1.0,
 
 			game: Game::new(),
+			game_ui: GameUi::new(),
 
 			demo: Demo::new(),
 			demo_enabled: false,
@@ -158,6 +161,7 @@ impl FiiishApp {
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Background as u16 , "Background" , "background_vs.glsl", "background_fs.glsl" ) );
 
 		TextureAtlas::load_all( &mut self.system, &mut renderer, "game-atlas-%d" );
+		TextureAtlas::load_all( &mut self.system, &mut renderer, "gui-atlas-%d" );
 
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_1" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
@@ -167,6 +171,7 @@ impl FiiishApp {
 		// setup sub parts
 		self.game.setup( &mut self.system, &mut renderer );
 
+		self.game_ui.setup( &mut self.system, &mut renderer );
 
 		self.demo.setup( &mut self.system, &mut renderer );
 		self.mixel.setup( &mut self.system, &mut renderer );
@@ -182,6 +187,7 @@ impl FiiishApp {
 		self.mixel.teardown();
 		self.demo.teardown();
 
+		self.game_ui.teardown();
 		self.game.teardown();
 		self.renderer = None;
 	}
@@ -256,6 +262,7 @@ impl FiiishApp {
 		}
 
 		self.game.update( wuc, &mut auc );
+		self.game_ui.update( wuc, &mut auc );
 
 
 		if wuc.was_key_pressed( 't' as u8 ) {
@@ -324,6 +331,7 @@ impl FiiishApp {
 				}
 
 				self.game.render( renderer );
+				self.game_ui.render( renderer );
 
 				// :DEBUG: render atlas
 				/*

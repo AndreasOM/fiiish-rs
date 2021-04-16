@@ -8,6 +8,8 @@ mod entity_update_context;
 	pub use entity_update_context::EntityUpdateContext as EntityUpdateContext;
 pub mod fiiish_app;
 pub mod game;
+mod game_ui;
+	pub use game_ui::GameUi as GameUi;
 
 mod shape;
 	pub use shape::Shape as Shape;

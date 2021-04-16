@@ -1,6 +1,8 @@
 LICENSE.md
 background_fs.glsl
 background_vs.glsl
+colored_fs.glsl
+colored_vs.glsl
 cursor.png
 default_fs.glsl
 default_vs.glsl

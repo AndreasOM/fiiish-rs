@@ -6,6 +6,7 @@ extern crate derivative;
 pub mod math;
 pub mod renderer;
 pub mod system;
+pub mod ui;
 pub mod window;
 pub mod window_update_context;
 

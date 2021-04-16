@@ -21,6 +21,11 @@ omt-atlas combine --border 1 --size 2048 \
 		../fiiish-content/decorations/*.png \
 		../fiiish-content/obstacles/blocks/block-*.png
 
+omt-atlas combine --border 1 --size 2048 \
+	--output ../fiiish-data/gui-atlas-%d \
+	--input \
+		../fiiish-content/gui/buttons/*.png
+
 ## now create the archives
 # :TODO: fix for non unix systems
 cd ../fiiish-data
