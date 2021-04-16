@@ -7,8 +7,51 @@ variable_defaults:
   fiiish_y: 400
   title_x: 80
   title_y: 920
+  bar_y: 940
+  bar_amp: 25
+  bar_width: 1400
 
 elements:
+  - name: Bar 0
+    type: block
+    parameters:
+      pos_x: 0
+      pos_y: "$bar_y+$bar_amp*sin(2.0*$time)"
+      width: "$bar_width"
+      height: 2
+      color: "blue"
+  - name: Bar 1
+    type: block
+    parameters:
+      pos_x: 0
+      pos_y: "$bar_y+$bar_amp*sin(2.0*$time+0.2)"
+      width: "$bar_width"
+      height: 2
+      color: "blue"
+  - name: Bar 2
+    type: block
+    parameters:
+      pos_x: 0
+      pos_y: "$bar_y+$bar_amp*sin(2.0*$time+0.4)"
+      width: "$bar_width"
+      height: 2
+      color: "blue"
+  - name: Bar 3
+    type: block
+    parameters:
+      pos_x: 0
+      pos_y: "$bar_y+$bar_amp*sin(2.0*$time+0.6)"
+      width: "$bar_width"
+      height: 2
+      color: "blue"
+  - name: Bar 4
+    type: block
+    parameters:
+      pos_x: 0
+      pos_y: "$bar_y+$bar_amp*sin(2.0*$time+0.8)"
+      width: "$bar_width"
+      height: 2
+      color: "blue"
   - name: Title Background
     type: block
     parameters:
