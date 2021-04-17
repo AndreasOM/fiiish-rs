@@ -24,7 +24,6 @@ pub struct UiGravityBox {
 	base: UiElementBase,
 	padding: f32,
 	children: Vec< Child >,
-	fade_state: UiElementFadeState,
 }
 
 impl UiGravityBox {
@@ -33,7 +32,6 @@ impl UiGravityBox {
 			base: UiElementBase::new(),
 			padding: 0.0,
 			children: Vec::new(),
-			fade_state: UiElementFadeState::FadedIn,
 		}
 	}
 
@@ -58,7 +56,7 @@ impl UiElement for UiGravityBox {
 	}
 	fn render( &self, ui_renderer: &mut UiRenderer) {
 //		dbg!(&self.fade_state);
-		if self.fade_state != UiElementFadeState::FadedOut {
+		if *self.fade_state() != UiElementFadeState::FadedOut {
 			ui_renderer.push_translation( &self.borrow_base().pos );
 			let l = self.get_fade_level();
 			ui_renderer.push_opacity( l );
@@ -87,13 +85,4 @@ impl UiElement for UiGravityBox {
 	fn borrow_base_mut( &mut self ) -> &mut UiElementBase {
 		&mut self.base
 	}
-
-	fn fade_state( &self ) -> &UiElementFadeState {
-		&self.fade_state
-	}
-	fn set_fade_state( &mut self, fade_state: &UiElementFadeState ) {
-		self.fade_state = *fade_state;
-	}
-
-
 }

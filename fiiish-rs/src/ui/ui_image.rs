@@ -16,7 +16,6 @@ use crate::ui::{
 pub struct UiImage {
 	base: UiElementBase,
 	name: String,
-	fade_state: UiElementFadeState,
 }
 
 impl UiImage {
@@ -26,7 +25,6 @@ impl UiImage {
 		Self {
 			base,
 			name: name.to_owned(),
-			fade_state: UiElementFadeState::FadedIn,
 		}
 	}
 }
@@ -49,12 +47,4 @@ impl UiElement for UiImage {
 	fn borrow_base_mut( &mut self ) -> &mut UiElementBase {
 		&mut self.base
 	}
-
-	fn fade_state( &self ) -> &UiElementFadeState {
-		&self.fade_state
-	}
-	fn set_fade_state( &mut self, fade_state: &UiElementFadeState ) {
-		self.fade_state = *fade_state;
-	}
-
 }

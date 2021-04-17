@@ -37,9 +37,13 @@ pub trait UiElement {
 	fn pos( &self ) -> &Vector2 {
 		&self.borrow_base().pos
 	}
-	
-	fn fade_state( &self ) -> &UiElementFadeState;
-	fn set_fade_state( &mut self, fade_state: &UiElementFadeState );
+
+	fn fade_state( &self ) -> &UiElementFadeState {
+		&self.borrow_base().fade_state
+	}
+	fn set_fade_state( &mut self, fade_state: &UiElementFadeState ) {
+		self.borrow_base_mut().fade_state = *fade_state;
+	}
 
 	fn fade_in( &mut self, duration: f32 ) {
 		let fs = self.fade_state();

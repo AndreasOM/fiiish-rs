@@ -18,7 +18,6 @@ pub struct UiVbox {
 	base: UiElementBase,
 	padding: f32,
 	children: Vec< Box< dyn UiElement > > ,
-	fade_state: UiElementFadeState,
 }
 
 impl UiVbox {
@@ -27,7 +26,6 @@ impl UiVbox {
 			base: UiElementBase::new(),
 			padding: 0.0,
 			children: Vec::new(),
-			fade_state: UiElementFadeState::FadedIn,
 		}
 	}
 
@@ -65,7 +63,7 @@ impl UiElement for UiVbox {
 		}
 	}
 	fn render( &self, ui_renderer: &mut UiRenderer) {
-		if self.fade_state != UiElementFadeState::FadedOut {
+		if *self.fade_state() != UiElementFadeState::FadedOut {
 			ui_renderer.push_translation( &self.borrow_base().pos );
 			let l = self.get_fade_level();
 			ui_renderer.push_opacity( l );
@@ -115,13 +113,6 @@ impl UiElement for UiVbox {
 
 	fn borrow_base_mut( &mut self ) -> &mut UiElementBase {
 		&mut self.base
-	}
-	
-	fn fade_state( &self ) -> &UiElementFadeState {
-		&self.fade_state
-	}
-	fn set_fade_state( &mut self, fade_state: &UiElementFadeState ) {
-		self.fade_state = *fade_state;
 	}
 
 }
