@@ -212,9 +212,11 @@ impl FiiishApp {
 											)
 										) ) );
 				self.game.enable_debug_renderer( &self.debug_renderer );
+				self.game_ui.enable_debug_renderer( &self.debug_renderer );
 			} else {
 				self.debug_renderer = Rc::new( None );
 				self.game.disable_debug_renderer();
+				self.game_ui.enable_debug_renderer( &self.debug_renderer );
 			}
 		}
 

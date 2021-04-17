@@ -10,6 +10,7 @@ use crate::ui::{
 	UiElement,
 	UiElementBase,
 	UiElementFadeState,
+	UiEvent,
 	UiRenderer,
 };
 
@@ -30,6 +31,10 @@ impl UiImage {
 }
 
 impl UiElement for UiImage {
+	fn handle_ui_event( &mut self, event: &UiEvent ) -> bool {
+		println!("UiImage got event -> {}", &self.name );
+		false
+	}
 	fn update( &mut self, _time_step: f64 ) {
 	}
 	fn render( &self, ui_renderer: &mut UiRenderer) {

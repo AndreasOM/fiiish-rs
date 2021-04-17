@@ -1,5 +1,7 @@
 
+use crate::DebugRenderer;
 use crate::math::Vector2;
+use crate::renderer::Color;
 use crate::ui::{
 	UiElementBase,
 	UiEvent,
@@ -30,6 +32,23 @@ pub trait UiElement {
 	fn render( &self, ui_renderer: &mut UiRenderer) {
 		self.render_children( ui_renderer );
 	}
+	fn render_debug( &self, debug_renderer: &mut DebugRenderer, offset: &Vector2 ) {
+		for c in self.borrow_base().children.iter() {
+			let co = offset.add( c.pos() );
+			c.render_debug( debug_renderer, &co );
+		}
+		debug_renderer.add_line( &Vector2::zero(), &Vector2::zero().add( &offset ), 3.0, &Color::white() );
+	}
+
+	fn dump_info( &self, indent: &str, offset: &Vector2 ) {
+		println!("{} {},{} {},{}", indent, self.pos().x, self.pos().y, self.size().x, self.size().y );
+		let new_indent = format!("{}  ", indent);
+		for c in self.borrow_base().children.iter() {
+			let co = offset;//.add( c.pos() );
+			c.dump_info( &new_indent, &co );
+		}
+	}
+
 	fn render_children( &self, ui_renderer: &mut UiRenderer ) {
 		if *self.fade_state() != UiElementFadeState::FadedOut {
 			ui_renderer.push_translation( &self.borrow_base().pos );
@@ -44,7 +63,50 @@ pub trait UiElement {
 	}
 	fn layout( &mut self, pos: &Vector2 ){}
 	fn handle_ui_event( &mut self, event: &UiEvent ) -> bool {	// bool will change to ... Option< Something >
-		false
+		dbg!(&event);
+		match event {
+			UiEvent::MouseClick{ pos, button } => {
+				let pos = pos.sub( self.pos() );
+				if self.is_hit_by( &pos ) {
+//					println!( "Hit with {} children", self.borrow_base_mut().children.len() );
+					for c in self.borrow_base_mut().children.iter_mut() {
+						let cpos = pos.sub( c.pos() );
+//						let pos = *pos;
+//						println!("New pos: {},{} (child @ {}, {} -> {}, {})", pos.x, pos.y , c.pos().x, c.pos().y, cpos.x, cpos.y );
+						if c.is_hit_by( &cpos ) {
+//							println!("Child is hit");
+							let ev = UiEvent::MouseClick{ pos, button: *button };
+							if c.handle_ui_event( &ev ) {
+								return true;
+							}
+						} else {
+//							println!("Child NOT hit");
+						}
+					}
+					false
+				} else {
+//					println!( "Not hit" );
+					false
+				}
+			},
+			_ => false,
+		}
+	}
+
+	// local coordinates!
+	fn is_hit_by( &self, pos: &Vector2 ) -> bool {
+//		dbg!(pos, self.pos(), self.size() );
+		let hs = self.size().scaled( 0.5 );
+//		let bl = self.pos().sub( &hs );
+//		let tr = self.pos().add( &hs );
+		let bl = Vector2::zero().sub( &hs );
+		let tr = Vector2::zero().add( &hs );
+//		dbg!(&pos,&tl,&br);
+//		println!("is_hit_by {:?} {:?}-{:?}", &pos, &bl, &tr);
+		pos.x >= bl.x
+		&& pos.y >= bl.y
+		&& pos.x <= tr.x
+		&& pos.y <= tr.y
 	}
 
 	fn borrow_base( &self ) -> &UiElementBase;

@@ -1,4 +1,7 @@
+use std::rc::Rc;
+use std::cell::RefCell;
 
+use crate::DebugRenderer;
 use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 use crate::math::Vector2;
@@ -11,6 +14,7 @@ use crate::system::System;
 
 use crate::ui::{
 	UiElement,
+	UiEvent,
 	UiGravityBox,
 	UiHbox,
 	UiImage,
@@ -26,6 +30,8 @@ pub struct GameUi {
 //	root: Option< Box< dyn UiElement > >,
 	root: Option< UiGravityBox >,
 	size: Vector2,
+
+	debug_renderer: Rc < Option < RefCell< DebugRenderer >  > >,
 }
 
 impl GameUi {
@@ -33,8 +39,18 @@ impl GameUi {
 		Self {
 			root: None,
 			size: Vector2::zero(),
+			debug_renderer:	Rc::new( None ),
 		}
 	}
+
+	pub fn enable_debug_renderer( &mut self, debug_renderer: &Rc< Option< RefCell< DebugRenderer > > > ) {
+		self.debug_renderer = Rc::clone( debug_renderer );
+	}
+
+	pub fn disable_debug_renderer( &mut self ) {
+		self.debug_renderer = Rc::new( None );
+	}
+
 	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer) {
 		let mut root = UiGravityBox::new( );
 		root.set_padding( 16.0 );
@@ -51,6 +67,7 @@ impl GameUi {
 		}
 
 		root.layout( &Vector2::zero() );
+
 		root.fade_out( 0.0 );
 		root.fade_in( 2.0 ); // ten seconds? yes, just for testing
 //		self.root = Some( Box::new( root ) );
@@ -65,12 +82,30 @@ impl GameUi {
 		if let Some( root ) = &mut self.root {
 			root.set_size( &self.size );
 			root.layout( &Vector2::zero() );
+//			root.dump_info( "", &Vector2::zero() );
+//			todo!("die");
 		}		
 	}
 
-	pub fn update( &mut self, wuc: &mut WindowUpdateContext, _auc: &mut AppUpdateContext ) {
+	pub fn update( &mut self, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
 		if let Some( root ) = &mut self.root {
+
+			if wuc.was_mouse_button_pressed( 0 ) {
+				let cp = auc.cursor_pos();
+				println!("Left Mouse Button was pressed @ {}, {}", cp.x, cp.y );
+				let ev = UiEvent::MouseClick{ pos: *cp, button: 0 };
+				if root.handle_ui_event( &ev ) {
+					println!("Click handled");
+				}
+			}
+
 			root.update( wuc.time_step() );
+
+			if let Some( debug_renderer ) = &*self.debug_renderer {
+				let mut debug_renderer = debug_renderer.borrow_mut();
+				root.render_debug( &mut debug_renderer, &Vector2::zero() );
+			}
+
 		}
 	}
 	pub fn render( &mut self, renderer: &mut Renderer) {
