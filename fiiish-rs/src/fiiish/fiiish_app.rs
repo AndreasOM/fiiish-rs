@@ -158,6 +158,7 @@ impl FiiishApp {
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::White as u16    , "White"    , "default_vs.glsl", "white_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Colored as u16    , "Colored"    , "colored_vs.glsl", "colored_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Textured as u16 , "Textured" , "textured_vs.glsl", "textured_fs.glsl" ) );
+		renderer.register_effect( Effect::create( &mut self.system, EffectId::ColoredTextured as u16 , "ColoredTextured" , "coloredtextured_vs.glsl", "coloredtextured_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Background as u16 , "Background" , "background_vs.glsl", "background_fs.glsl" ) );
 
 		TextureAtlas::load_all( &mut self.system, &mut renderer, "game-atlas-%d" );

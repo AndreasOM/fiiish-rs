@@ -8,6 +8,7 @@ use crate::renderer::{
 
 use crate::ui::{
 	UiElement,
+	UiElementFadeState,
 	UiRenderer,
 };
 
@@ -15,6 +16,7 @@ pub struct UiImage {
 	pos: Vector2,
 	size: Vector2,
 	name: String,
+	fade_state: UiElementFadeState,
 }
 
 impl UiImage {
@@ -23,6 +25,7 @@ impl UiImage {
 			pos: Vector2::zero(),
 			size: *size,
 			name: name.to_owned(),
+			fade_state: UiElementFadeState::FadedIn,
 		}
 	}
 }
@@ -42,6 +45,12 @@ impl UiElement for UiImage {
 	}
 	fn pos( &self ) -> &Vector2 {
 		&self.pos
+	}
+	fn fade_state( &self ) -> &UiElementFadeState {
+		&self.fade_state
+	}
+	fn set_fade_state( &mut self, fade_state: &UiElementFadeState ) {
+		self.fade_state = *fade_state;
 	}
 
 }

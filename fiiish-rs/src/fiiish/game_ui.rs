@@ -1,4 +1,6 @@
 
+use crate::fiiish::effect_ids::EffectId;
+use crate::fiiish::layer_ids::LayerId;
 use crate::math::Vector2;
 use crate::renderer::{
 	Color,
@@ -43,10 +45,14 @@ impl GameUi {
 			pause_menu.add_child( Box::new( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) ) );
 			pause_menu.add_child( Box::new( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ) );
 			pause_menu.add_child( Box::new( UiImage::new( "button_fiiish", &Vector2::new( 128.0, 128.0 ) ) ) );
+			pause_menu.fade_out( 0.0 );
+			pause_menu.fade_in( 3.0 );
 			root.add_child( Box::new( pause_menu ), &Vector2::new( -1.0, 1.0 ) );
 		}
 
 		root.layout( &Vector2::zero() );
+		root.fade_out( 0.0 );
+		root.fade_in( 2.0 ); // ten seconds? yes, just for testing
 //		self.root = Some( Box::new( root ) );
 		self.root = Some( root );
 	}
@@ -69,6 +75,10 @@ impl GameUi {
 	}
 	pub fn render( &mut self, renderer: &mut Renderer) {
 		if let Some( root ) = &mut self.root {
+			// :CHEAT:
+			renderer.use_layer( LayerId::Ui as u8 );
+			renderer.use_effect( EffectId::ColoredTextured as u16 );
+
 			let mut ui_renderer = UiRenderer::new( renderer );
 			root.render( &mut ui_renderer );
 		}

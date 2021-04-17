@@ -8,6 +8,7 @@ use crate::renderer::{
 
 use crate::ui::{
 	UiElement,
+	UiElementFadeState,
 	UiRenderer,
 };
 
@@ -17,6 +18,7 @@ pub struct UiVbox {
 	size: Vector2,
 	padding: f32,
 	children: Vec< Box< dyn UiElement > > ,
+	fade_state: UiElementFadeState,
 }
 
 impl UiVbox {
@@ -26,6 +28,7 @@ impl UiVbox {
 			size: Vector2::zero(),
 			padding: 0.0,
 			children: Vec::new(),
+			fade_state: UiElementFadeState::FadedIn,
 		}
 	}
 
@@ -56,21 +59,30 @@ impl UiVbox {
 }
 
 impl UiElement for UiVbox {
-	fn update( &mut self, _time_step: f64 ) {
+	fn update( &mut self, time_step: f64 ) {
+		self.update_fade_state( time_step );
+		for c in self.children.iter_mut() {
+			c.update( time_step );
+		}
 	}
 	fn render( &self, ui_renderer: &mut UiRenderer) {
-		ui_renderer.push_translation( &self.pos );
-		for c in self.children.iter() {
-			c.render( ui_renderer );
+		if self.fade_state != UiElementFadeState::FadedOut {
+			ui_renderer.push_translation( &self.pos );
+			let l = self.get_fade_level();
+			ui_renderer.push_opacity( l );
+			for c in self.children.iter() {
+				c.render( ui_renderer );
+			}
+			ui_renderer.pop_opacity();
+			ui_renderer.pop_transform();
 		}
-		ui_renderer.pop_transform();
 	}
 	fn layout( &mut self, pos: &Vector2 ) {
 		let mut total_size = Vector2::zero();
 		let mut c_positions_y = Vec::new();
 
 		let mut w1 = 0.0;
-		let mut w0 = 0.0;
+		let mut w0;
 
 		for c in self.children.iter() {
 			let cs = *c.size();
@@ -103,6 +115,12 @@ impl UiElement for UiVbox {
 
 	fn pos( &self ) -> &Vector2 {
 		&self.pos
+	}
+	fn fade_state( &self ) -> &UiElementFadeState {
+		&self.fade_state
+	}
+	fn set_fade_state( &mut self, fade_state: &UiElementFadeState ) {
+		self.fade_state = *fade_state;
 	}
 
 }

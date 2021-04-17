@@ -8,6 +8,7 @@ use crate::renderer::{
 
 use crate::ui::{
 	UiElement,
+	UiElementFadeState,
 	UiRenderer,
 };
 
@@ -22,7 +23,8 @@ pub struct UiGravityBox {
 	pos: Vector2,
 	size: Vector2,
 	padding: f32,
-	children: Vec< Child > ,
+	children: Vec< Child >,
+	fade_state: UiElementFadeState,
 }
 
 impl UiGravityBox {
@@ -32,6 +34,7 @@ impl UiGravityBox {
 			size: Vector2::zero(),
 			padding: 0.0,
 			children: Vec::new(),
+			fade_state: UiElementFadeState::FadedIn,
 		}
 	}
 
@@ -48,14 +51,24 @@ impl UiGravityBox {
 }
 
 impl UiElement for UiGravityBox {
-	fn update( &mut self, _time_step: f64 ) {
+	fn update( &mut self, time_step: f64 ) {
+		self.update_fade_state( time_step );
+		for c in self.children.iter_mut() {
+			c.element.update( time_step );
+		}
 	}
 	fn render( &self, ui_renderer: &mut UiRenderer) {
-		ui_renderer.push_translation( &self.pos );
-		for c in self.children.iter() {
-			c.element.render( ui_renderer );
+//		dbg!(&self.fade_state);
+		if self.fade_state != UiElementFadeState::FadedOut {
+			ui_renderer.push_translation( &self.pos );
+			let l = self.get_fade_level();
+			ui_renderer.push_opacity( l );
+			for c in self.children.iter() {
+				c.element.render( ui_renderer );
+			}
+			ui_renderer.pop_opacity();
+			ui_renderer.pop_transform();
 		}
-		ui_renderer.pop_transform();
 	}
 	fn layout( &mut self, pos: &Vector2 ) {
 		let ws = self.size.sub( &Vector2::new( 2.0*self.padding, 2.0*self.padding ) );
@@ -74,5 +87,13 @@ impl UiElement for UiGravityBox {
 	fn pos( &self ) -> &Vector2 {
 		&self.pos
 	}
+
+	fn fade_state( &self ) -> &UiElementFadeState {
+		&self.fade_state
+	}
+	fn set_fade_state( &mut self, fade_state: &UiElementFadeState ) {
+		self.fade_state = *fade_state;
+	}
+
 
 }

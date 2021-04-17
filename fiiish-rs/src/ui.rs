@@ -1,5 +1,6 @@
 mod ui_element;
 	pub use ui_element::UiElement as UiElement;
+	pub use ui_element::UiElementFadeState as UiElementFadeState;
 mod ui_gravity_box;
 	pub use ui_gravity_box::UiGravityBox as UiGravityBox;
 mod ui_hbox;
