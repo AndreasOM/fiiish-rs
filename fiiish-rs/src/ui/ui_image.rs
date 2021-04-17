@@ -8,22 +8,23 @@ use crate::renderer::{
 
 use crate::ui::{
 	UiElement,
+	UiElementBase,
 	UiElementFadeState,
 	UiRenderer,
 };
 
 pub struct UiImage {
-	pos: Vector2,
-	size: Vector2,
+	base: UiElementBase,
 	name: String,
 	fade_state: UiElementFadeState,
 }
 
 impl UiImage {
 	pub fn new( name: &str, size: &Vector2 ) -> Self {
+		let mut base = UiElementBase::new();
+		base.size = *size;
 		Self {
-			pos: Vector2::zero(),
-			size: *size,
+			base,
 			name: name.to_owned(),
 			fade_state: UiElementFadeState::FadedIn,
 		}
@@ -35,17 +36,20 @@ impl UiElement for UiImage {
 	}
 	fn render( &self, ui_renderer: &mut UiRenderer) {
 		ui_renderer.use_texture( &self.name );
-		ui_renderer.render_textured_quad( &self.pos, &self.size );
+		ui_renderer.render_textured_quad( &self.borrow_base().pos, &self.borrow_base().size );
 	}
 	fn layout( &mut self, pos: &Vector2 ) {
-		self.pos = *pos;
+		self.borrow_base_mut().pos = *pos;
 	}
-	fn size( &self ) -> &Vector2 {
-		&self.size
+
+	fn borrow_base( &self ) -> &UiElementBase {
+		&self.base
 	}
-	fn pos( &self ) -> &Vector2 {
-		&self.pos
+
+	fn borrow_base_mut( &mut self ) -> &mut UiElementBase {
+		&mut self.base
 	}
+
 	fn fade_state( &self ) -> &UiElementFadeState {
 		&self.fade_state
 	}

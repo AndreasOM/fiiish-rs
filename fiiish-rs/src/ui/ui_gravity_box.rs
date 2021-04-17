@@ -8,6 +8,7 @@ use crate::renderer::{
 
 use crate::ui::{
 	UiElement,
+	UiElementBase,
 	UiElementFadeState,
 	UiRenderer,
 };
@@ -20,8 +21,7 @@ struct Child {
 
 #[derive(Debug)]
 pub struct UiGravityBox {
-	pos: Vector2,
-	size: Vector2,
+	base: UiElementBase,
 	padding: f32,
 	children: Vec< Child >,
 	fade_state: UiElementFadeState,
@@ -30,8 +30,7 @@ pub struct UiGravityBox {
 impl UiGravityBox {
 	pub fn new( ) -> Self {
 		Self {
-			pos: Vector2::zero(),
-			size: Vector2::zero(),
+			base: UiElementBase::new(),
 			padding: 0.0,
 			children: Vec::new(),
 			fade_state: UiElementFadeState::FadedIn,
@@ -39,7 +38,7 @@ impl UiGravityBox {
 	}
 
 	pub fn set_size( &mut self, size: &Vector2 ) {
-		self.size = *size;
+		self.borrow_base_mut().size = *size;
 	}
 	pub fn set_padding( &mut self, padding: f32 ) {
 		self.padding = padding;
@@ -60,7 +59,7 @@ impl UiElement for UiGravityBox {
 	fn render( &self, ui_renderer: &mut UiRenderer) {
 //		dbg!(&self.fade_state);
 		if self.fade_state != UiElementFadeState::FadedOut {
-			ui_renderer.push_translation( &self.pos );
+			ui_renderer.push_translation( &self.borrow_base().pos );
 			let l = self.get_fade_level();
 			ui_renderer.push_opacity( l );
 			for c in self.children.iter() {
@@ -71,21 +70,22 @@ impl UiElement for UiGravityBox {
 		}
 	}
 	fn layout( &mut self, pos: &Vector2 ) {
-		let ws = self.size.sub( &Vector2::new( 2.0*self.padding, 2.0*self.padding ) );
+		let ws = self.borrow_base().size.sub( &Vector2::new( 2.0*self.padding, 2.0*self.padding ) );
 		for c in self.children.iter_mut() {
 			let cs = c.element.size();
 			let cpos = ws.sub( &cs ).scaled( 0.5 ).scaled_vector2( &c.gravity );
 			c.element.layout( &cpos );
 		}
 
-		self.pos = *pos;
-	}
-	fn size( &self ) -> &Vector2 {
-		&self.size
+		self.borrow_base_mut().pos = *pos;
 	}
 
-	fn pos( &self ) -> &Vector2 {
-		&self.pos
+	fn borrow_base( &self ) -> &UiElementBase {
+		&self.base
+	}
+
+	fn borrow_base_mut( &mut self ) -> &mut UiElementBase {
+		&mut self.base
 	}
 
 	fn fade_state( &self ) -> &UiElementFadeState {

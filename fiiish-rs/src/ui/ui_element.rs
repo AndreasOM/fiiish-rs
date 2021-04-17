@@ -1,6 +1,10 @@
 
 use crate::math::Vector2;
-use crate::ui::UiRenderer;
+use crate::ui::{
+	UiElementBase,
+	UiEvent,
+	UiRenderer,
+};
 
 #[derive(Debug,Copy,Clone,PartialEq)]
 pub struct UiElementFadeData {
@@ -20,8 +24,20 @@ pub trait UiElement {
 	fn update( &mut self, time_step: f64 );
 	fn render( &self, ui_renderer: &mut UiRenderer);
 	fn layout( &mut self, pos: &Vector2 ){}
-	fn size( &self ) -> &Vector2;
-	fn pos( &self ) -> &Vector2;
+	fn handle_ui_event( &mut self, event: &UiEvent ) -> bool {	// bool will change to ... Option< Something >
+		false
+	}
+
+	fn borrow_base( &self ) -> &UiElementBase;
+	fn borrow_base_mut( &mut self ) -> &mut UiElementBase;
+
+	fn size( &self ) -> &Vector2 {
+		&self.borrow_base().size
+	}
+	fn pos( &self ) -> &Vector2 {
+		&self.borrow_base().pos
+	}
+	
 	fn fade_state( &self ) -> &UiElementFadeState;
 	fn set_fade_state( &mut self, fade_state: &UiElementFadeState );
 

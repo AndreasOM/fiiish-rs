@@ -8,14 +8,14 @@ use crate::renderer::{
 
 use crate::ui::{
 	UiElement,
+	UiElementBase,
 	UiElementFadeState,
 	UiRenderer,
 };
 
 #[derive(Debug)]
 pub struct UiHbox {
-	pos: Vector2,
-	size: Vector2,
+	base: UiElementBase,
 	padding: f32,
 	children: Vec< Box< dyn UiElement > > ,
 	fade_state: UiElementFadeState,
@@ -24,8 +24,7 @@ pub struct UiHbox {
 impl UiHbox {
 	pub fn new( ) -> Self {
 		Self {
-			pos: Vector2::zero(),
-			size: Vector2::zero(),
+			base: UiElementBase::new(),
 			padding: 0.0,
 			children: Vec::new(),
 			fade_state: UiElementFadeState::FadedIn,
@@ -54,7 +53,7 @@ impl UiHbox {
 		}
 		total_size.x -= self.padding;
 
-		self.size = total_size;
+		self.borrow_base_mut().size = total_size;
 	}
 
 }
@@ -68,7 +67,7 @@ impl UiElement for UiHbox {
 	}
 	fn render( &self, ui_renderer: &mut UiRenderer) {
 		if self.fade_state != UiElementFadeState::FadedOut {
-			ui_renderer.push_translation( &self.pos );
+			ui_renderer.push_translation( &self.borrow_base().pos );
 			let l = self.get_fade_level();
 			ui_renderer.push_opacity( l );
 			for c in self.children.iter() {
@@ -107,16 +106,18 @@ impl UiElement for UiHbox {
 			c.layout( &cpos );
 		}
 
-		self.pos = *pos;
-		self.size = total_size;
-	}
-	fn size( &self ) -> &Vector2 {
-		&self.size
+		self.borrow_base_mut().pos = *pos;
+		self.borrow_base_mut().size = total_size;
 	}
 
-	fn pos( &self ) -> &Vector2 {
-		&self.pos
+	fn borrow_base( &self ) -> &UiElementBase {
+		&self.base
 	}
+
+	fn borrow_base_mut( &mut self ) -> &mut UiElementBase {
+		&mut self.base
+	}
+	
 	fn fade_state( &self ) -> &UiElementFadeState {
 		&self.fade_state
 	}
