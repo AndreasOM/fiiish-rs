@@ -23,7 +23,7 @@ struct Child {
 pub struct UiGravityBox {
 	base: UiElementBase,
 	padding: f32,
-	children: Vec< Child >,
+	children_gravities: Vec< Vector2 >
 }
 
 impl UiGravityBox {
@@ -31,7 +31,7 @@ impl UiGravityBox {
 		Self {
 			base: UiElementBase::new(),
 			padding: 0.0,
-			children: Vec::new(),
+			children_gravities: Vec::new(),
 		}
 	}
 
@@ -43,36 +43,23 @@ impl UiGravityBox {
 	}
 
 	pub fn add_child( &mut self, element: Box< dyn UiElement >, gravity: &Vector2 ) {
-		self.children.push( Child { element, gravity: *gravity } );
+		self.borrow_base_mut().children.push( element );
+		self.children_gravities.push( *gravity );
 	}
 }
 
 impl UiElement for UiGravityBox {
-	fn update( &mut self, time_step: f64 ) {
-		self.update_fade_state( time_step );
-		for c in self.children.iter_mut() {
-			c.element.update( time_step );
-		}
-	}
-	fn render( &self, ui_renderer: &mut UiRenderer) {
-//		dbg!(&self.fade_state);
-		if *self.fade_state() != UiElementFadeState::FadedOut {
-			ui_renderer.push_translation( &self.borrow_base().pos );
-			let l = self.get_fade_level();
-			ui_renderer.push_opacity( l );
-			for c in self.children.iter() {
-				c.element.render( ui_renderer );
-			}
-			ui_renderer.pop_opacity();
-			ui_renderer.pop_transform();
-		}
-	}
 	fn layout( &mut self, pos: &Vector2 ) {
 		let ws = self.borrow_base().size.sub( &Vector2::new( 2.0*self.padding, 2.0*self.padding ) );
-		for c in self.children.iter_mut() {
-			let cs = c.element.size();
-			let cpos = ws.sub( &cs ).scaled( 0.5 ).scaled_vector2( &c.gravity );
-			c.element.layout( &cpos );
+//		for ( i, c ) in self.borrow_base_mut().children.iter_mut().enumerate() {
+//		for ( i, g ) in self.children_gravities.iter().enumerate() {
+//		for i in 0..self.children_gravities.len() {
+//			let g = self.children_gravities[ i ];
+//			let c = &mut self.base.children[ i ];
+		for ( g, c ) in self.children_gravities.iter().zip( self.base.children.iter_mut() ) {
+			let cs = c.size();
+			let cpos = ws.sub( &cs ).scaled( 0.5 ).scaled_vector2( &g );
+			c.layout( &cpos );
 		}
 
 		self.borrow_base_mut().pos = *pos;
