@@ -87,12 +87,12 @@ impl UiElement for UiHbox {
 
 		c_positions_x.push( 0.0 );
 
-		let mut cpos = Vector2::new( -0.5*total_size.x, 0.0 );
+		let mut cpos = Vector2::new( -0.5*total_size.x - self.padding, 0.0 );
 
 		for (i, c ) in self.children.iter_mut().enumerate() {
-			c.layout( &cpos );
-			let x = c_positions_x[ i+1 ];
+			let x = c_positions_x[ i ];
 			cpos.x += x + self.padding;
+			c.layout( &cpos );
 		}
 
 		self.pos = *pos;

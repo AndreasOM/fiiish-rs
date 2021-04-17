@@ -25,27 +25,28 @@ pub struct GameUi {
 
 impl GameUi {
 	pub fn new() -> Self {
+/* for layout testing
 		let mut root = Box::new( UiVbox::new() );
 		root.set_padding( 16.0 );
-
-		let mut root1 = Box::new( UiHbox::new() );
-		root1.set_padding( 16.0 );
-		root1.add_child( Box::new( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) ) );
-		root1.add_child( Box::new( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ) );
-		root1.add_child( Box::new( UiImage::new( "button_fiiish", &Vector2::new( 128.0, 128.0 ) ) ) );
+*/
+		let mut root = Box::new( UiHbox::new() );
+		root.set_padding( 16.0 );
+		root.add_child( Box::new( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) ) );
+		root.add_child( Box::new( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ) );
+		root.add_child( Box::new( UiImage::new( "button_fiiish", &Vector2::new( 128.0, 128.0 ) ) ) );
 //		root1.layout( &Vector2::zero() );
+/* for layout testing
 		root.add_child( root1 );
-
 		for _ in 0..4 {
 			let mut root2 = Box::new( UiHbox::new() );
 			root2.set_padding( 0.0 );
-			root2.add_child( Box::new( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) ) );
-			root2.add_child( Box::new( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ) );
-			root2.add_child( Box::new( UiImage::new( "button_fiiish", &Vector2::new( 128.0, 128.0 ) ) ) );
+			root2.add_child( Box::new( UiImage::new( "button_pause", &Vector2::new( 2.0*128.0, 128.0 ) ) ) );
+			root2.add_child( Box::new( UiImage::new( "button_settings", &Vector2::new( 128.0, 0.5*128.0 ) ) ) );
+			root2.add_child( Box::new( UiImage::new( "button_fiiish", &Vector2::new( 2.0*128.0, 128.0 ) ) ) );
 	//		root2.layout( &Vector2::new( 0.0, 128.0 ) );
 			root.add_child( root2 );
 		}
-
+*/
 		root.layout( &Vector2::zero() );
 
 //		dbg!(&root);
