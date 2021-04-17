@@ -51,11 +51,6 @@ impl UiGravityBox {
 impl UiElement for UiGravityBox {
 	fn layout( &mut self, pos: &Vector2 ) {
 		let ws = self.borrow_base().size.sub( &Vector2::new( 2.0*self.padding, 2.0*self.padding ) );
-//		for ( i, c ) in self.borrow_base_mut().children.iter_mut().enumerate() {
-//		for ( i, g ) in self.children_gravities.iter().enumerate() {
-//		for i in 0..self.children_gravities.len() {
-//			let g = self.children_gravities[ i ];
-//			let c = &mut self.base.children[ i ];
 		for ( g, c ) in self.children_gravities.iter().zip( self.base.children.iter_mut() ) {
 			let cs = c.size();
 			let cpos = ws.sub( &cs ).scaled( 0.5 ).scaled_vector2( &g );
