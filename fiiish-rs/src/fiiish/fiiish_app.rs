@@ -169,9 +169,12 @@ impl FiiishApp {
 
 //		todo!("die");
 		// setup sub parts
+		let window_size = Vector2::new( 1024.0, 1024.0 ); // :TODO: get from window
 		self.game.setup( &mut self.system, &mut renderer );
+//		self.game.set_size( &window_size );
 
 		self.game_ui.setup( &mut self.system, &mut renderer );
+		self.game_ui.set_size( &window_size );
 
 		self.demo.setup( &mut self.system, &mut renderer );
 		self.mixel.setup( &mut self.system, &mut renderer );
@@ -231,6 +234,9 @@ impl FiiishApp {
 
 		self.size.x = ( self.scaling ) * self.viewport_size.x;
 		self.size.y = ( self.scaling ) * self.viewport_size.y;
+
+		// :TODO: only call on change
+		self.game_ui.set_size( &self.size );
 
 //		dbg!(&self.viewport_size);
 //		dbg!(&self.size);
