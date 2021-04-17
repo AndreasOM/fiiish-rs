@@ -17,7 +17,6 @@ use crate::ui::{
 pub struct UiHbox {
 	base: UiElementBase,
 	padding: f32,
-	children: Vec< Box< dyn UiElement > > ,
 }
 
 impl UiHbox {
@@ -25,7 +24,6 @@ impl UiHbox {
 		Self {
 			base: UiElementBase::new(),
 			padding: 0.0,
-			children: Vec::new(),
 		}
 	}
 
@@ -35,14 +33,14 @@ impl UiHbox {
 	}
 
 	pub fn add_child( &mut self, child: Box< dyn UiElement > ) {
-		self.children.push( child );
+		self.borrow_base_mut().children.push( child );
 		self.recalculate_size();
 	}
 
 	fn recalculate_size( &mut self ) {
 		let mut total_size = Vector2::zero();
 
-		for c in self.children.iter() {
+		for c in self.borrow_base().children.iter() {
 			let cs = c.size();
 			total_size.x += cs.x + self.padding;
 			if total_size.y < cs.y {
@@ -59,32 +57,21 @@ impl UiHbox {
 impl UiElement for UiHbox {
 	fn update( &mut self, time_step: f64 ) {
 		self.update_fade_state( time_step );
-		for c in self.children.iter_mut() {
+		for c in self.borrow_base_mut().children.iter_mut() {
 			c.update( time_step );
-		}
-	}
-	fn render( &self, ui_renderer: &mut UiRenderer) {
-		if *self.fade_state() != UiElementFadeState::FadedOut {
-			ui_renderer.push_translation( &self.borrow_base().pos );
-			let l = self.get_fade_level();
-			ui_renderer.push_opacity( l );
-			for c in self.children.iter() {
-				c.render( ui_renderer );
-			}
-			ui_renderer.pop_opacity();
-			ui_renderer.pop_transform();
 		}
 	}
 	fn layout( &mut self, pos: &Vector2 ) {
 		let mut total_size = Vector2::zero();
 		let mut c_positions_x = Vec::new();
+		let padding = self.padding;
 
 		let mut w1 = 0.0;
 		let mut w0 = 0.0;
 
-		for c in self.children.iter() {
+		for c in self.borrow_base().children.iter() {
 			let cs = c.size();
-			total_size.x += cs.x + self.padding;
+			total_size.x += cs.x + padding;
 			if total_size.y < cs.y {
 				total_size.y = cs.y;
 			}
@@ -92,15 +79,15 @@ impl UiElement for UiHbox {
 			w1 = 0.5 * cs.x;
 			c_positions_x.push( w0 +  w1 );
 		}
-		total_size.x -= self.padding;
+		total_size.x -= padding;
 
 		c_positions_x.push( 0.0 );
 
 		let mut cpos = Vector2::new( -0.5*total_size.x - self.padding, 0.0 );
 
-		for (i, c ) in self.children.iter_mut().enumerate() {
+		for (i, c ) in self.borrow_base_mut().children.iter_mut().enumerate() {
 			let x = c_positions_x[ i ];
-			cpos.x += x + self.padding;
+			cpos.x += x + padding;
 			c.layout( &cpos );
 		}
 

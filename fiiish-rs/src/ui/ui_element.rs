@@ -22,7 +22,21 @@ pub enum UiElementFadeState {
 
 pub trait UiElement {
 	fn update( &mut self, time_step: f64 );
-	fn render( &self, ui_renderer: &mut UiRenderer);
+	fn render( &self, ui_renderer: &mut UiRenderer) {
+		self.render_children( ui_renderer );
+	}
+	fn render_children( &self, ui_renderer: &mut UiRenderer ) {
+		if *self.fade_state() != UiElementFadeState::FadedOut {
+			ui_renderer.push_translation( &self.borrow_base().pos );
+			let l = self.get_fade_level();
+			ui_renderer.push_opacity( l );
+			for c in self.borrow_base().children.iter() {
+				c.render( ui_renderer );
+			}
+			ui_renderer.pop_opacity();
+			ui_renderer.pop_transform();
+		}		
+	}
 	fn layout( &mut self, pos: &Vector2 ){}
 	fn handle_ui_event( &mut self, event: &UiEvent ) -> bool {	// bool will change to ... Option< Something >
 		false
