@@ -21,7 +21,12 @@ pub enum UiElementFadeState {
 }
 
 pub trait UiElement {
-	fn update( &mut self, time_step: f64 );
+	fn update( &mut self, time_step: f64 ) {
+		self.update_fade_state( time_step );
+		for c in self.borrow_base_mut().children.iter_mut() {
+			c.update( time_step );
+		}
+	}
 	fn render( &self, ui_renderer: &mut UiRenderer) {
 		self.render_children( ui_renderer );
 	}

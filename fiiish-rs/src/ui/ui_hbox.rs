@@ -55,12 +55,6 @@ impl UiHbox {
 }
 
 impl UiElement for UiHbox {
-	fn update( &mut self, time_step: f64 ) {
-		self.update_fade_state( time_step );
-		for c in self.borrow_base_mut().children.iter_mut() {
-			c.update( time_step );
-		}
-	}
 	fn layout( &mut self, pos: &Vector2 ) {
 		let mut total_size = Vector2::zero();
 		let mut c_positions_x = Vec::new();
