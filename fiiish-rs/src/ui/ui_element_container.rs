@@ -1,6 +1,7 @@
 
 use crate::DebugRenderer;
 use crate::math::Vector2;
+use crate::renderer::Color;
 use crate::ui::{
 	UiElement,
 	UiElementFadeData,
@@ -185,6 +186,11 @@ impl UiElementContainer {
 
 	pub fn render_debug( &self, debug_renderer: &mut DebugRenderer, offset: &Vector2 ) {
 		self.element.render_debug( &self.data, debug_renderer, offset );
+		for c in self.data.borrow_children().iter() {
+			let co = offset.add( c.pos() );
+			c.render_debug( debug_renderer, &co );
+		}
+		debug_renderer.add_line( &Vector2::zero(), &Vector2::zero().add( &offset ), 3.0, &Color::white() );
 	}
 
 	pub fn dump_info( &self, indent: &str, offset: &Vector2 ) {

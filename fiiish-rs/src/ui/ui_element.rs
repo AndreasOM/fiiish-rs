@@ -37,15 +37,6 @@ pub trait UiElement {
 //	fn set_size( &mut self, size: &Vector2 ) {}
 	
 	// old below
-	/* :TODO: move to UiElementContainer
-	fn render_debug( &self, debug_renderer: &mut DebugRenderer, offset: &Vector2 ) {
-		for c in self.borrow_base().children.iter() {
-			let co = offset.add( c.pos() );
-			c.render_debug( debug_renderer, &co );
-		}
-		debug_renderer.add_line( &Vector2::zero(), &Vector2::zero().add( &offset ), 3.0, &Color::white() );
-	}
-	*/
 
 	fn find_child_mut( &mut self, path: &[ &str ] ) -> Option< &mut dyn UiElement > where Self: Sized {
 		/*
