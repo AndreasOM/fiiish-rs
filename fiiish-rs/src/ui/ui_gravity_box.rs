@@ -8,9 +8,8 @@ use crate::renderer::{
 
 use crate::ui::{
 	UiElement,
-	UiElementBase,
-	UiElementFadeState,
-	UiRenderer,
+	UiElementContainer,
+	UiElementContainerData,
 };
 
 #[derive(Debug)]
@@ -21,50 +20,43 @@ struct Child {
 
 #[derive(Debug)]
 pub struct UiGravityBox {
-	base: UiElementBase,
 	padding: f32,
+	gravity: Vector2,
 	children_gravities: Vec< Vector2 >
 }
 
 impl UiGravityBox {
 	pub fn new( ) -> Self {
 		Self {
-			base: UiElementBase::new(),
 			padding: 0.0,
+			gravity: Vector2::zero(),
 			children_gravities: Vec::new(),
 		}
 	}
 
-	pub fn set_size( &mut self, size: &Vector2 ) {
-		self.borrow_base_mut().size = *size;
-	}
 	pub fn set_padding( &mut self, padding: f32 ) {
 		self.padding = padding;
 	}
 
-	pub fn add_child( &mut self, element: Box< dyn UiElement >, gravity: &Vector2 ) {
-		self.borrow_base_mut().children.push( element );
-		self.children_gravities.push( *gravity );
+	pub fn set_gravity( &mut self, gravity: &Vector2 ) {
+		self.gravity = *gravity;
 	}
+
 }
 
 impl UiElement for UiGravityBox {
-	fn layout( &mut self, pos: &Vector2 ) {
-		let ws = self.borrow_base().size.sub( &Vector2::new( 2.0*self.padding, 2.0*self.padding ) );
-		for ( g, c ) in self.children_gravities.iter().zip( self.base.children.iter_mut() ) {
+	fn add_child( &mut self, _child: &mut UiElementContainerData ) {
+		self.children_gravities.push( self.gravity );
+	}
+
+	fn layout( &mut self, container: &mut UiElementContainerData, pos: &Vector2 ) {
+		let ws = container.size.sub( &Vector2::new( 2.0*self.padding, 2.0*self.padding ) );
+		for ( g, c ) in self.children_gravities.iter().zip( container.borrow_children_mut().iter_mut() ) {
 			let cs = c.size();
 			let cpos = ws.sub( &cs ).scaled( 0.5 ).scaled_vector2( &g );
 			c.layout( &cpos );
 		}
 
-		self.borrow_base_mut().pos = *pos;
-	}
-
-	fn borrow_base( &self ) -> &UiElementBase {
-		&self.base
-	}
-
-	fn borrow_base_mut( &mut self ) -> &mut UiElementBase {
-		&mut self.base
+		container.set_pos( pos );
 	}
 }

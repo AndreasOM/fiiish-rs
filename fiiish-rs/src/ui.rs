@@ -1,8 +1,12 @@
 mod ui_element;
 	pub use ui_element::UiElement as UiElement;
+	pub use ui_element::UiElementFadeData as UiElementFadeData;
 	pub use ui_element::UiElementFadeState as UiElementFadeState;
 mod ui_element_base;
 	pub use ui_element_base::UiElementBase as UiElementBase;
+mod ui_element_container;
+	pub use ui_element_container::UiElementContainer as UiElementContainer;
+	pub use ui_element_container::UiElementContainerData as UiElementContainerData;
 mod ui_event;
 	pub use ui_event::UiEvent as UiEvent;
 mod ui_gravity_box;

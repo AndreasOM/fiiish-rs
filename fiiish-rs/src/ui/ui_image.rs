@@ -8,48 +8,47 @@ use crate::renderer::{
 
 use crate::ui::{
 	UiElement,
-	UiElementBase,
+	UiElementContainer,
+	UiElementContainerData,
 	UiElementFadeState,
 	UiEvent,
 	UiRenderer,
 };
 
 pub struct UiImage {
-	base: UiElementBase,
-	name: String,
+	imagename: String,
+	imagesize: Vector2,
 }
 
 impl UiImage {
-	pub fn new( name: &str, size: &Vector2 ) -> Self {
-		let mut base = UiElementBase::new();
-		base.size = *size;
+	pub fn new( imagename: &str, size: &Vector2 ) -> Self {
 		Self {
-			base,
-			name: name.to_owned(),
+			imagename: imagename.to_owned(),
+			imagesize: *size,
 		}
 	}
 }
 
 impl UiElement for UiImage {
+	fn preferred_size( &self ) -> Option< &Vector2 > {
+		Some( &self.imagesize )
+	}
 	fn handle_ui_event( &mut self, event: &UiEvent ) -> bool {
-		println!("UiImage got event -> {}", &self.name );
+		println!("UiImage got event -> {}", &self.imagename );
 		false
 	}
+	/*
 	fn update( &mut self, _time_step: f64 ) {
 	}
-	fn render( &self, ui_renderer: &mut UiRenderer) {
-		ui_renderer.use_texture( &self.name );
-		ui_renderer.render_textured_quad( &self.borrow_base().pos, &self.borrow_base().size );
-	}
-	fn layout( &mut self, pos: &Vector2 ) {
-		self.borrow_base_mut().pos = *pos;
+	*/
+	fn render( &self, container: &UiElementContainerData, ui_renderer: &mut UiRenderer) {
+		if *container.fade_state() != UiElementFadeState::FadedOut {
+			let l = container.get_fade_level();
+			ui_renderer.push_opacity( l );
+			ui_renderer.use_texture( &self.imagename );
+			ui_renderer.render_textured_quad( &container.pos, &self.imagesize );
+			ui_renderer.pop_opacity();
+		}		
 	}
 
-	fn borrow_base( &self ) -> &UiElementBase {
-		&self.base
-	}
-
-	fn borrow_base_mut( &mut self ) -> &mut UiElementBase {
-		&mut self.base
-	}
 }
