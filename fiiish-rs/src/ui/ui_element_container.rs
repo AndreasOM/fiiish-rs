@@ -9,6 +9,7 @@ use crate::ui::{
 	UiElementFadeData,
 	UiElementFadeState,
 	UiEvent,
+	UiEventResponse,
 	UiRenderer,
 };
 
@@ -334,7 +335,7 @@ impl UiElementContainer {
 		self.data.pos = *pos;
 	}
 
-	pub fn handle_ui_event( &mut self, event: &UiEvent ) -> bool {	// bool will change to ... Option< Something >
+	pub fn handle_ui_event( &mut self, event: &UiEvent ) -> Option< Box< dyn UiEventResponse > > {
 		match event {
 			UiEvent::MouseClick{ pos, button } => {
 				let pos = pos.sub( self.pos() );
@@ -348,8 +349,8 @@ impl UiElementContainer {
 						if c.is_hit_by( &cpos ) {
 //							println!("Child is hit");
 							let ev = UiEvent::MouseClick{ pos, button: *button };
-							if c.handle_ui_event( &ev ) {
-								return true;
+							if let Some( r ) = c.handle_ui_event( &ev ) {
+								return Some( r );
 							}
 						} else {
 //							println!("Child NOT hit");
@@ -359,10 +360,10 @@ impl UiElementContainer {
 					self.element.handle_ui_event( &mut self.data, &event )
 				} else {
 //					println!( "Not hit" );
-					false
+					None
 				}
 			},
-			_ => false,
+			_ => None,
 		}
 	}
 

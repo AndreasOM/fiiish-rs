@@ -18,6 +18,7 @@ use crate::ui::{
 	UiElementContainer,
 	UiElementContainerHandle,
 	UiEvent,
+	UiEventResponseButtonClicked,
 	UiGravityBox,
 	UiHbox,
 	UiImage,
@@ -78,6 +79,10 @@ impl GameUi {
 
 //			pause_menu.add_child_element( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) );
 			let pause_togglebutton = pause_menu.add_child_element( UiToggleButton::new( "button_pause", "button_play", &Vector2::new( 128.0, 128.0 ) ) );
+			{
+				let mut p = pause_togglebutton.borrow_mut();
+				p.set_name( "ButtonPause" );
+			}
 			self.pause_togglebutton = Some( pause_togglebutton.clone() );
 
 			let mut button_settings = pause_menu.add_child_element( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ).borrow_mut();
@@ -109,17 +114,6 @@ impl GameUi {
 		self.root = Some( root );
 
 
-		// somewhere in the code
-		/*
-		{
-			if let Some( p ) = &mut self.pause_togglebutton {
-				let p = p.borrow_mut();
-				let tb: UiToggleButton = dynamic_cast<UiToggleButton>( p );
-				tb.goto_b();
-			}
-
-		}
-		*/
 	}
 	pub fn teardown( &mut self ) {
 		self.root = None;
@@ -135,15 +129,27 @@ impl GameUi {
 		}		
 	}
 
-	pub fn update( &mut self, game: &Game, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
+	pub fn update( &mut self, game: &mut Game, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
 		if let Some( root ) = &mut self.root {
 
 			if wuc.was_mouse_button_pressed( 0 ) {
 				let cp = auc.cursor_pos();
 				println!("Left Mouse Button was pressed @ {}, {}", cp.x, cp.y );
 				let ev = UiEvent::MouseClick{ pos: *cp, button: 0 };
-				if root.handle_ui_event( &ev ) {
-					println!("Click handled");
+				if let Some( r ) = root.handle_ui_event( &ev ) {
+					println!("Click handled -> {:?}", &r );
+					match r.as_any().downcast_ref::<UiEventResponseButtonClicked>() {
+						Some( e ) => {
+							println!("Button {} clicked", &e.button_name );
+							match e.button_name.as_str() {
+								"ButtonPause" => {
+									game.toggle_pause();
+								},
+								_ => {},
+							}
+						},
+						None => {},
+					};
 				}
 			}
 
@@ -163,6 +169,21 @@ impl GameUi {
 					settings_button.fade_out( 1.0 );
 				}
 			}
+			if let Some( p ) = &mut self.pause_togglebutton {
+				let mut p = p.borrow_mut();
+				let p = p.borrow_element_mut();
+//				let tb: UiToggleButton = dynamic_cast<UiToggleButton>( p );
+				let tb: &mut UiToggleButton = match p.as_any_mut().downcast_mut::<UiToggleButton>() {
+					Some(p) => p,
+					None => panic!("{:?} isn't a UiToggleButton!", &p),
+				};
+				if game.is_paused() {
+					tb.goto_b();
+				} else {
+					tb.goto_a();
+				}
+			}
+
 			root.update( wuc.time_step() );
 
 			if let Some( debug_renderer ) = &*self.debug_renderer {

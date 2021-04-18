@@ -342,7 +342,7 @@ impl Game {
 		}
 
 		if wuc.was_key_pressed( 'p' as u8 ) {
-			self.is_paused = !self.is_paused;
+			self.toggle_pause();
 		}
 
 		if !self.is_paused {
@@ -367,6 +367,7 @@ impl Game {
 			}
 		} else {
 			// :HACK: for visualising collisions even when paused
+			/* :TODO: enable via hotkey
 			self.collide_with_obstacles( &euc );
 			if wuc.mouse_buttons[ 0 ] {
 				let pos = auc.cursor_pos();
@@ -376,6 +377,7 @@ impl Game {
 					}
 				}
 			}
+			*/
 		}
 
 	}
@@ -394,5 +396,9 @@ impl Game {
 	}
 	pub fn is_paused( &self ) -> bool {
 		self.is_paused
+	}
+
+	pub fn toggle_pause( &mut self ) {
+		self.is_paused = !self.is_paused;
 	}
 }
