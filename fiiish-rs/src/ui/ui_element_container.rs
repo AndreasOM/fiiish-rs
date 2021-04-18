@@ -6,6 +6,7 @@ use crate::ui::{
 	UiElement,
 	UiElementFadeData,
 	UiElementFadeState,
+	UiEvent,
 	UiRenderer,
 };
 
@@ -257,6 +258,48 @@ impl UiElementContainer {
 	}
 	pub fn set_pos( &mut self, pos: &Vector2 ) {
 		self.data.pos = *pos;
+	}
+
+	pub fn handle_ui_event( &mut self, event: &UiEvent ) -> bool {	// bool will change to ... Option< Something >
+		match event {
+			UiEvent::MouseClick{ pos, button } => {
+				let pos = pos.sub( self.pos() );
+				if self.is_hit_by( &pos ) {
+//					println!( "Hit with {} children", self.borrow_base_mut().children.len() );
+					for c in self.data.borrow_children_mut().iter_mut() {
+						let cpos = pos.sub( c.pos() );
+//						let pos = *pos;
+//						println!("New pos: {},{} (child @ {}, {} -> {}, {})", pos.x, pos.y , c.pos().x, c.pos().y, cpos.x, cpos.y );
+						if c.is_hit_by( &cpos ) {
+//							println!("Child is hit");
+							let ev = UiEvent::MouseClick{ pos, button: *button };
+							if c.handle_ui_event( &ev ) {
+								return true;
+							}
+						} else {
+//							println!("Child NOT hit");
+						}
+					}
+					// no child hit, so try give to our element
+					self.element.handle_ui_event( &mut self.data, &event )
+				} else {
+//					println!( "Not hit" );
+					false
+				}
+			},
+			_ => false,
+		}
+	}
+
+	// local coordinates!
+	fn is_hit_by( &self, pos: &Vector2 ) -> bool {
+		let hs = self.data.size.scaled( 0.5 );
+		let bl = Vector2::zero().sub( &hs );
+		let tr = Vector2::zero().add( &hs );
+		pos.x >= bl.x
+		&& pos.y >= bl.y
+		&& pos.x <= tr.x
+		&& pos.y <= tr.y
 	}
 
 }

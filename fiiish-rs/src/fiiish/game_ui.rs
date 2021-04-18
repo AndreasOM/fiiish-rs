@@ -121,11 +121,9 @@ impl GameUi {
 				let cp = auc.cursor_pos();
 				println!("Left Mouse Button was pressed @ {}, {}", cp.x, cp.y );
 				let ev = UiEvent::MouseClick{ pos: *cp, button: 0 };
-				/* :TODO:
 				if root.handle_ui_event( &ev ) {
 					println!("Click handled");
 				}
-				*/
 			}
 
 			root.update( wuc.time_step() );

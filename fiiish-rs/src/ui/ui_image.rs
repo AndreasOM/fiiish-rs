@@ -33,8 +33,8 @@ impl UiElement for UiImage {
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		Some( &self.imagesize )
 	}
-	fn handle_ui_event( &mut self, event: &UiEvent ) -> bool {
-		println!("UiImage got event -> {}", &self.imagename );
+	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, event: &UiEvent ) -> bool {	// bool will change to ... Option< Something >
+		println!("UiImage got event -> {} -> {}", &container.name, &self.imagename );
 		false
 	}
 	/*
