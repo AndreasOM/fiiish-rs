@@ -33,22 +33,29 @@ impl UiToggleButton {
 		if let Some( image_a ) = &mut self.image_a {
 			image_a.borrow_mut().fade_in( 1.0 );
 		}
-		/*
-		image_a.fade_in( 1.0 );
-		image_b.fade_out( 1.0 );
-		*/
+		if let Some( image_b ) = &mut self.image_b {
+			image_b.borrow_mut().fade_out( 1.0 );
+		}
 	}
 	pub fn goto_b( &mut self ) {
-		/*
-		image_a.fade_out( 1.0 );
-		image_b.fade_in( 1.0 );
-		*/
+		if let Some( image_a ) = &mut self.image_a {
+			image_a.borrow_mut().fade_out( 1.0 );
+		}
+		if let Some( image_b ) = &mut self.image_b {
+			image_b.borrow_mut().fade_in( 1.0 );
+		}
 	}
 }
 
 impl UiElement for UiToggleButton {
+	fn as_any(&self) -> &dyn std::any::Any {
+		self
+	}
+	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+		self
+	}
 	fn setup_within_container( &mut self, container: &mut UiElementContainerData ) {
-		let mut image_a = container.add_child_element( UiImage::new( &self.imagename_a, &self.imagesize.scaled( 1.2 ) ) );
+		let mut image_a = container.add_child_element( UiImage::new( &self.imagename_a, &self.imagesize ) );
 		{
 			let mut img_a = image_a.borrow_mut();
 			img_a.set_name( "A" );

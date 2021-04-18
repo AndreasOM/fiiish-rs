@@ -34,6 +34,12 @@ impl UiVbox {
 }
 
 impl UiElement for UiVbox {
+	fn as_any(&self) -> &dyn std::any::Any {
+		self
+	}
+	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+		self
+	}
 	fn recalculate_size( &mut self, container: &mut UiElementContainerData ) {
 		let mut total_size = Vector2::zero();
 

@@ -30,6 +30,12 @@ impl UiImage {
 }
 
 impl UiElement for UiImage {
+	fn as_any(&self) -> &dyn std::any::Any {
+		self
+	}
+	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+		self
+	}
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		Some( &self.imagesize )
 	}

@@ -25,6 +25,8 @@ pub enum UiElementFadeState {
 }
 
 pub trait UiElement {
+	fn as_any(&self) -> &dyn std::any::Any;
+	fn as_any_mut(&mut self) -> &mut dyn std::any::Any;
 	fn setup_within_container( &mut self, _container: &mut UiElementContainerData ) {}
 
 	fn recalculate_size( &mut self, _container: &mut UiElementContainerData ) {}
