@@ -271,7 +271,7 @@ impl FiiishApp {
 		}
 
 		self.game.update( wuc, &mut auc );
-		self.game_ui.update( wuc, &mut auc );
+		self.game_ui.update( &self.game, wuc, &mut auc );
 
 
 		if wuc.was_key_pressed( 't' as u8 ) {

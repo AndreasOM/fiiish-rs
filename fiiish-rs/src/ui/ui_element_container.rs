@@ -309,19 +309,19 @@ impl UiElementContainer {
 		let (head, tail ) = path.split_at(1);
 		let head = head[ 0 ];
 
-		println!("Checking {} for {}, {:?}", self.name(), head, tail );
+//		println!("Checking {} for {}, {:?}", self.name(), head, tail );
 
 		if head == self.name() {
 			if tail.len() == 0 {
-				println!("Found {}!", &head );
+//				println!("Found {}!", &head );
 				return Some( self );
 			} else {
-				println!("Found {} ... {:?}", &head, &tail );
+//				println!("Found {} ... {:?}", &head, &tail );
 				return self.find_child_mut( tail );
 			}
 		}
 
-		println!("Checking {} children for {}, {:?}", self.data.borrow_children().len(), head, tail );
+//		println!("Checking {} children for {}, {:?}", self.data.borrow_children().len(), head, tail );
 
 		for c in self.data.borrow_children_mut().iter_mut() {
 			if let Some( r ) = c.find_child_mut( path ) {

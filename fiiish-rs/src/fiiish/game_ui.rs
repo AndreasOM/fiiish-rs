@@ -2,6 +2,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 use crate::DebugRenderer;
+use crate::fiiish::game::Game;
 use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 use crate::math::Vector2;
@@ -68,25 +69,27 @@ impl GameUi {
 			let pause_menu = root.add_child_element( pause_menu );
 			pause_menu.set_name( "PauseMenu" );
 			pause_menu.fade_out( 0.0 );
-			pause_menu.fade_in( 3.0 );
+//			pause_menu.fade_in( 3.0 );
 
 			pause_menu.add_child_element( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) );
 
 			let button_settings = pause_menu.add_child_element( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) );
 			button_settings.set_name( "ButtonSettings" );
-//			button_settings.fade_out( 0.0 );
+			button_settings.fade_out( 0.0 );
 
-			pause_menu.add_child_element( UiImage::new( "button_fiiish", &Vector2::new( 128.0, 128.0 ) ) );
+//			pause_menu.add_child_element( UiImage::new( "button_fiiish", &Vector2::new( 128.0, 128.0 ) ) );
 		}
 
 		// example
+		/*
 		{
 			if let Some( button_settings ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
-				button_settings.fade_out( 5.0 );
+				button_settings.fade_out( 0.0 );
 			}
 
 //			todo!("die");
 		}
+		*/
 
 		root.layout( &Vector2::zero() );
 
@@ -112,7 +115,7 @@ impl GameUi {
 		}		
 	}
 
-	pub fn update( &mut self, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
+	pub fn update( &mut self, game: &Game, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
 		if let Some( root ) = &mut self.root {
 
 			if wuc.was_mouse_button_pressed( 0 ) {
@@ -124,6 +127,20 @@ impl GameUi {
 				}
 			}
 
+			if let Some( pause_menu ) = root.find_child_mut( &[ "PauseMenu" ] ) {
+				if game.is_playing() {
+					pause_menu.fade_in( 1.0 );
+				} else {
+					pause_menu.fade_out( 1.0 );
+				}
+			}
+			if let Some( settings_button ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
+				if game.is_paused() {
+					settings_button.fade_in( 1.0 );
+				} else {
+					settings_button.fade_out( 1.0 );
+				}
+			}
 			root.update( wuc.time_step() );
 
 			if let Some( debug_renderer ) = &*self.debug_renderer {

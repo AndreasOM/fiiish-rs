@@ -41,6 +41,7 @@ pub enum GameState {
 	None,
 	WaitForStart,
 	Playing,
+	Die,
 	Dead,
 }
 
@@ -65,7 +66,7 @@ impl Game {
 			entity_configuration_manager:	EntityConfigurationManager::new(),
 			zone_manager:					ZoneManager::new(),
 			shape_cache:					ShapeCache::new(),
-			state:							GameState::WaitForStart,
+			state:							GameState::None,
 			is_paused:						false,
 			debug_renderer:					Rc::new( None ),
 		}
@@ -279,30 +280,43 @@ impl Game {
 		for p in self.fishes.iter_mut() {
 			if p.name() == "fish" {
 				fish_movement = *p.movement();
-				if p.is_alive() {
-					self.state = GameState::Playing;
-					if wuc.is_space_pressed {
-						p.turn_down();
-					} else {
-						p.turn_up();
-					};
-					if wuc.was_key_pressed( 'k' as u8 ) {
-						p.kill();
-					}
-				} else {
-					// :TODO: handle via UI
-					if p.can_respawn() {
+				match self.state {
+					GameState::None => {
 						println!("Respawn");
 						p.respawn();
 						self.state = GameState::WaitForStart;
-					} else {
-						self.state = GameState::Dead;
+					},
+					GameState::WaitForStart => {
+						if wuc.is_space_pressed {
+							self.state = GameState::Playing;
+						}
+					},
+					GameState::Playing => {
+						if wuc.is_space_pressed {
+							p.turn_down();
+						} else {
+							p.turn_up();
+						};
+						if wuc.was_key_pressed( 'k' as u8 ) {
+							p.kill();
+						}
+						if !p.is_alive() {
+							self.state = GameState::Die;
+						}
+					},
+					GameState::Die => {
 						for e in self.entity_manager.iter_mut() {
 							// :TODO: fade out or something
 							e.kill();
 						}
 						self.zone_manager.clear_zone();
-					}
+						self.state = GameState::Dead;
+					},
+					GameState::Dead => {
+						if p.can_respawn() {
+							self.state = GameState::None;
+						}
+					},
 				}
 			}
 		}
@@ -373,5 +387,12 @@ impl Game {
 		for e in self.entity_manager.iter_mut() {
 			e.render( renderer );
 		}
+	}
+
+	pub fn is_playing( &self ) -> bool {
+		self.state == GameState::Playing
+	}
+	pub fn is_paused( &self ) -> bool {
+		self.is_paused
 	}
 }
