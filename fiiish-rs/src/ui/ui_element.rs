@@ -25,6 +25,8 @@ pub enum UiElementFadeState {
 }
 
 pub trait UiElement {
+	fn setup_within_container( &mut self, _container: &mut UiElementContainerData ) {}
+
 	fn recalculate_size( &mut self, _container: &mut UiElementContainerData ) {}
 	fn add_child( &mut self, _child: &mut UiElementContainerData ) {}
 	fn update( &mut self, _time_step: f64 ) {}

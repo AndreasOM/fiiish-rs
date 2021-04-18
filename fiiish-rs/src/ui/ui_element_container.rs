@@ -54,6 +54,16 @@ impl UiElementContainerData {
 		}
 	}
 
+	pub fn add_child( &mut self, child: UiElementContainer ) -> &mut UiElementContainer {
+		self.children.push( child );
+		let last = self.children.len() - 1;
+		&mut self.children[ last ]
+	}
+
+	pub fn add_child_element( &mut self, element: impl UiElement + 'static ) -> &mut UiElementContainer {
+		self.add_child( UiElementContainer::new( Box::new( element ) ) )
+	}
+
 }
 
 #[derive(Debug)]
@@ -63,13 +73,14 @@ pub struct UiElementContainer {
 }
 
 impl UiElementContainer {
-	pub fn new( element: Box< dyn UiElement > ) -> Self {
+	pub fn new( mut element: Box< dyn UiElement > ) -> Self {
 		let mut data = UiElementContainerData::new();
 		if let Some( size ) = element.preferred_size() {
 //			println!("{:?} has a preferred size of {:?}", &element, &size );
 			data.set_size( size );
 		}
-		Self {			
+		element.setup_within_container( &mut data );
+		Self {
 			element,
 			data,
 		}

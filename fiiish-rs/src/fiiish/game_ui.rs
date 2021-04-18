@@ -21,6 +21,7 @@ use crate::ui::{
 	UiHbox,
 	UiImage,
 	UiRenderer,
+	UiToggleButton,
 	UiVbox,
 };
 
@@ -71,7 +72,8 @@ impl GameUi {
 			pause_menu.fade_out( 0.0 );
 //			pause_menu.fade_in( 3.0 );
 
-			pause_menu.add_child_element( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) );
+//			pause_menu.add_child_element( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) );
+			pause_menu.add_child_element( UiToggleButton::new( "button_pause", "button_play", &Vector2::new( 128.0, 128.0 ) ) );
 
 			let button_settings = pause_menu.add_child_element( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) );
 			button_settings.set_name( "ButtonSettings" );
