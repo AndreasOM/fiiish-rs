@@ -16,6 +16,7 @@ use crate::system::System;
 use crate::ui::{
 	UiElement,
 	UiElementContainer,
+	UiElementContainerHandle,
 	UiEvent,
 	UiGravityBox,
 	UiHbox,
@@ -34,6 +35,8 @@ pub struct GameUi {
 	root: Option< UiElementContainer >,
 	size: Vector2,
 
+	pause_togglebutton: Option< UiElementContainerHandle >,
+
 	debug_renderer: Rc < Option < RefCell< DebugRenderer >  > >,
 }
 
@@ -42,6 +45,7 @@ impl GameUi {
 		Self {
 			root: None,
 			size: Vector2::zero(),
+			pause_togglebutton: None,
 			debug_renderer:	Rc::new( None ),
 		}
 	}
@@ -67,15 +71,16 @@ impl GameUi {
 
 			// :TODO: unhack for HACK above
 //			root.borrow_element_mut().set_gravity( &Vector2::new( -1.0, 1.0 ) );
-			let pause_menu = root.add_child_element( pause_menu );
+			let mut pause_menu = root.add_child_element( pause_menu ).borrow_mut();
 			pause_menu.set_name( "PauseMenu" );
 			pause_menu.fade_out( 0.0 );
 //			pause_menu.fade_in( 3.0 );
 
 //			pause_menu.add_child_element( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) );
-			pause_menu.add_child_element( UiToggleButton::new( "button_pause", "button_play", &Vector2::new( 128.0, 128.0 ) ) );
+			let pause_togglebutton = pause_menu.add_child_element( UiToggleButton::new( "button_pause", "button_play", &Vector2::new( 128.0, 128.0 ) ) );
+			self.pause_togglebutton = Some( pause_togglebutton.clone() );
 
-			let button_settings = pause_menu.add_child_element( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) );
+			let mut button_settings = pause_menu.add_child_element( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ).borrow_mut();
 			button_settings.set_name( "ButtonSettings" );
 			button_settings.fade_out( 0.0 );
 
@@ -102,6 +107,19 @@ impl GameUi {
 		root.fade_in( 2.0 );
 //		self.root = Some( Box::new( root ) );
 		self.root = Some( root );
+
+
+		// somewhere in the code
+		/*
+		{
+			if let Some( p ) = &mut self.pause_togglebutton {
+				let p = p.borrow_mut();
+				let tb: UiToggleButton = dynamic_cast<UiToggleButton>( p );
+				tb.goto_b();
+			}
+
+		}
+		*/
 	}
 	pub fn teardown( &mut self ) {
 		self.root = None;
@@ -129,14 +147,16 @@ impl GameUi {
 				}
 			}
 
-			if let Some( pause_menu ) = root.find_child_mut( &[ "PauseMenu" ] ) {
+			if let Some( mut pause_menu ) = root.find_child_mut( &[ "PauseMenu" ] ) {
+				let mut pause_menu = pause_menu.borrow_mut();
 				if game.is_playing() {
 					pause_menu.fade_in( 1.0 );
 				} else {
 					pause_menu.fade_out( 1.0 );
 				}
 			}
-			if let Some( settings_button ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
+			if let Some( mut settings_button ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
+				let mut settings_button = settings_button.borrow_mut();
 				if game.is_paused() {
 					settings_button.fade_in( 1.0 );
 				} else {

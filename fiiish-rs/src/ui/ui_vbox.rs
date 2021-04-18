@@ -38,6 +38,7 @@ impl UiElement for UiVbox {
 		let mut total_size = Vector2::zero();
 
 		for c in container.borrow_children().iter() {
+			let c = c.borrow();
 			let cs = c.size();
 			total_size.y += cs.y + self.padding;
 			if total_size.x < cs.x {
@@ -59,7 +60,7 @@ impl UiElement for UiVbox {
 		let mut w0;
 
 		for c in container.borrow_children().iter() {
-			let cs = *c.size();
+			let cs = *c.borrow().size();
 			total_size.y += cs.y + padding;
 			if total_size.x < cs.x {
 				total_size.x = cs.x;
@@ -77,7 +78,7 @@ impl UiElement for UiVbox {
 		for (i, c ) in container.borrow_children_mut().iter_mut().enumerate() {
 			let y = c_positions_y[ i ];
 			cpos.y += y + padding;
-			c.layout( &cpos );
+			c.borrow_mut().layout( &cpos );
 		}
 
 		container.set_pos( pos );

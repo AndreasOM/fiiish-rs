@@ -38,6 +38,7 @@ impl UiElement for UiHbox {
 		let mut total_size = Vector2::zero();
 
 		for c in container.borrow_children().iter() {
+			let c = c.borrow();
 			let cs = c.size();
 			total_size.x += cs.x + self.padding;
 			if total_size.y < cs.y {
@@ -59,6 +60,7 @@ impl UiElement for UiHbox {
 		let mut w0 = 0.0;
 
 		for c in container.borrow_children().iter() {
+			let c = c.borrow();
 			let cs = c.size();
 			total_size.x += cs.x + padding;
 			if total_size.y < cs.y {
@@ -77,7 +79,7 @@ impl UiElement for UiHbox {
 		for (i, c ) in container.borrow_children_mut().iter_mut().enumerate() {
 			let x = c_positions_x[ i ];
 			cpos.x += x + padding;
-			c.layout( &cpos );
+			c.borrow_mut().layout( &cpos );
 		}
 
 		container.set_pos( pos );

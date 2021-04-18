@@ -1,3 +1,5 @@
+use std::rc::{ Rc, Weak };
+use std::cell::{ Ref, RefCell, RefMut };
 
 use crate::DebugRenderer;
 use crate::math::Vector2;
@@ -16,7 +18,7 @@ pub struct UiElementContainerData {
 	pub pos: Vector2,
 	pub size: Vector2,
 	pub fade_state: UiElementFadeState,
-	pub children: Vec< UiElementContainer >,
+	pub children: Vec< UiElementContainerHandle >,
 }
 
 impl UiElementContainerData {
@@ -35,10 +37,10 @@ impl UiElementContainerData {
 	pub fn set_pos( &mut self, pos: &Vector2 ) {
 		self.pos = *pos;
 	}
-	pub fn borrow_children( &self ) -> &Vec< UiElementContainer > {
+	pub fn borrow_children( &self ) -> &Vec< UiElementContainerHandle > {
 		&self.children
 	}
-	pub fn borrow_children_mut( &mut self ) -> &mut Vec< UiElementContainer > {
+	pub fn borrow_children_mut( &mut self ) -> &mut Vec< UiElementContainerHandle > {
 		&mut self.children
 	}
 	pub fn fade_state( &self ) -> &UiElementFadeState {
@@ -54,22 +56,77 @@ impl UiElementContainerData {
 		}
 	}
 
-	pub fn add_child( &mut self, child: UiElementContainer ) -> &mut UiElementContainer {
-		self.children.push( child );
+	pub fn add_child( &mut self, child: UiElementContainer ) -> UiElementContainerHandle {
+		let mut handle = UiElementContainerHandle::new( child );
+		let mut handle2 = handle.clone();
+		handle.borrow_mut().set_handle( &mut handle2 );
+		self.children.push( handle );
 		let last = self.children.len() - 1;
-		&mut self.children[ last ]
+		self.children[ last ].clone()
 	}
 
-	pub fn add_child_element( &mut self, element: impl UiElement + 'static ) -> &mut UiElementContainer {
+	pub fn add_child_element( &mut self, element: impl UiElement + 'static ) -> UiElementContainerHandle {
 		self.add_child( UiElementContainer::new( Box::new( element ) ) )
 	}
 
 }
 
+#[derive(Debug,Clone)]
+pub struct UiElementContainerHandleWeak {
+	weak_handle: Weak< RefCell< UiElementContainer > >,
+}
+
+impl UiElementContainerHandleWeak {
+	pub fn new( handle: Weak< RefCell< UiElementContainer > > ) -> Self {
+		Self {
+			weak_handle: handle,
+		}
+	}
+	pub fn upgrade( &mut self ) -> UiElementContainerHandle {
+		UiElementContainerHandle::upgrade( &mut self.weak_handle )
+	}
+}
+#[derive(Debug,Clone)]
+pub struct UiElementContainerHandle {
+	container: Rc< RefCell< UiElementContainer > >,
+}
+
+impl UiElementContainerHandle {
+
+	pub fn new( container: UiElementContainer ) -> Self {
+		Self {
+			container: Rc::new( RefCell::new( container ) ),
+		}
+	}
+
+	pub fn upgrade( handle: &mut Weak< RefCell< UiElementContainer > > ) -> Self {
+		Self {
+			container: handle.upgrade().unwrap(),
+		}
+	}
+
+	pub fn borrow( &self ) -> Ref<UiElementContainer> {
+		self.container.borrow()
+	}
+	pub fn borrow_mut( &mut self ) -> RefMut<UiElementContainer> {
+		self.container.borrow_mut()
+	}
+
+	pub fn downgrade( &mut self ) -> UiElementContainerHandleWeak {
+		UiElementContainerHandleWeak::new( Rc::downgrade( &self.container ) )
+	}
+}
+/*
+impl Copy for UiElementContainerHandle {
+
+}
+*/
+
 #[derive(Debug)]
 pub struct UiElementContainer {
 	element: Box< dyn UiElement >,
 	data: UiElementContainerData,
+	handle: Option< UiElementContainerHandleWeak >,
 }
 
 impl UiElementContainer {
@@ -83,14 +140,19 @@ impl UiElementContainer {
 		Self {
 			element,
 			data,
+			handle: None,
 		}
+	}
+
+	pub fn set_handle( &mut self, handle: &mut UiElementContainerHandle ) {
+		self.handle = Some( handle.downgrade() );
 	}
 
 	pub fn update( &mut self, time_step: f64 ) {
 		self.element.update( time_step );
 		self.update_fade_state( time_step );
 		for c in self.data.children.iter_mut() {
-			c.update( time_step );
+			c.borrow_mut().update( time_step );
 		}
 	}
 
@@ -105,7 +167,7 @@ impl UiElementContainer {
 			let l = self.get_fade_level();
 			ui_renderer.push_opacity( l );
 			for c in self.data.children.iter() {
-				c.render( ui_renderer );
+				c.borrow().render( ui_renderer );
 			}
 			ui_renderer.pop_opacity();
 			ui_renderer.pop_transform();
@@ -199,8 +261,8 @@ impl UiElementContainer {
 	pub fn render_debug( &self, debug_renderer: &mut DebugRenderer, offset: &Vector2 ) {
 		self.element.render_debug( &self.data, debug_renderer, offset );
 		for c in self.data.borrow_children().iter() {
-			let co = offset.add( c.pos() );
-			c.render_debug( debug_renderer, &co );
+			let co = offset.add( c.borrow().pos() );
+			c.borrow().render_debug( debug_renderer, &co );
 		}
 		debug_renderer.add_line( &Vector2::zero(), &Vector2::zero().add( &offset ), 3.0, &Color::white() );
 	}
@@ -210,7 +272,7 @@ impl UiElementContainer {
 		let new_indent = format!("{}  ", indent);
 		for c in self.data.borrow_children().iter() {
 			let co = offset;//.add( c.pos() );
-			c.dump_info( &new_indent, &co );
+			c.borrow().dump_info( &new_indent, &co );
 		}
 	}
 
@@ -224,23 +286,24 @@ impl UiElementContainer {
 		&mut self.element
 	}
 
-	pub fn borrow_children( &self ) -> &Vec< UiElementContainer > {
+	pub fn borrow_children( &self ) -> &Vec< UiElementContainerHandle > {
 		&self.data.children
 	}
 
-	pub fn borrow_children_mut( &mut self ) -> &mut Vec< UiElementContainer > {
+	pub fn borrow_children_mut( &mut self ) -> &mut Vec< UiElementContainerHandle > {
 		&mut self.data.children
 	}
 
-	pub fn add_child( &mut self, mut child: UiElementContainer ) -> &mut UiElementContainer {
+	pub fn add_child( &mut self, mut child: UiElementContainer ) -> &mut UiElementContainerHandle {
 		self.element.add_child( &mut child.data );
-		self.data.children.push( child );
+//		self.data.children.push( child );
+		self.data.add_child( child );
 		self.element.recalculate_size( &mut self.data );
 		let last = self.data.children.len() - 1;
 		&mut self.data.children[ last ]
 	}
 
-	pub fn add_child_element( &mut self, element: impl UiElement + 'static ) -> &mut UiElementContainer {
+	pub fn add_child_element( &mut self, element: impl UiElement + 'static ) -> &mut UiElementContainerHandle {
 		self.add_child( UiElementContainer::new( Box::new( element ) ) )
 	}
 
@@ -278,6 +341,7 @@ impl UiElementContainer {
 				if self.is_hit_by( &pos ) {
 //					println!( "Hit with {} children", self.borrow_base_mut().children.len() );
 					for c in self.data.borrow_children_mut().iter_mut() {
+						let mut c = c.borrow_mut();
 						let cpos = pos.sub( c.pos() );
 //						let pos = *pos;
 //						println!("New pos: {},{} (child @ {}, {} -> {}, {})", pos.x, pos.y , c.pos().x, c.pos().y, cpos.x, cpos.y );
@@ -313,7 +377,7 @@ impl UiElementContainer {
 		&& pos.y <= tr.y
 	}
 
-	pub fn find_child_mut( &mut self, path: &[ &str ] ) -> Option< &mut UiElementContainer > {
+	pub fn find_child_mut( &mut self, path: &[ &str ] ) -> Option< UiElementContainerHandle > {
 		if path.len() == 0 { // nothing left to check
 			return None;
 		}
@@ -325,7 +389,13 @@ impl UiElementContainer {
 		if head == self.name() {
 			if tail.len() == 0 {
 //				println!("Found {}!", &head );
-				return Some( self );
+//				return Some( &mut UiElementContainerHandle::new( *self ) );
+				if let Some( handle ) = &mut self.handle {
+					return Some( handle.upgrade() );
+				} else {
+					println!("Found {}, but it doesn't have a handle!", &head );
+					return None;
+				}
 			} else {
 //				println!("Found {} ... {:?}", &head, &tail );
 				return self.find_child_mut( tail );
@@ -335,7 +405,7 @@ impl UiElementContainer {
 //		println!("Checking {} children for {}, {:?}", self.data.borrow_children().len(), head, tail );
 
 		for c in self.data.borrow_children_mut().iter_mut() {
-			if let Some( r ) = c.find_child_mut( path ) {
+			if let Some( r ) = c.borrow_mut().find_child_mut( path ) {
 				return Some( r );
 			}
 		}

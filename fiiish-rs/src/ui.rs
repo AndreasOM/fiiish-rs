@@ -7,6 +7,7 @@ mod ui_element_base;
 mod ui_element_container;
 	pub use ui_element_container::UiElementContainer as UiElementContainer;
 	pub use ui_element_container::UiElementContainerData as UiElementContainerData;
+	pub use ui_element_container::UiElementContainerHandle as UiElementContainerHandle;
 mod ui_event;
 	pub use ui_event::UiEvent as UiEvent;
 mod ui_gravity_box;
