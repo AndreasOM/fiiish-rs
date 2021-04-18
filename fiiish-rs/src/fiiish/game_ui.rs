@@ -74,21 +74,19 @@ impl GameUi {
 
 			let button_settings = pause_menu.add_child_element( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) );
 			button_settings.set_name( "ButtonSettings" );
-			button_settings.fade_out( 0.0 );
+//			button_settings.fade_out( 0.0 );
 
 			pause_menu.add_child_element( UiImage::new( "button_fiiish", &Vector2::new( 128.0, 128.0 ) ) );
 		}
 
 		// example
-		/* :TODO: after ui restructuring
 		{
 			if let Some( button_settings ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
-				button_settings.fade_out( 0.0 );
+				button_settings.fade_out( 5.0 );
 			}
 
-			todo!("die");
+//			todo!("die");
 		}
-		*/
 
 		root.layout( &Vector2::zero() );
 

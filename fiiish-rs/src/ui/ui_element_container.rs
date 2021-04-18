@@ -302,4 +302,33 @@ impl UiElementContainer {
 		&& pos.y <= tr.y
 	}
 
+	pub fn find_child_mut( &mut self, path: &[ &str ] ) -> Option< &mut UiElementContainer > {
+		if path.len() == 0 { // nothing left to check
+			return None;
+		}
+		let (head, tail ) = path.split_at(1);
+		let head = head[ 0 ];
+
+		println!("Checking {} for {}, {:?}", self.name(), head, tail );
+
+		if head == self.name() {
+			if tail.len() == 0 {
+				println!("Found {}!", &head );
+				return Some( self );
+			} else {
+				println!("Found {} ... {:?}", &head, &tail );
+				return self.find_child_mut( tail );
+			}
+		}
+
+		println!("Checking {} children for {}, {:?}", self.data.borrow_children().len(), head, tail );
+
+		for c in self.data.borrow_children_mut().iter_mut() {
+			if let Some( r ) = c.find_child_mut( path ) {
+				return Some( r );
+			}
+		}
+		None
+	}
+
 }

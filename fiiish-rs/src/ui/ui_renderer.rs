@@ -44,7 +44,7 @@ impl <'a> UiRenderer<'a> {
 	}
 
 	pub fn pop_opacity( &mut self ) {
-		self.opacity_stack.pop();
+		self.opacity = self.opacity_stack.pop().unwrap();
 	}
 
 	pub fn use_texture( &mut self, name: &str ) {
