@@ -10,6 +10,8 @@ pub mod fiiish_app;
 pub mod game;
 mod game_ui;
 	pub use game_ui::GameUi as GameUi;
+mod settings_dialog;
+	pub use settings_dialog::SettingsDialog as SettingsDialog;
 
 mod shape;
 	pub use shape::Shape as Shape;

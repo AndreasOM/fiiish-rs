@@ -8,6 +8,7 @@ use std::sync::mpsc::{
 };
 
 use crate::DebugRenderer;
+use crate::fiiish::SettingsDialog;
 use crate::fiiish::game::Game;
 use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
@@ -23,6 +24,7 @@ use crate::ui::{
 	UiElement,
 	UiElementContainer,
 	UiElementContainerHandle,
+	UiElementFadeState,
 	UiEvent,
 	UiEventResponse,
 	UiEventResponseButtonClicked,
@@ -118,6 +120,19 @@ impl GameUi {
 		}
 		*/
 
+		// setup dialogs
+
+		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
+				Some( root_gravity_box ) => {
+					root_gravity_box.set_gravity( &Vector2::new( 0.0, 0.0 ) );
+				},
+				None => (),
+		};
+
+		let settings_dialog = root.add_child_element( SettingsDialog::new() );
+		settings_dialog.borrow_mut().set_name( "SettingsDialog" );
+		settings_dialog.borrow_mut().fade_out( 0.0 );
+
 		root.layout( &Vector2::zero() );
 
 //		root.dump_info( "", &Vector2::zero() );
@@ -146,6 +161,21 @@ impl GameUi {
 
 	fn toggle_settings_dialog( &mut self ) {
 		println!("Toggling settings dialog");
+		if let Some( root ) = &mut self.root {
+			if let Some( mut settings_dialog ) = root.find_child_mut( &[ "SettingsDialog" ] ) {
+				let mut settings_dialog = settings_dialog.borrow_mut();
+				match settings_dialog.fade_state() {
+					UiElementFadeState::FadedOut
+					| UiElementFadeState::FadingOut( _ ) => {
+						settings_dialog.fade_in( 1.0 );
+					},
+					UiElementFadeState::FadedIn
+					| UiElementFadeState::FadingIn( _ ) => {
+						settings_dialog.fade_out( 1.0 );
+					},
+				}
+			}
+		}
 	}
 
 	pub fn update( &mut self, game: &mut Game, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
@@ -157,8 +187,6 @@ impl GameUi {
 				let ev = UiEvent::MouseClick{ pos: *cp, button: 0 };
 				if root.handle_ui_event( &ev, &self.event_response_sender ) {
 					println!( "Click handled" );
-					/*
-					*/
 				}
 			}
 
@@ -176,6 +204,12 @@ impl GameUi {
 					settings_button.fade_in( 1.0 );
 				} else {
 					settings_button.fade_out( 1.0 );
+				}
+			}
+			if !game.is_paused() {
+				if let Some( mut settings_dialog ) = root.find_child_mut( &[ "SettingsDialog" ] ) {
+					let mut settings_dialog = settings_dialog.borrow_mut();
+					settings_dialog.fade_out( 1.0 );
 				}
 			}
 			if let Some( p ) = &mut self.pause_togglebutton {

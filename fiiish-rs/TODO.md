@@ -26,6 +26,8 @@
 
 ## Future
 
+
+- [ ] Experiment with using messages to communicate with UiElements
 - [ ] Implement block wise reading for FilesystemStreams
 - [ ] Implement, and use Serializer
 - [ ] Sort Materials on creation instead of every frame
