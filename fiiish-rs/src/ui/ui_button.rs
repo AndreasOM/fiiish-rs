@@ -1,4 +1,6 @@
 
+use std::sync::mpsc::Sender;
+
 use crate::math::Vector2;
 use crate::ui::{
 	UiElement,
@@ -39,10 +41,12 @@ impl UiElement for UiButton {
 		let image = container.add_child_element( UiImage::new( &self.imagename, &self.imagesize ) );
 		self.image = Some( image );
 	}
-	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent ) -> Option< Box < dyn UiEventResponse > > {
+	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> bool {
 		println!("Button clicked");
-		let ev = UiEventResponseButtonClicked{ button_name: container.name.clone() };
-		Some( Box::new( ev ) )
+		let ev = Box::new( UiEventResponseButtonClicked{ button_name: container.name.clone() } );
+		event_sender.send( ev ).unwrap();
+
+		true
 	}
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		Some( &self.imagesize )

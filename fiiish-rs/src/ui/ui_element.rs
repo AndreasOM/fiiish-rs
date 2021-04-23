@@ -1,4 +1,6 @@
 
+use std::sync::mpsc::Sender;
+
 use crate::DebugRenderer;
 use crate::math::Vector2;
 use crate::renderer::Color;
@@ -36,8 +38,8 @@ pub trait UiElement {
 	fn render( &self, _container: &UiElementContainerData, _ui_renderer: &mut UiRenderer) {}
 	fn layout( &mut self, _container: &mut UiElementContainerData, _pos: &Vector2 ){}
 	fn render_debug( &self, _container: &UiElementContainerData, _debug_renderer: &mut DebugRenderer, _offset: &Vector2 ) {}
-	fn handle_ui_event( &mut self, _container: &mut UiElementContainerData, _event: &UiEvent ) -> Option< Box < dyn UiEventResponse > > {
-		None
+	fn handle_ui_event( &mut self, _container: &mut UiElementContainerData, _event: &UiEvent, _event_sender: &Sender< Box< dyn UiEventResponse > > ) -> bool {
+		false
 	}
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		None

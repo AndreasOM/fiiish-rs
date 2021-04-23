@@ -1,6 +1,12 @@
 use std::rc::Rc;
 use std::cell::RefCell;
 
+use std::sync::mpsc::{
+	channel,
+	Sender,
+	Receiver,
+};
+
 use crate::DebugRenderer;
 use crate::fiiish::game::Game;
 use crate::fiiish::effect_ids::EffectId;
@@ -18,6 +24,7 @@ use crate::ui::{
 	UiElementContainer,
 	UiElementContainerHandle,
 	UiEvent,
+	UiEventResponse,
 	UiEventResponseButtonClicked,
 
 	UiButton,
@@ -41,15 +48,21 @@ pub struct GameUi {
 	pause_togglebutton: Option< UiElementContainerHandle >,
 
 	debug_renderer: Rc < Option < RefCell< DebugRenderer >  > >,
+
+	event_response_sender: Sender< Box< dyn UiEventResponse > >,
+	event_response_receiver: Receiver< Box< dyn UiEventResponse > >,
 }
 
 impl GameUi {
 	pub fn new() -> Self {
+		let ( tx, rx ) = channel();
 		Self {
 			root: None,
 			size: Vector2::zero(),
 			pause_togglebutton: None,
 			debug_renderer:	Rc::new( None ),
+			event_response_sender: tx,
+			event_response_receiver: rx,
 		}
 	}
 
@@ -132,7 +145,7 @@ impl GameUi {
 	}
 
 	fn toggle_settings_dialog( &mut self ) {
-
+		println!("Toggling settings dialog");
 	}
 
 	pub fn update( &mut self, game: &mut Game, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
@@ -142,25 +155,10 @@ impl GameUi {
 				let cp = auc.cursor_pos();
 				println!("Left Mouse Button was pressed @ {}, {}", cp.x, cp.y );
 				let ev = UiEvent::MouseClick{ pos: *cp, button: 0 };
-				if let Some( r ) = root.handle_ui_event( &ev ) {
-					println!("Click handled -> {:?}", &r );
-					match r.as_any().downcast_ref::<UiEventResponseButtonClicked>() {
-						Some( e ) => {
-							println!("Button {} clicked", &e.button_name );
-							match e.button_name.as_str() {
-								"ButtonPause" => {
-									game.toggle_pause();
-								},
-								"ButtonSettings" => {
-//									self.toggle_settings_dialog();
-								},
-								_ => {
-									println!( "Unhandled button click from {}", &e.button_name );
-								},
-							}
-						},
-						None => {},
-					};
+				if root.handle_ui_event( &ev, &self.event_response_sender ) {
+					println!( "Click handled" );
+					/*
+					*/
 				}
 			}
 
@@ -203,6 +201,30 @@ impl GameUi {
 			}
 
 		}
+
+		// handle pending event responses
+		let events: Vec< Box< dyn UiEventResponse > > = self.event_response_receiver.try_iter().collect();
+		for ev in events {
+//			while let Some( ev ) =  ev_iter.next() {
+			match ev.as_any().downcast_ref::<UiEventResponseButtonClicked>() {
+				Some( e ) => {
+					println!("Button {} clicked", &e.button_name );
+					match e.button_name.as_str() {
+						"ButtonPause" => {
+							game.toggle_pause();
+						},
+						"ButtonSettings" => {
+								self.toggle_settings_dialog();
+						},
+						_ => {
+							println!( "Unhandled button click from {}", &e.button_name );
+						},
+					}
+				},
+				None => {},
+			};
+		}
+
 	}
 	pub fn render( &mut self, renderer: &mut Renderer) {
 		if let Some( root ) = &mut self.root {

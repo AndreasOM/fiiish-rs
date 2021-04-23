@@ -1,6 +1,8 @@
 use std::rc::{ Rc, Weak };
 use std::cell::{ Ref, RefCell, RefMut };
 
+use std::sync::mpsc::Sender;
+
 use crate::DebugRenderer;
 use crate::math::Vector2;
 use crate::renderer::Color;
@@ -335,7 +337,7 @@ impl UiElementContainer {
 		self.data.pos = *pos;
 	}
 
-	pub fn handle_ui_event( &mut self, event: &UiEvent ) -> Option< Box< dyn UiEventResponse > > {
+	pub fn handle_ui_event( &mut self, event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> bool {
 		match event {
 			UiEvent::MouseClick{ pos, button } => {
 				let pos = pos.sub( self.pos() );
@@ -349,21 +351,21 @@ impl UiElementContainer {
 						if c.is_hit_by( &cpos ) {
 //							println!("Child is hit");
 							let ev = UiEvent::MouseClick{ pos, button: *button };
-							if let Some( r ) = c.handle_ui_event( &ev ) {
-								return Some( r );
+							if c.handle_ui_event( &ev, event_sender ) {
+								return true;
 							}
 						} else {
 //							println!("Child NOT hit");
 						}
 					}
 					// no child hit, so try give to our element
-					self.element.handle_ui_event( &mut self.data, &event )
+					self.element.handle_ui_event( &mut self.data, &event, event_sender )
 				} else {
 //					println!( "Not hit" );
-					None
+					false
 				}
 			},
-			_ => None,
+			_ => false,
 		}
 	}
 
