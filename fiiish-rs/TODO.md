@@ -3,6 +3,9 @@
 
 ## In Progress
 
+- [ ] Add UiButton
+- [ ] Add Settings Button
+- [ ] Implement UI system
 
 ## TODO
 
@@ -23,8 +26,6 @@
 
 ## Future
 
-- [ ] Implement UI system
-- [ ] Add collision with obstacles 
 - [ ] Implement block wise reading for FilesystemStreams
 - [ ] Implement, and use Serializer
 - [ ] Sort Materials on creation instead of every frame
@@ -45,6 +46,9 @@
 
 ## DONE
 
+- [x] Add collision with obstacles 
+- [x] Add pause button
+- [x] Add UI
 - [x] Use shapes for collision detection
 - [x] Visualise collision shapes
 - [x] Add cache for collision shapes

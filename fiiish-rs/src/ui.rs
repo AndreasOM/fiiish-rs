@@ -12,6 +12,9 @@ mod ui_event;
 	pub use ui_event::UiEvent as UiEvent;
 	pub use ui_event::UiEventResponse as UiEventResponse;
 	pub use ui_event::UiEventResponseButtonClicked as UiEventResponseButtonClicked;
+
+mod ui_button;
+	pub use ui_button::UiButton as UiButton;
 mod ui_gravity_box;
 	pub use ui_gravity_box::UiGravityBox as UiGravityBox;
 mod ui_hbox;

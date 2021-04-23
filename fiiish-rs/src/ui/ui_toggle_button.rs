@@ -72,7 +72,7 @@ impl UiElement for UiToggleButton {
 		self.image_b = Some( image_b );
 	}
 	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent ) -> Option< Box < dyn UiEventResponse > > {
-		println!("Pause toggled");
+		println!("Button toggled");
 		let ev = UiEventResponseButtonClicked{ button_name: container.name.clone() };
 		Some( Box::new( ev ) )
 	}

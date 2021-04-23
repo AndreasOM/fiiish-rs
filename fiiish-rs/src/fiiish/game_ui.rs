@@ -19,6 +19,8 @@ use crate::ui::{
 	UiElementContainerHandle,
 	UiEvent,
 	UiEventResponseButtonClicked,
+
+	UiButton,
 	UiGravityBox,
 	UiHbox,
 	UiImage,
@@ -85,7 +87,7 @@ impl GameUi {
 			}
 			self.pause_togglebutton = Some( pause_togglebutton.clone() );
 
-			let mut button_settings = pause_menu.add_child_element( UiImage::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ).borrow_mut();
+			let mut button_settings = pause_menu.add_child_element( UiButton::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ).borrow_mut();
 			button_settings.set_name( "ButtonSettings" );
 			button_settings.fade_out( 0.0 );
 
@@ -129,6 +131,10 @@ impl GameUi {
 		}		
 	}
 
+	fn toggle_settings_dialog( &mut self ) {
+
+	}
+
 	pub fn update( &mut self, game: &mut Game, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
 		if let Some( root ) = &mut self.root {
 
@@ -145,7 +151,12 @@ impl GameUi {
 								"ButtonPause" => {
 									game.toggle_pause();
 								},
-								_ => {},
+								"ButtonSettings" => {
+//									self.toggle_settings_dialog();
+								},
+								_ => {
+									println!( "Unhandled button click from {}", &e.button_name );
+								},
 							}
 						},
 						None => {},
