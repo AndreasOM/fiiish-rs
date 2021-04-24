@@ -206,9 +206,6 @@ impl GameUi {
 					Some( e ) => {
 						println!("Button {} clicked", &e.button_name );
 						match e.button_name.as_str() {
-							"ButtonPause" => {
-								game.toggle_pause();
-							},
 							"ButtonSettings" => {
 									self.toggle_settings_dialog();
 							},

@@ -69,6 +69,24 @@ impl UiElement for PauseDialog {
 		self.settings_button = Some( settings_button.clone() );
 		container.set_size( pause_menu.size() );
 	}
+	fn handle_ui_event_response( &mut self, response: Box< dyn UiEventResponse > ) -> Option< Box< dyn UiEventResponse > > {
+		match response.as_any().downcast_ref::<UiEventResponseButtonClicked>() {
+			Some( e ) => {
+				println!("SettingsDialog: Button {} clicked", &e.button_name );
+				match e.button_name.as_str() {
+					"ButtonPause" => {
+						self.game.borrow_mut().toggle_pause();
+					},
+					_ => {
+//						println!( "Unhandled button click from {}", &e.button_name );
+					},
+				}
+			},
+			_ => {},
+		}
+		Some( response )
+	}
+
 	fn update( &mut self, _container: &UiElementContainerData, _time_step: f64 ) {
 		let game = self.game.borrow();
 		if let Some( p ) = &mut self.pause_togglebutton {
