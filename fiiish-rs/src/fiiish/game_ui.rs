@@ -212,12 +212,6 @@ impl GameUi {
 							"ButtonSettings" => {
 									self.toggle_settings_dialog();
 							},
-							"MusicToggleButton" => {
-								game.toggle_music();
-							},
-							"SoundToggleButton" => {
-								game.toggle_sound();
-							},
 							_ => {
 								println!( "Unhandled button click from {}", &e.button_name );
 							},

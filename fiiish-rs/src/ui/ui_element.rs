@@ -47,6 +47,9 @@ pub trait UiElement {
 //		Vec::new()
 		None
 	}
+	fn handle_ui_event_response( &mut self, response: Box< dyn UiEventResponse > ) -> Option< Box< dyn UiEventResponse > > {
+		Some( response )
+	}
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		None
 	}

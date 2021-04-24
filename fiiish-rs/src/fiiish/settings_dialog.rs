@@ -98,6 +98,28 @@ impl UiElement for SettingsDialog {
 			};
 		}
 	}
+	fn handle_ui_event_response( &mut self, response: Box< dyn UiEventResponse > ) -> Option< Box< dyn UiEventResponse > > {
+		match response.as_any().downcast_ref::<UiEventResponseButtonClicked>() {
+			Some( e ) => {
+				println!("SettingsDialog: Button {} clicked", &e.button_name );
+				match e.button_name.as_str() {
+					"MusicToggleButton" => {
+						self.game.borrow_mut().toggle_music();
+						return None;
+					},
+					"SoundToggleButton" => {
+						self.game.borrow_mut().toggle_sound();
+						return None;
+					},
+					_ => {
+//						println!( "Unhandled button click from {}", &e.button_name );
+					},
+				}
+			},
+			_ => {},
+		}
+		Some( response )
+	}
 
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		Some( &self.size )

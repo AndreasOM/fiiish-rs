@@ -353,7 +353,8 @@ impl UiElementContainer {
 //							println!("Child is hit");
 							let ev = UiEvent::MouseClick{ pos, button: *button };
 							if let Some( r ) = c.handle_ui_event( &ev, event_sender ) {
-								return Some( r );
+								return self.element.handle_ui_event_response( r );
+//								return Some( r );
 							}
 						} else {
 //							println!("Child NOT hit");
