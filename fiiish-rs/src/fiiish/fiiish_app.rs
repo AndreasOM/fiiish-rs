@@ -46,7 +46,7 @@ pub struct FiiishApp {
 	viewport_size: Vector2,
 	scaling: f32,
 
-	game: Game,
+	game: Rc< RefCell< Game > >,
 	game_ui: GameUi,
 
 	demo: Demo,
@@ -72,8 +72,8 @@ impl FiiishApp {
 			viewport_size: Vector2::zero(),
 			scaling: 1.0,
 
-			game: Game::new(),
-			game_ui: GameUi::new(),
+			game: Rc::new( RefCell::new( Game::new() ) ),
+			game_ui: GameUi::new( ),
 
 			demo: Demo::new(),
 			demo_enabled: false,
@@ -171,10 +171,10 @@ impl FiiishApp {
 //		todo!("die");
 		// setup sub parts
 		let window_size = Vector2::new( 1024.0, 1024.0 ); // :TODO: get from window
-		self.game.setup( &mut self.system, &mut renderer );
+		self.game.borrow_mut().setup( &mut self.system, &mut renderer );
 //		self.game.set_size( &window_size );
 
-		self.game_ui.setup( &mut self.system, &mut renderer );
+		self.game_ui.setup( &mut self.system, &mut renderer, &mut self.game );
 		self.game_ui.set_size( &window_size );
 
 		self.demo.setup( &mut self.system, &mut renderer );
@@ -192,7 +192,7 @@ impl FiiishApp {
 		self.demo.teardown();
 
 		self.game_ui.teardown();
-		self.game.teardown();
+		self.game.borrow_mut().teardown();
 		self.renderer = None;
 	}
 
@@ -211,11 +211,12 @@ impl FiiishApp {
 												EffectId::Colored as u16
 											)
 										) ) );
-				self.game.enable_debug_renderer( &self.debug_renderer );
+//				let game = self.game.borrow_mut();
+				self.game.borrow_mut().enable_debug_renderer( &self.debug_renderer );
 				self.game_ui.enable_debug_renderer( &self.debug_renderer );
 			} else {
 				self.debug_renderer = Rc::new( None );
-				self.game.disable_debug_renderer();
+				self.game.borrow_mut().disable_debug_renderer();
 				self.game_ui.enable_debug_renderer( &self.debug_renderer );
 			}
 		}
@@ -270,8 +271,8 @@ impl FiiishApp {
 			self.is_done = true;
 		}
 
-		self.game.update( wuc, &mut auc );
-		self.game_ui.update( &mut self.game, wuc, &mut auc );
+		self.game.borrow_mut().update( wuc, &mut auc );
+		self.game_ui.update( wuc, &mut auc );
 
 
 		if wuc.was_key_pressed( 't' as u8 ) {
@@ -339,7 +340,7 @@ impl FiiishApp {
 					self.mixel.render( renderer );
 				}
 
-				self.game.render( renderer );
+				self.game.borrow_mut().render( renderer );
 				self.game_ui.render( renderer );
 
 				// :DEBUG: render atlas

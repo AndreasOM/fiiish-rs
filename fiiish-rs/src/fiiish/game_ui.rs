@@ -53,6 +53,8 @@ pub struct GameUi {
 
 	event_response_sender: Sender< Box< dyn UiEventResponse > >,
 	event_response_receiver: Receiver< Box< dyn UiEventResponse > >,
+
+	game: Option< Rc< RefCell< Game > > >,
 }
 
 impl GameUi {
@@ -65,6 +67,7 @@ impl GameUi {
 			debug_renderer:	Rc::new( None ),
 			event_response_sender: tx,
 			event_response_receiver: rx,
+			game: None,
 		}
 	}
 
@@ -76,7 +79,8 @@ impl GameUi {
 		self.debug_renderer = Rc::new( None );
 	}
 
-	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer) {
+	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer, game: &mut Rc< RefCell< Game > > ) {
+		self.game = Some( game.clone() );
 		let mut root = UiGravityBox::new( );
 		root.set_padding( 16.0 );
 		// :HACK:
@@ -130,7 +134,7 @@ impl GameUi {
 				None => (),
 		};
 
-		let settings_dialog = root.add_child_element( SettingsDialog::new() );
+		let settings_dialog = root.add_child_element( SettingsDialog::new( &mut self.game.as_mut().unwrap() )  );
 		settings_dialog.borrow_mut().set_name( "SettingsDialog" );
 		settings_dialog.borrow_mut().fade_out( 0.0 );
 
@@ -148,6 +152,7 @@ impl GameUi {
 	}
 	pub fn teardown( &mut self ) {
 		self.root = None;
+		self.game = None;
 	}
 
 	pub fn set_size( &mut self, size: &Vector2 ) {
@@ -179,7 +184,7 @@ impl GameUi {
 		}
 	}
 
-	pub fn update( &mut self, game: &mut Game, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
+	pub fn update( &mut self, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
 		if let Some( root ) = &mut self.root {
 
 			if wuc.was_mouse_button_pressed( 0 ) {
@@ -191,50 +196,46 @@ impl GameUi {
 				}
 			}
 
-			if let Some( mut pause_menu ) = root.find_child_mut( &[ "PauseMenu" ] ) {
-				let mut pause_menu = pause_menu.borrow_mut();
-				if game.is_playing() {
-					pause_menu.fade_in( 1.0 );
-				} else {
-					pause_menu.fade_out( 1.0 );
+			if let Some( game ) = &mut self.game {
+				let game = game.borrow();
+				if let Some( mut pause_menu ) = root.find_child_mut( &[ "PauseMenu" ] ) {
+					let mut pause_menu = pause_menu.borrow_mut();
+					if game.is_playing() {
+						pause_menu.fade_in( 1.0 );
+					} else {
+						pause_menu.fade_out( 1.0 );
+					}
 				}
-			}
-			if let Some( mut settings_button ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
-				let mut settings_button = settings_button.borrow_mut();
-				if game.is_paused() {
-					settings_button.fade_in( 1.0 );
-				} else {
-					settings_button.fade_out( 1.0 );
+				if let Some( mut settings_button ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
+					let mut settings_button = settings_button.borrow_mut();
+					if game.is_paused() {
+						settings_button.fade_in( 1.0 );
+					} else {
+						settings_button.fade_out( 1.0 );
+					}
 				}
-			}
-			if let Some( mut settings_dialog ) = root.find_child_mut( &[ "SettingsDialog" ] ) {
-				let mut settings_dialog = settings_dialog.borrow_mut();
-				if !game.is_paused() {
-					settings_dialog.fade_out( 1.0 );
+				if let Some( mut settings_dialog ) = root.find_child_mut( &[ "SettingsDialog" ] ) {
+					let mut settings_dialog = settings_dialog.borrow_mut();
+					if !game.is_paused() {
+						settings_dialog.fade_out( 1.0 );
+					}
 				}
-				let settings_dialog = settings_dialog.borrow_element_mut();
-				let sd: &mut SettingsDialog = match settings_dialog.as_any_mut().downcast_mut::<SettingsDialog>() {
-					Some( sd ) => sd,
-					None => panic!("{:?} isn't a SettingsDialog!", &settings_dialog),
-				};
-				sd.update_from_game( game );
-			}
 
-			if let Some( p ) = &mut self.pause_togglebutton {
-				let mut p = p.borrow_mut();
-				let p = p.borrow_element_mut();
-//				let tb: UiToggleButton = dynamic_cast<UiToggleButton>( p );
-				let tb: &mut UiToggleButton = match p.as_any_mut().downcast_mut::<UiToggleButton>() {
-					Some(p) => p,
-					None => panic!("{:?} isn't a UiToggleButton!", &p),
-				};
-				if game.is_paused() {
-					tb.goto_b();
-				} else {
-					tb.goto_a();
+				if let Some( p ) = &mut self.pause_togglebutton {
+					let mut p = p.borrow_mut();
+					let p = p.borrow_element_mut();
+	//				let tb: UiToggleButton = dynamic_cast<UiToggleButton>( p );
+					let tb: &mut UiToggleButton = match p.as_any_mut().downcast_mut::<UiToggleButton>() {
+						Some(p) => p,
+						None => panic!("{:?} isn't a UiToggleButton!", &p),
+					};
+					if game.is_paused() {
+						tb.goto_b();
+					} else {
+						tb.goto_a();
+					}
 				}
 			}
-
 			root.update( wuc.time_step() );
 
 			if let Some( debug_renderer ) = &*self.debug_renderer {
@@ -245,34 +246,36 @@ impl GameUi {
 		}
 
 		// handle pending event responses
-		let events: Vec< Box< dyn UiEventResponse > > = self.event_response_receiver.try_iter().collect();
-		for ev in events {
-//			while let Some( ev ) =  ev_iter.next() {
-			match ev.as_any().downcast_ref::<UiEventResponseButtonClicked>() {
-				Some( e ) => {
-					println!("Button {} clicked", &e.button_name );
-					match e.button_name.as_str() {
-						"ButtonPause" => {
-							game.toggle_pause();
-						},
-						"ButtonSettings" => {
-								self.toggle_settings_dialog();
-						},
-						"MusicToggleButton" => {
-							game.toggle_music();
-						},
-						"SoundToggleButton" => {
-							game.toggle_sound();
-						},
-						_ => {
-							println!( "Unhandled button click from {}", &e.button_name );
-						},
-					}
-				},
-				None => {},
-			};
+		if let Some( game ) = &mut self.game.clone() {
+			let mut game = game.borrow_mut();
+			let events: Vec< Box< dyn UiEventResponse > > = self.event_response_receiver.try_iter().collect();
+			for ev in events {
+	//			while let Some( ev ) =  ev_iter.next() {
+				match ev.as_any().downcast_ref::<UiEventResponseButtonClicked>() {
+					Some( e ) => {
+						println!("Button {} clicked", &e.button_name );
+						match e.button_name.as_str() {
+							"ButtonPause" => {
+								game.toggle_pause();
+							},
+							"ButtonSettings" => {
+									self.toggle_settings_dialog();
+							},
+							"MusicToggleButton" => {
+								game.toggle_music();
+							},
+							"SoundToggleButton" => {
+								game.toggle_sound();
+							},
+							_ => {
+								println!( "Unhandled button click from {}", &e.button_name );
+							},
+						}
+					},
+					None => {},
+				};
+			}
 		}
-
 	}
 	pub fn render( &mut self, renderer: &mut Renderer) {
 		if let Some( root ) = &mut self.root {
