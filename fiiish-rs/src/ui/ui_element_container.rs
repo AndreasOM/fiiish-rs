@@ -311,8 +311,9 @@ impl UiElementContainer {
 	}
 
 	pub fn layout( &mut self, pos: &Vector2 ) {
-		self.element.layout( &mut self.data, pos );
+//		println!("Container layout for {} -> {}, {}", &self.data.name, pos.x, pos.y );
 		self.data.pos = *pos;
+		self.element.layout( &mut self.data, pos );
 	}
 
 	pub fn size( &self ) -> &Vector2 {

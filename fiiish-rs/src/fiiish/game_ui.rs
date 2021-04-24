@@ -82,6 +82,7 @@ impl GameUi {
 		// :HACK:
 		root.set_gravity( &Vector2::new( -1.0, 1.0 ) );
 		let mut root = UiElementContainer::new( Box::new( root ) );
+		root.set_name( "root" );
 
 		{
 			let mut pause_menu = UiHbox::new();

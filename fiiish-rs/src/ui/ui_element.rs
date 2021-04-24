@@ -36,7 +36,12 @@ pub trait UiElement {
 	fn add_child( &mut self, _child: &mut UiElementContainerData ) {}
 	fn update( &mut self, _time_step: f64 ) {}
 	fn render( &self, _container: &UiElementContainerData, _ui_renderer: &mut UiRenderer) {}
-	fn layout( &mut self, _container: &mut UiElementContainerData, _pos: &Vector2 ){}
+	fn layout( &mut self, container: &mut UiElementContainerData, _pos: &Vector2 ){
+		for c in container.borrow_children_mut().iter_mut() {
+			c.borrow_mut().layout( &Vector2::zero() );
+		}
+//		container.set_pos( pos );	// no! This is the default anyway
+	}
 	fn render_debug( &self, _container: &UiElementContainerData, _debug_renderer: &mut DebugRenderer, _offset: &Vector2 ) {}
 	fn handle_ui_event( &mut self, _container: &mut UiElementContainerData, _event: &UiEvent, _event_sender: &Sender< Box< dyn UiEventResponse > > ) -> bool {
 		false
