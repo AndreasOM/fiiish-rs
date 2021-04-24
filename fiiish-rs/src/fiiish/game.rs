@@ -54,6 +54,8 @@ pub struct Game {
 	shape_cache: ShapeCache,
 	state: GameState,
 	is_paused: bool,
+	is_music_enabled: bool,
+	is_sound_enabled: bool,
 
 	debug_renderer: Rc < Option < RefCell< DebugRenderer >  > >,
 }
@@ -68,6 +70,8 @@ impl Game {
 			shape_cache:					ShapeCache::new(),
 			state:							GameState::None,
 			is_paused:						false,
+			is_music_enabled:				true,
+			is_sound_enabled:				true,
 			debug_renderer:					Rc::new( None ),
 		}
 	}
@@ -397,8 +401,20 @@ impl Game {
 	pub fn is_paused( &self ) -> bool {
 		self.is_paused
 	}
+	pub fn is_music_enabled( &self ) -> bool {
+		self.is_music_enabled
+	}
+	pub fn is_sound_enabled( &self ) -> bool {
+		self.is_sound_enabled
+	}
 
 	pub fn toggle_pause( &mut self ) {
 		self.is_paused = !self.is_paused;
+	}
+	pub fn toggle_music( &mut self ) {
+		self.is_music_enabled = !self.is_music_enabled;
+	}
+	pub fn toggle_sound( &mut self ) {
+		self.is_sound_enabled = !self.is_sound_enabled;
 	}
 }

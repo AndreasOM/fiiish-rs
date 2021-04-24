@@ -3,8 +3,6 @@
 
 ## In Progress
 
-- [ ] Add UiButton
-- [ ] Add Settings Button
 - [ ] Implement UI system
 
 ## TODO
@@ -48,6 +46,10 @@
 
 ## DONE
 
+- [x] Add UiButton
+- [x] Add Settings Button
+- [x] Add Settings Dialog
+- [x] Add Music, and Sound Button to Settings Dialog
 - [x] Add collision with obstacles 
 - [x] Add pause button
 - [x] Add UI

@@ -1,6 +1,7 @@
 
 use std::sync::mpsc::Sender;
 
+use crate::fiiish::game::Game;
 use crate::math::Vector2;
 use crate::ui::{
 	UiElement,
@@ -18,12 +19,47 @@ use crate::ui::{
 #[derive(Debug)]
 pub struct SettingsDialog {
 	size: Vector2,
+	music_togglebutton: Option< UiElementContainerHandle >,
+	sound_togglebutton: Option< UiElementContainerHandle >,
 }
 
 impl SettingsDialog {
 	pub fn new( ) -> Self {
 		Self {
 			size: Vector2::new( 1024.0, 1024.0 ),
+			music_togglebutton: None,
+			sound_togglebutton: None,
+		}
+	}
+
+	pub fn update_from_game( &mut self, game: &mut Game ) {
+		if let Some( music_togglebutton ) = &mut self.music_togglebutton {
+			let mut music_togglebutton = music_togglebutton.borrow_mut();
+			let music_togglebutton = music_togglebutton.borrow_element_mut();
+			match music_togglebutton.as_any_mut().downcast_mut::<UiToggleButton>() {
+				Some( mtb ) => {
+					if game.is_music_enabled() {
+						mtb.goto_a();
+					} else {
+						mtb.goto_b();
+					}
+				},
+				None => panic!("{:?} isn't a UiToggleButton!", &music_togglebutton),
+			};
+		}
+		if let Some( sound_togglebutton ) = &mut self.sound_togglebutton {
+			let mut sound_togglebutton = sound_togglebutton.borrow_mut();
+			let sound_togglebutton = sound_togglebutton.borrow_element_mut();
+			match sound_togglebutton.as_any_mut().downcast_mut::<UiToggleButton>() {
+				Some( mtb ) => {
+					if game.is_sound_enabled() {
+						mtb.goto_a();
+					} else {
+						mtb.goto_b();
+					}
+				},
+				None => panic!("{:?} isn't a UiToggleButton!", &sound_togglebutton),
+			};
 		}
 	}
 }
@@ -51,11 +87,13 @@ impl UiElement for SettingsDialog {
 			let mut p = music_togglebutton.borrow_mut();
 			p.set_name( "MusicToggleButton" );
 		}
+		self.music_togglebutton = Some( music_togglebutton.clone() );
 		let sound_togglebutton = hbox.add_child_element( UiToggleButton::new( "button_sound_on", "button_sound_off", &Vector2::new( 128.0, 128.0 ) ) );
 		{
 			let mut p = sound_togglebutton.borrow_mut();
 			p.set_name( "SoundToggleButton" );
 		}
+		self.sound_togglebutton = Some( sound_togglebutton.clone() );
 
 
 

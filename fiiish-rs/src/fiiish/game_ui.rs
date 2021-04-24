@@ -207,12 +207,19 @@ impl GameUi {
 					settings_button.fade_out( 1.0 );
 				}
 			}
-			if !game.is_paused() {
-				if let Some( mut settings_dialog ) = root.find_child_mut( &[ "SettingsDialog" ] ) {
-					let mut settings_dialog = settings_dialog.borrow_mut();
+			if let Some( mut settings_dialog ) = root.find_child_mut( &[ "SettingsDialog" ] ) {
+				let mut settings_dialog = settings_dialog.borrow_mut();
+				if !game.is_paused() {
 					settings_dialog.fade_out( 1.0 );
 				}
+				let settings_dialog = settings_dialog.borrow_element_mut();
+				let sd: &mut SettingsDialog = match settings_dialog.as_any_mut().downcast_mut::<SettingsDialog>() {
+					Some( sd ) => sd,
+					None => panic!("{:?} isn't a SettingsDialog!", &settings_dialog),
+				};
+				sd.update_from_game( game );
 			}
+
 			if let Some( p ) = &mut self.pause_togglebutton {
 				let mut p = p.borrow_mut();
 				let p = p.borrow_element_mut();
@@ -250,6 +257,12 @@ impl GameUi {
 						},
 						"ButtonSettings" => {
 								self.toggle_settings_dialog();
+						},
+						"MusicToggleButton" => {
+							game.toggle_music();
+						},
+						"SoundToggleButton" => {
+							game.toggle_sound();
 						},
 						_ => {
 							println!( "Unhandled button click from {}", &e.button_name );
