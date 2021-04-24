@@ -8,6 +8,7 @@ use std::sync::mpsc::{
 };
 
 use crate::DebugRenderer;
+use crate::fiiish::PauseDialog;
 use crate::fiiish::SettingsDialog;
 use crate::fiiish::game::Game;
 use crate::fiiish::effect_ids::EffectId;
@@ -81,51 +82,24 @@ impl GameUi {
 
 	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer, game: &mut Rc< RefCell< Game > > ) {
 		self.game = Some( game.clone() );
+
 		let mut root = UiGravityBox::new( );
 		root.set_padding( 16.0 );
-		// :HACK:
-		root.set_gravity( &Vector2::new( -1.0, 1.0 ) );
 		let mut root = UiElementContainer::new( Box::new( root ) );
 		root.set_name( "root" );
 
-		{
-			let mut pause_menu = UiHbox::new();
-			pause_menu.set_padding( 16.0 );
-
-			// :TODO: unhack for HACK above
-//			root.borrow_element_mut().set_gravity( &Vector2::new( -1.0, 1.0 ) );
-			let mut pause_menu = root.add_child_element( pause_menu ).borrow_mut();
-			pause_menu.set_name( "PauseMenu" );
-			pause_menu.fade_out( 0.0 );
-//			pause_menu.fade_in( 3.0 );
-
-//			pause_menu.add_child_element( UiImage::new( "button_pause", &Vector2::new( 128.0, 128.0 ) ) );
-			let pause_togglebutton = pause_menu.add_child_element( UiToggleButton::new( "button_pause", "button_play", &Vector2::new( 128.0, 128.0 ) ) );
-			{
-				let mut p = pause_togglebutton.borrow_mut();
-				p.set_name( "ButtonPause" );
-			}
-			self.pause_togglebutton = Some( pause_togglebutton.clone() );
-
-			let mut button_settings = pause_menu.add_child_element( UiButton::new( "button_settings", &Vector2::new( 128.0, 128.0 ) ) ).borrow_mut();
-			button_settings.set_name( "ButtonSettings" );
-			button_settings.fade_out( 0.0 );
-
-//			pause_menu.add_child_element( UiImage::new( "button_fiiish", &Vector2::new( 128.0, 128.0 ) ) );
-		}
-
-		// example
-		/*
-		{
-			if let Some( button_settings ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
-				button_settings.fade_out( 0.0 );
-			}
-
-//			todo!("die");
-		}
-		*/
-
 		// setup dialogs
+
+		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
+				Some( root_gravity_box ) => {
+					root_gravity_box.set_gravity( &Vector2::new( -1.0, 1.0 ) );
+				},
+				None => (),
+		};
+
+		let pause_dialog = root.add_child_element( PauseDialog::new( &mut self.game.as_mut().unwrap() )  );
+		pause_dialog.borrow_mut().set_name( "PauseDialog" );
+		pause_dialog.borrow_mut().fade_out( 0.0 );
 
 		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
 				Some( root_gravity_box ) => {
@@ -147,9 +121,8 @@ impl GameUi {
 		root.fade_in( 2.0 );
 //		self.root = Some( Box::new( root ) );
 		self.root = Some( root );
-
-
 	}
+	
 	pub fn teardown( &mut self ) {
 		self.root = None;
 		self.game = None;
@@ -198,41 +171,18 @@ impl GameUi {
 
 			if let Some( game ) = &mut self.game {
 				let game = game.borrow();
-				if let Some( mut pause_menu ) = root.find_child_mut( &[ "PauseMenu" ] ) {
-					let mut pause_menu = pause_menu.borrow_mut();
+				if let Some( mut pause_dialog ) = root.find_child_mut( &[ "PauseDialog" ] ) {
+					let mut pause_dialog = pause_dialog.borrow_mut();
 					if game.is_playing() {
-						pause_menu.fade_in( 1.0 );
+						pause_dialog.fade_in( 1.0 );
 					} else {
-						pause_menu.fade_out( 1.0 );
-					}
-				}
-				if let Some( mut settings_button ) = root.find_child_mut( &[ "PauseMenu", "ButtonSettings" ] ) {
-					let mut settings_button = settings_button.borrow_mut();
-					if game.is_paused() {
-						settings_button.fade_in( 1.0 );
-					} else {
-						settings_button.fade_out( 1.0 );
+						pause_dialog.fade_out( 1.0 );
 					}
 				}
 				if let Some( mut settings_dialog ) = root.find_child_mut( &[ "SettingsDialog" ] ) {
 					let mut settings_dialog = settings_dialog.borrow_mut();
 					if !game.is_paused() {
 						settings_dialog.fade_out( 1.0 );
-					}
-				}
-
-				if let Some( p ) = &mut self.pause_togglebutton {
-					let mut p = p.borrow_mut();
-					let p = p.borrow_element_mut();
-	//				let tb: UiToggleButton = dynamic_cast<UiToggleButton>( p );
-					let tb: &mut UiToggleButton = match p.as_any_mut().downcast_mut::<UiToggleButton>() {
-						Some(p) => p,
-						None => panic!("{:?} isn't a UiToggleButton!", &p),
-					};
-					if game.is_paused() {
-						tb.goto_b();
-					} else {
-						tb.goto_a();
 					}
 				}
 			}

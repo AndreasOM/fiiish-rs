@@ -152,7 +152,7 @@ impl UiElementContainer {
 	}
 
 	pub fn update( &mut self, time_step: f64 ) {
-		self.element.update( time_step );
+		self.element.update( &self.data, time_step );
 		self.update_fade_state( time_step );
 		for c in self.data.children.iter_mut() {
 			c.borrow_mut().update( time_step );

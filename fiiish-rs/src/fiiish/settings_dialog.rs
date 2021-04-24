@@ -67,7 +67,7 @@ impl UiElement for SettingsDialog {
 		}
 		self.sound_togglebutton = Some( sound_togglebutton.clone() );
 	}
-	fn update( &mut self, _time_step: f64 ) {
+	fn update( &mut self, _container: &UiElementContainerData, _time_step: f64 ) {
 		let game = self.game.borrow_mut();
 		if let Some( music_togglebutton ) = &mut self.music_togglebutton {
 			let mut music_togglebutton = music_togglebutton.borrow_mut();

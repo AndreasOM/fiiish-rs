@@ -4,6 +4,7 @@
 ## In Progress
 
 - [ ] Implement UI system
+- [ ] Move event result handling into UiElements
 
 ## TODO
 
