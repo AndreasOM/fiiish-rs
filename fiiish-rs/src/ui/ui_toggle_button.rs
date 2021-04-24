@@ -49,6 +49,15 @@ impl UiToggleButton {
 			image_b.borrow_mut().fade_in( 1.0 );
 		}
 	}
+
+	pub fn foo( &mut self ) -> Vec< Box < impl UiEventResponse > > {
+		let mut r = Vec::new();
+		//let ev = Box::new( UiEventResponseButtonClicked{ button_name: container.name.clone() } );
+		//event_sender.send( ev ).unwrap();
+		r.push( Box::new( UiEventResponseButtonClicked::new( "foo" ) ) );
+
+		r
+	}
 }
 
 impl UiElement for UiToggleButton {
@@ -73,12 +82,14 @@ impl UiElement for UiToggleButton {
 		}
 		self.image_b = Some( image_b );
 	}
-	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> bool {
+	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Vec< Box < dyn UiEventResponse > > {
 		println!("Button toggled");
-		let ev = Box::new( UiEventResponseButtonClicked{ button_name: container.name.clone() } );
-		event_sender.send( ev ).unwrap();
-		
-		true
+		let mut r = Vec::new();
+		//let ev = Box::new( UiEventResponseButtonClicked{ button_name: container.name.clone() } );
+		//event_sender.send( ev ).unwrap();
+		r.push( Box::new( UiEventResponseButtonClicked::new( &container.name ) ) );
+
+		r
 	}
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		Some( &self.imagesize )

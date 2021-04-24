@@ -16,6 +16,14 @@ pub struct UiEventResponseButtonClicked {
 	pub button_name: String,
 }
 
+impl UiEventResponseButtonClicked {
+	pub fn new( button_name: &str ) -> Self {
+		Self {
+			button_name: button_name.to_owned(),
+		}
+	}
+}
+
 // :TODO: use derived Debug where available
 impl UiEventResponse for UiEventResponseButtonClicked {
 	fn as_any(&self) -> &dyn std::any::Any {

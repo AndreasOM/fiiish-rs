@@ -338,7 +338,7 @@ impl UiElementContainer {
 		self.data.pos = *pos;
 	}
 
-	pub fn handle_ui_event( &mut self, event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> bool {
+	pub fn handle_ui_event( &mut self, event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Vec< Box < dyn UiEventResponse > > {
 		match event {
 			UiEvent::MouseClick{ pos, button } => {
 				let pos = pos.sub( self.pos() );
@@ -352,8 +352,9 @@ impl UiElementContainer {
 						if c.is_hit_by( &cpos ) {
 //							println!("Child is hit");
 							let ev = UiEvent::MouseClick{ pos, button: *button };
-							if c.handle_ui_event( &ev, event_sender ) {
-								return true;
+							let r = c.handle_ui_event( &ev, event_sender );
+							if r.len() > 0 {
+								return r;
 							}
 						} else {
 //							println!("Child NOT hit");
@@ -363,10 +364,10 @@ impl UiElementContainer {
 					self.element.handle_ui_event( &mut self.data, &event, event_sender )
 				} else {
 //					println!( "Not hit" );
-					false
+					Vec::new()
 				}
 			},
-			_ => false,
+			_ => Vec::new(),
 		}
 	}
 
