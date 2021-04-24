@@ -43,8 +43,9 @@ pub trait UiElement {
 //		container.set_pos( pos );	// no! This is the default anyway
 	}
 	fn render_debug( &self, _container: &UiElementContainerData, _debug_renderer: &mut DebugRenderer, _offset: &Vector2 ) {}
-	fn handle_ui_event( &mut self, _container: &mut UiElementContainerData, _event: &UiEvent, _event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Vec< Box < dyn UiEventResponse > > {
-		Vec::new()
+	fn handle_ui_event( &mut self, _container: &mut UiElementContainerData, _event: &UiEvent, _event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Option< Box < dyn UiEventResponse > > {
+//		Vec::new()
+		None
 	}
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		None

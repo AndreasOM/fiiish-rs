@@ -41,14 +41,14 @@ impl UiElement for UiButton {
 		let image = container.add_child_element( UiImage::new( &self.imagename, &self.imagesize ) );
 		self.image = Some( image );
 	}
-	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Vec< Box < dyn UiEventResponse > > {
+	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Option< Box < dyn UiEventResponse > > {
 		println!("Button clicked");
-		let mut r = Vec::new();
+//		let mut r = Vec::new();
 //		let ev = Box::new( UiEventResponseButtonClicked{ button_name: container.name.clone() } );
 		//event_sender.send( ev ).unwrap();
 //		r.push( Box::new( UiEventResponseButtonClicked::new( &container.name ) ) );
-
-		r
+		Some( Box::new( UiEventResponseButtonClicked::new( &container.name ) ) )
+//		r
 	}
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		Some( &self.imagesize )

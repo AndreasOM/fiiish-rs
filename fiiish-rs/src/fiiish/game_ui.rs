@@ -164,12 +164,9 @@ impl GameUi {
 				let cp = auc.cursor_pos();
 				println!("Left Mouse Button was pressed @ {}, {}", cp.x, cp.y );
 				let ev = UiEvent::MouseClick{ pos: *cp, button: 0 };
-				let r = root.handle_ui_event( &ev, &self.event_response_sender );
-				if r.len() > 0 {
+				if let Some( ev ) = root.handle_ui_event( &ev, &self.event_response_sender ) {
 					println!( "Click handled" );
-					for ev in r {
-						self.event_response_sender.send( ev ).unwrap();
-					}
+					self.event_response_sender.send( ev ).unwrap();
 				}
 			}
 

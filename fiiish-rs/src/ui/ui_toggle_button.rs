@@ -82,14 +82,11 @@ impl UiElement for UiToggleButton {
 		}
 		self.image_b = Some( image_b );
 	}
-	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Vec< Box < dyn UiEventResponse > > {
+	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Option< Box < dyn UiEventResponse > > {
 		println!("Button toggled");
-		let mut r = Vec::new();
 		//let ev = Box::new( UiEventResponseButtonClicked{ button_name: container.name.clone() } );
 		//event_sender.send( ev ).unwrap();
-		r.push( Box::new( UiEventResponseButtonClicked::new( &container.name ) ) );
-
-		r
+		Some( Box::new( UiEventResponseButtonClicked::new( &container.name ) ) )
 	}
 	fn preferred_size( &self ) -> Option< &Vector2 > {
 		Some( &self.imagesize )
