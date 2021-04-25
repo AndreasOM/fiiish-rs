@@ -13,6 +13,8 @@ mod ui_event;
 	pub use ui_event::UiEventResponse as UiEventResponse;
 	pub use ui_event::UiEventResponseButtonClicked as UiEventResponseButtonClicked;
 
+mod ui_block;
+	pub use ui_block::UiBlock;
 mod ui_button;
 	pub use ui_button::UiButton as UiButton;
 mod ui_gravity_box;
@@ -21,6 +23,8 @@ mod ui_hbox;
 	pub use ui_hbox::UiHbox as UiHbox;
 mod ui_image;
 	pub use ui_image::UiImage as UiImage;
+mod ui_label;
+	pub use ui_label::UiLabel;
 mod ui_renderer;
 	pub use ui_renderer::UiRenderer as UiRenderer;
 mod ui_toggle_button;

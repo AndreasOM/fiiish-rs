@@ -147,6 +147,10 @@ impl UiElementContainer {
 		}
 	}
 
+	pub fn new_from_element( mut element: impl UiElement + 'static ) -> Self {
+		UiElementContainer::new( Box::new( element ) )
+	}
+
 	pub fn set_handle( &mut self, handle: &mut UiElementContainerHandle ) {
 		self.handle = Some( handle.downgrade() );
 	}
@@ -268,6 +272,17 @@ impl UiElementContainer {
 			c.borrow().render_debug( debug_renderer, &co );
 		}
 		debug_renderer.add_line( &Vector2::zero(), &Vector2::zero().add( &offset ), 3.0, &Color::white() );
+		let hs = self.size().scaled( 0.5 );
+		let bl = offset.sub( &hs );
+		let tr = offset.add( &hs );
+		let tl = Vector2::new( bl.x, tr.y );
+		let br = Vector2::new( tr.x, bl.y );
+		let color = Color::from_rgba( 0.2, 0.9, 0.2, 0.3 );
+		debug_renderer.add_line( &tl, &bl, 3.0, &color );
+		debug_renderer.add_line( &bl, &br, 3.0, &color );
+		debug_renderer.add_line( &br, &tr, 3.0, &color );
+		debug_renderer.add_line( &tr, &tl, 3.0, &color );
+
 	}
 
 	pub fn dump_info( &self, indent: &str, offset: &Vector2 ) {

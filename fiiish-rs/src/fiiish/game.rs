@@ -395,6 +395,12 @@ impl Game {
 		}
 	}
 
+	pub fn is_waiting_for_start( &self ) -> bool {
+		self.state == GameState::WaitForStart
+	}
+	pub fn is_dead( &self ) -> bool {
+		self.state == GameState::Dead
+	}
 	pub fn is_playing( &self ) -> bool {
 		self.state == GameState::Playing
 	}

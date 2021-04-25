@@ -4,10 +4,14 @@
 ## In Progress
 
 - [ ] Implement UI system
-- [ ] Move event result handling into UiElements
+- [ ] Add result dialog
 
 ## TODO
 
+- [ ] Add font rendering
+- [ ] Finalize UiLabel rendering
+- [ ] Hook up counters
+- [ ] Cleanup: Remov unnecessary `use ...`
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
 - [ ] Add fadeout for entities
@@ -47,6 +51,10 @@
 
 ## DONE
 
+- [x] Add in-game counters
+- [x] Stub UiLabel
+- [x] Improve UI debug rendering to include bounding rectangles
+- [x] Move event result handling into UiElements
 - [x] Add UiButton
 - [x] Add Settings Button
 - [x] Add Settings Dialog

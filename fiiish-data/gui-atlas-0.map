@@ -8,3 +8,5 @@ button_settings.png:640,1024-768,1152
 button_sound_off.png:768,1024-896,1152
 button_sound_on.png:896,1024-1024,1152
 button_cross.png:1024,1024-1151,1151
+mini_icon_coin.png:0,1152-64,1216
+mini_icon_flag.png:64,1152-128,1216

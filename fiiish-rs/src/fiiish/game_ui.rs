@@ -8,6 +8,7 @@ use std::sync::mpsc::{
 };
 
 use crate::DebugRenderer;
+use crate::fiiish::CounterDialog;
 use crate::fiiish::PauseDialog;
 use crate::fiiish::SettingsDialog;
 use crate::fiiish::game::Game;
@@ -90,6 +91,7 @@ impl GameUi {
 
 		// setup dialogs
 
+		// PauseDialog
 		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
 				Some( root_gravity_box ) => {
 					root_gravity_box.set_gravity( &Vector2::new( -1.0, 1.0 ) );
@@ -101,6 +103,7 @@ impl GameUi {
 		pause_dialog.borrow_mut().set_name( "PauseDialog" );
 		pause_dialog.borrow_mut().fade_out( 0.0 );
 
+		// SettingDialog
 		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
 				Some( root_gravity_box ) => {
 					root_gravity_box.set_gravity( &Vector2::new( 0.0, 0.0 ) );
@@ -111,6 +114,21 @@ impl GameUi {
 		let settings_dialog = root.add_child_element( SettingsDialog::new( &mut self.game.as_mut().unwrap() )  );
 		settings_dialog.borrow_mut().set_name( "SettingsDialog" );
 		settings_dialog.borrow_mut().fade_out( 0.0 );
+
+
+		// CounterDialog
+		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
+				Some( root_gravity_box ) => {
+					root_gravity_box.set_gravity( &Vector2::new( 1.0, 1.0 ) );
+				},
+				None => (),
+		};
+
+		let counter_dialog = root.add_child_element( CounterDialog::new( &mut self.game.as_mut().unwrap() )  );
+		counter_dialog.borrow_mut().set_name( "CounterDialog" );
+		counter_dialog.borrow_mut().fade_out( 0.0 );
+		counter_dialog.borrow_mut().fade_in( 1.0 );
+
 
 		root.layout( &Vector2::zero() );
 
@@ -180,6 +198,14 @@ impl GameUi {
 						pause_dialog.fade_out( 1.0 );
 					}
 				}
+				if let Some( mut counter_dialog ) = root.find_child_mut( &[ "CounterDialog" ] ) {
+					let mut counter_dialog = counter_dialog.borrow_mut();
+					if !game.is_waiting_for_start() {
+						counter_dialog.fade_in( 1.0 );
+					} else {
+						counter_dialog.fade_out( 1.0 );
+					}
+				}
 				if let Some( mut settings_dialog ) = root.find_child_mut( &[ "SettingsDialog" ] ) {
 					let mut settings_dialog = settings_dialog.borrow_mut();
 					if !game.is_paused() {
@@ -223,9 +249,13 @@ impl GameUi {
 		if let Some( root ) = &mut self.root {
 			// :CHEAT:
 			renderer.use_layer( LayerId::Ui as u8 );
-			renderer.use_effect( EffectId::ColoredTextured as u16 );
+//			renderer.use_effect( EffectId::ColoredTextured as u16 );
 
-			let mut ui_renderer = UiRenderer::new( renderer );
+			let mut ui_renderer = UiRenderer::new(
+										renderer,
+										EffectId::ColoredTextured as u16,
+										EffectId::Colored as u16,										
+									);
 			root.render( &mut ui_renderer );
 		}
 	}
