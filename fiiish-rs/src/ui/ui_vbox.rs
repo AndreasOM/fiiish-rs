@@ -79,11 +79,12 @@ impl UiElement for UiVbox {
 
 		c_positions_y.push( 0.0 );
 
-		let mut cpos = Vector2::new( 0.0, -0.5*total_size.y - self.padding );
+//		let mut cpos = Vector2::new( 0.0, -0.5*total_size.y - self.padding );
+		let mut cpos = Vector2::new( 0.0,  0.5*total_size.y - self.padding );
 
 		for (i, c ) in container.borrow_children_mut().iter_mut().enumerate() {
 			let y = c_positions_y[ i ];
-			cpos.y += y + padding;
+			cpos.y -= y + padding;
 			c.borrow_mut().layout( &cpos );
 		}
 

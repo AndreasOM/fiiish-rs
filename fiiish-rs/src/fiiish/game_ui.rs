@@ -10,6 +10,7 @@ use std::sync::mpsc::{
 use crate::DebugRenderer;
 use crate::fiiish::CounterDialog;
 use crate::fiiish::PauseDialog;
+use crate::fiiish::ResultDialog;
 use crate::fiiish::SettingsDialog;
 use crate::fiiish::game::Game;
 use crate::fiiish::effect_ids::EffectId;
@@ -103,19 +104,6 @@ impl GameUi {
 		pause_dialog.borrow_mut().set_name( "PauseDialog" );
 		pause_dialog.borrow_mut().fade_out( 0.0 );
 
-		// SettingDialog
-		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
-				Some( root_gravity_box ) => {
-					root_gravity_box.set_gravity( &Vector2::new( 0.0, 0.0 ) );
-				},
-				None => (),
-		};
-
-		let settings_dialog = root.add_child_element( SettingsDialog::new( &mut self.game.as_mut().unwrap() )  );
-		settings_dialog.borrow_mut().set_name( "SettingsDialog" );
-		settings_dialog.borrow_mut().fade_out( 0.0 );
-
-
 		// CounterDialog
 		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
 				Some( root_gravity_box ) => {
@@ -128,6 +116,32 @@ impl GameUi {
 		counter_dialog.borrow_mut().set_name( "CounterDialog" );
 		counter_dialog.borrow_mut().fade_out( 0.0 );
 		counter_dialog.borrow_mut().fade_in( 1.0 );
+
+		// SettingDialog
+		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
+				Some( root_gravity_box ) => {
+					root_gravity_box.set_gravity( &Vector2::new( 0.0, 0.0 ) );
+				},
+				None => (),
+		};
+
+		let settings_dialog = root.add_child_element( SettingsDialog::new( &mut self.game.as_mut().unwrap() )  );
+		settings_dialog.borrow_mut().set_name( "SettingsDialog" );
+		settings_dialog.borrow_mut().fade_out( 0.0 );
+
+		// ResultDialog
+		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
+				Some( root_gravity_box ) => {
+					root_gravity_box.set_gravity( &Vector2::new( 0.0, 0.0 ) );
+				},
+				None => (),
+		};
+
+		let result_dialog = root.add_child_element( ResultDialog::new( &mut self.game.as_mut().unwrap() )  );
+		result_dialog.borrow_mut().set_name( "ResultDialog" );
+		result_dialog.borrow_mut().fade_out( 0.0 );
+		result_dialog.borrow_mut().fade_in( 1.0 );
+
 
 
 		root.layout( &Vector2::zero() );

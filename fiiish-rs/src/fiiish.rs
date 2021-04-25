@@ -14,6 +14,8 @@ mod counter_dialog;
 	pub use counter_dialog::CounterDialog;
 mod pause_dialog;
 	pub use pause_dialog::PauseDialog;
+mod result_dialog;
+	pub use result_dialog::ResultDialog;
 mod settings_dialog;
 	pub use settings_dialog::SettingsDialog as SettingsDialog;
 

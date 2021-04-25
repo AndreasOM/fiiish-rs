@@ -26,7 +26,8 @@ omt-atlas combine --border 1 --size 2048 \
 	--input \
 		../fiiish-content/gui/mini_icon_*.png		\
 		../fiiish-content/gui/buttons/*.png			\
-		../fiiish-content/gui/screen_frame_2.png
+		../fiiish-content/gui/screen_frame_2.png	\
+		../fiiish-content/gui/screen_frame.png
 
 ## now create the archives
 # :TODO: fix for non unix systems
