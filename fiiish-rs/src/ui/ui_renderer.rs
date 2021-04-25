@@ -18,6 +18,8 @@ pub struct UiRenderer<'a> {
 	color_stack: StateStack< Color >,
 	textured_render_effect_id: u16,
 	untextured_render_effect_id: u16,
+	layer_id: u8,
+	front_layer_id: u8,
 }
 
 impl <'a> UiRenderer<'a> {
@@ -25,6 +27,8 @@ impl <'a> UiRenderer<'a> {
 		renderer: &'a mut Renderer,
 		textured_render_effect_id: u16,
 		untextured_render_effect_id: u16,
+		layer_id: u8,
+		front_layer_id: u8,
 	) -> Self {
 		Self {
 			renderer,
@@ -35,6 +39,8 @@ impl <'a> UiRenderer<'a> {
 			color_stack: StateStack::new( Color::white() ),
 			textured_render_effect_id,
 			untextured_render_effect_id,
+			layer_id,
+			front_layer_id,
 		}
 	}
 
@@ -72,8 +78,9 @@ impl <'a> UiRenderer<'a> {
 	pub fn render_textured_quad( &mut self, pos: &Vector2, size: &Vector2 ) {
 		let transformed_pos = self.transform_mtx.mul_vector2( &pos );
 		let mut color = *self.color_stack.top();
-		color.a = self.opacity;
+		color.a *= self.opacity;
 		self.renderer.set_color( &color );
+		self.renderer.use_layer( self.layer_id );
 		self.renderer.use_effect( self.textured_render_effect_id );
 		self.renderer.render_textured_quad( &transformed_pos, size );
 	}
@@ -81,8 +88,9 @@ impl <'a> UiRenderer<'a> {
 	pub fn render_quad( &mut self, pos: &Vector2, size: &Vector2 ) {
 		let transformed_pos = self.transform_mtx.mul_vector2( &pos );
 		let mut color = *self.color_stack.top();
-		color.a = self.opacity;
+		color.a *= self.opacity;
 		self.renderer.set_color( &color );
+		self.renderer.use_layer( self.front_layer_id );
 		self.renderer.use_effect( self.untextured_render_effect_id );
 		self.renderer.render_quad( &transformed_pos, size );
 	}

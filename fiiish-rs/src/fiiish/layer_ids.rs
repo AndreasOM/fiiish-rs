@@ -10,7 +10,7 @@ pub enum LayerId {
 	DecorationFront = 6,
 	Debug = 7,
 	Ui = 8,
-	UIFront = 9,
+	UiFront = 9,
 	Overlay = 10,
 	DebugRenderer = 11,
 }

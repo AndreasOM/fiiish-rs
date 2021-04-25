@@ -276,7 +276,9 @@ impl GameUi {
 			let mut ui_renderer = UiRenderer::new(
 										renderer,
 										EffectId::ColoredTextured as u16,
-										EffectId::Colored as u16,										
+										EffectId::Colored as u16,
+										LayerId::Ui as u8,
+										LayerId::UiFront as u8,									
 									);
 			root.render( &mut ui_renderer );
 		}

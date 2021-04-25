@@ -271,7 +271,7 @@ impl UiElementContainer {
 			let co = offset.add( c.borrow().pos() );
 			c.borrow().render_debug( debug_renderer, &co );
 		}
-		debug_renderer.add_line( &Vector2::zero(), &Vector2::zero().add( &offset ), 3.0, &Color::white() );
+		debug_renderer.add_line( &Vector2::zero(), &Vector2::zero().add( &offset ), 3.0, &Color::from_rgba( 0.5, 0.5, 0.5, 0.8 ) );
 		let hs = self.size().scaled( 0.5 );
 		let bl = offset.sub( &hs );
 		let tr = offset.add( &hs );

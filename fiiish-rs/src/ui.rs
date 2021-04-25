@@ -27,6 +27,8 @@ mod ui_label;
 	pub use ui_label::UiLabel;
 mod ui_renderer;
 	pub use ui_renderer::UiRenderer as UiRenderer;
+mod ui_spacer;
+	pub use ui_spacer::UiSpacer;
 mod ui_toggle_button;
 	pub use ui_toggle_button::UiToggleButton as UiToggleButton;
 mod ui_vbox;

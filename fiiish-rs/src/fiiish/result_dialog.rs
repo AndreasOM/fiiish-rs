@@ -8,7 +8,7 @@ use crate::fiiish::game::Game;
 use crate::math::Vector2;
 use crate::renderer::Color;
 use crate::ui::{
-	UiBlock,
+//	UiBlock,
 	UiButton,
 	UiElement,
 	UiElementContainer,
@@ -20,6 +20,7 @@ use crate::ui::{
 	UiImage,
 	UiHbox,
 	UiLabel,
+	UiSpacer,
 	UiToggleButton,
 	UiVbox,
 };
@@ -57,7 +58,7 @@ impl UiElement for ResultDialog {
 			{
 				let mut parent = vbox.borrow_mut();
 
-				parent.add_child_element( UiBlock::new( &Vector2::new( 16.0, 240.0 ), &Color::from_rgba( 0.2, 0.6, 0.8, 0.5 ) ) ); // top space
+				parent.add_child_element( UiSpacer::new( &Vector2::new( 16.0, 240.0 ), &Color::from_rgba( 0.2, 0.6, 0.8, 0.5 ) ) ); // top space
 
 				let mut hbox = UiHbox::new();
 				// hbox.set_padding( 0.0 );
@@ -65,13 +66,35 @@ impl UiElement for ResultDialog {
 				// center box with actual results
 				{
 					let mut parent = hbox.borrow_mut();
-					parent.add_child_element( UiBlock::new( &Vector2::new( 350.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.8, 0.5 ) ) ); // left space
+					parent.add_child_element( UiSpacer::new( &Vector2::new( 350.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.8, 0.5 ) ) ); // left space
 					{
-						parent.add_child_element( UiBlock::new( &Vector2::new( 520.0, 412.0 ), &Color::from_rgba( 0.2, 0.2, 0.8, 0.5 ) ) ); // placeholder
+						let mut table_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 520.0, 412.0 ), &Color::from_rgba( 0.2, 0.2, 0.8, 0.5 ) ) ); // placeholder
+
+						let mut parent = table_space.borrow_mut();
+						let mut vbox = UiVbox::new();
+						vbox.set_padding( 32.0 );
+						let mut vbox = parent.add_child_element( vbox );
+						{
+							let mut parent = vbox.borrow_mut();
+
+							for _ in 0..4
+							{
+								let mut hbox = UiHbox::new();
+								hbox.set_padding( 20.0 );
+								let mut hbox = parent.add_child_element( hbox );
+
+								{
+									let mut parent = hbox.borrow_mut();
+									parent.add_child_element( UiLabel::new( &Vector2::new( 250.0, 79.0 ), "[COIN TOTAL]" ) );
+									parent.add_child_element( UiLabel::new( &Vector2::new( 250.0, 79.0 ), "[COIN CURRENT]" ) );
+								}
+							}
+						}
+
 					}
-					parent.add_child_element( UiBlock::new( &Vector2::new( 154.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.2, 0.5 ) ) ); // right space
+					parent.add_child_element( UiSpacer::new( &Vector2::new( 154.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.2, 0.5 ) ) ); // right space
 				}
-				parent.add_child_element( UiBlock::new( &Vector2::new( 16.0, 54.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // middle space
+				parent.add_child_element( UiSpacer::new( &Vector2::new( 16.0, 54.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // middle space
 				{
 					// button row
 
@@ -80,9 +103,9 @@ impl UiElement for ResultDialog {
 					let mut hbox = parent.add_child_element( hbox );
 					{
 						let mut parent = hbox.borrow_mut();
-						parent.add_child_element( UiBlock::new( &Vector2::new( 128.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.8, 0.5 ) ) ); // left space
+						parent.add_child_element( UiSpacer::new( &Vector2::new( 128.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.8, 0.5 ) ) ); // left space
 						{
-							let mut button_space = parent.add_child_element( UiBlock::new( &Vector2::new( 384.0, 128.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // placeholder for buttons
+							let mut button_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 384.0, 128.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // placeholder for buttons
 
 							{
 								let mut parent = button_space.borrow_mut();
@@ -94,48 +117,16 @@ impl UiElement for ResultDialog {
 									let mut play_button = parent.add_child_element( UiButton::new( "button_play", &Vector2::new( 128.0, 128.0 ) ) );
 									play_button.borrow_mut().set_name( "PlayButton" );
 									self.play_button = Some( play_button.clone() );
-									parent.add_child_element( UiBlock::new( &Vector2::new( 256.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.2, 0.5 ) ) ); // right space
+									parent.add_child_element( UiSpacer::new( &Vector2::new( 256.0, 16.0 ), &Color::from_rgba( 0.8, 0.6, 0.2, 0.5 ) ) ); // right space
 								}
 							}
 						}
-						parent.add_child_element( UiBlock::new( &Vector2::new( 512.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.2, 0.5 ) ) ); // right space
+						parent.add_child_element( UiSpacer::new( &Vector2::new( 512.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.2, 0.5 ) ) ); // right space
 					}
 				}
-				parent.add_child_element( UiBlock::new( &Vector2::new( 16.0, 190.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // bottom space
+				parent.add_child_element( UiSpacer::new( &Vector2::new( 16.0, 190.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // bottom space
 			}
 		}
-		/*
-
-		let mut hbox = UiHbox::new();
-		hbox.set_padding( 16.0 );
-
-		let mut background = background.borrow_mut();
-		let mut hbox = background.add_child_element( hbox ).borrow_mut();
-
-		let mut vbox = UiVbox::new();
-		vbox.set_padding( 16.0 );
-		let mut vbox = container.add_child_element( vbox );
-
-		let mut vbox = vbox.borrow_mut();
-
-		{
-			let mut hbox = UiHbox::new();
-			hbox.set_padding( 16.0 );
-			let mut hbox = UiElementContainer::new_from_element( hbox );
-			hbox.add_child_element( UiLabel::new( &Vector2::new( 128.0, 64.0 ), "[DISTANCE]" ) );
-			hbox.add_child_element( UiImage::new( "mini_icon_flag", &Vector2::new( 64.0, 64.0 ) ) );
-			vbox.add_child( hbox );
-		}
-
-		{
-			let mut hbox = UiHbox::new();
-			hbox.set_padding( 16.0 );
-			let mut hbox = UiElementContainer::new_from_element( hbox );
-			hbox.add_child_element( UiLabel::new( &Vector2::new( 128.0, 64.0 ), "[COINS]" ) );
-			hbox.add_child_element( UiImage::new( "mini_icon_coin", &Vector2::new( 64.0, 64.0 ) ) );
-			vbox.add_child( hbox );
-		}
-		*/
 		container.set_size( background.borrow().size() );
 	}
 	fn update( &mut self, _container: &UiElementContainerData, _time_step: f64 ) {
