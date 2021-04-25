@@ -18,6 +18,7 @@ pub struct UiRenderer<'a> {
 	color_stack: StateStack< Color >,
 	textured_render_effect_id: u16,
 	untextured_render_effect_id: u16,
+	font_render_effect_id: u16,
 	layer_id: u8,
 	front_layer_id: u8,
 }
@@ -27,6 +28,7 @@ impl <'a> UiRenderer<'a> {
 		renderer: &'a mut Renderer,
 		textured_render_effect_id: u16,
 		untextured_render_effect_id: u16,
+		font_render_effect_id: u16,
 		layer_id: u8,
 		front_layer_id: u8,
 	) -> Self {
@@ -39,6 +41,7 @@ impl <'a> UiRenderer<'a> {
 			color_stack: StateStack::new( Color::white() ),
 			textured_render_effect_id,
 			untextured_render_effect_id,
+			font_render_effect_id,
 			layer_id,
 			front_layer_id,
 		}
@@ -94,6 +97,19 @@ impl <'a> UiRenderer<'a> {
 		self.renderer.use_effect( self.untextured_render_effect_id );
 		self.renderer.render_quad( &transformed_pos, size );
 	}
+	pub fn use_font( &mut self, font_id: u8 ) {
+		self.renderer.use_font( font_id );
+	}
+	pub fn print( &mut self, pos: &Vector2, text: &str ) {
+		let transformed_pos = self.transform_mtx.mul_vector2( &pos );
+		let mut color = *self.color_stack.top();
+		color.a *= self.opacity;
+		self.renderer.set_color( &color );
+		self.renderer.use_layer( self.front_layer_id );
+		self.renderer.use_effect( self.font_render_effect_id );
+		self.renderer.print( &transformed_pos, text );
+	}
+
 }
 
 struct StateStack<T> {

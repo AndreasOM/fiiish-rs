@@ -2,6 +2,7 @@
 mod app_update_context;
 	pub use app_update_context::AppUpdateContext as AppUpdateContext;
 pub mod effect_ids;
+pub mod font_ids;
 pub mod layer_ids;
 pub mod entities;
 mod entity_update_context;

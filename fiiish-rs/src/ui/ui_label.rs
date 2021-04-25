@@ -46,7 +46,10 @@ impl UiElement for UiLabel {
 			let l = container.get_fade_level();
 			ui_renderer.push_color( &self.color );
 			ui_renderer.push_opacity( l );
-			ui_renderer.render_quad( &container.pos, &self.size );
+			//ui_renderer.render_quad( &container.pos, &self.size );
+			// :TODO: font
+			ui_renderer.print( &container.pos, &self.text );
+
 			ui_renderer.pop_opacity();
 			ui_renderer.pop_color();
 		}		

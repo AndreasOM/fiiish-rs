@@ -74,6 +74,10 @@ game-atlas-2.png
 gui-atlas-0.atlas
 gui-atlas-0.map
 gui-atlas-0.png
+pink.omfont
+pink.png
+pink_huge.omfont
+pink_huge.png
 rock-a.shp
 rock-b.shp
 rock-c.shp

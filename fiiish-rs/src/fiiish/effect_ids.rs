@@ -8,5 +8,6 @@ pub enum EffectId {
 	Textured = 4,
 	ColoredTextured = 5,
 	Background = 6,
+	FontColored = 7,
 }
 

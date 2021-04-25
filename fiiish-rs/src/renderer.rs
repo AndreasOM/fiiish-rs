@@ -123,11 +123,17 @@ pub struct Renderer {
 	frame: u64,
 	material_manager: Manager<Material>,
 	texture_manager: Manager<Texture>,
+	font_manager: FontManager,
 	vertices: Vec<Vertex>,
 	effects: HashMap< u16, Effect >,
 	default_effect_id: u16,
 	active_effect_id: u16,
 	active_layer_id: u8,
+
+//	fonts: HashMap< u8, Font >,
+//	default_font_id: u8,
+	active_font_id: u8,
+	active_font_name: String,
 
 	active_textures: [Option< u16 >; MAX_TEXTURE_CHANNELS],
 
@@ -148,11 +154,16 @@ impl Renderer {
 			frame: 0,
 			material_manager: Manager::new(),
 			texture_manager: Manager::new(),
+			font_manager: FontManager::new(),
 			vertices: Vec::new(),		// :TODO: pre allocate size? or maybe even a fixed size array
 			effects: HashMap::new(),
+//			fonts: HashMap::new(),
 			default_effect_id: 0,
 			active_effect_id: 0,
 			active_layer_id: 0,
+//			default_font_id: 0,
+			active_font_id: 0,
+			active_font_name: String::new(),
 			active_textures: [None; MAX_TEXTURE_CHANNELS],
 
 			tex_coords: Vector2::zero(),
@@ -173,12 +184,23 @@ impl Renderer {
 		self.effects.insert(effect.id(), effect);
 	}
 
-	pub fn register_texture( &mut self, texture: Texture ) {
+	pub fn register_texture( &mut self, texture: Texture ) -> u16 {
 		let index = self.texture_manager.add( texture );
 		if self.texture_manager.len() == 1 {
 //			self.texture_manager.set_active( index );
 			self.active_textures[ 0 ] = Some( index as u16 );
 		}
+		index as u16
+	}
+
+	pub fn load_font( &mut self, system: &mut System, font_id: u8, name: &str ) {
+		let texture = Texture::create( system, name );
+		let mut font = Font::create( system, name );
+		font.recalc_from_matrix( texture.width() );
+
+		self.register_texture( texture );
+
+		let index = self.font_manager.add( font_id, font );
 	}
 
 	fn get_default_effect(&self) -> &Effect {
@@ -197,7 +219,24 @@ impl Renderer {
 			}
 		}
 	}
+/*
+	fn get_default_font(&self) -> &Font {
+		match self.fonts.get( &self.default_font_id ) {
+			Some( e ) => e,
+			None => panic!("No default render Font")
+		}
+	}
 
+	fn get_active_font(&self) -> &Font {
+		match self.fonts.get( &self.active_font_id ) {
+			Some( e ) => e,
+			None => {
+				println!("No active render Font -> using default");
+				self.get_default_font()
+			}
+		}
+	}
+*/
 	pub fn setup( &mut self, window: &Window, _system: &mut System ) -> anyhow::Result<()> {
 		gl::load_with(|s| window.get_proc_address(s) as *const _); // :TODO: maybe use CFBundleGetFunctionPointerForName directly
 
@@ -425,6 +464,10 @@ impl Renderer {
 		*/
 	}
 
+	pub fn use_font( &mut self, font_id: u8 ) {
+		self.active_font_id = font_id;
+	}
+
 	pub fn disable_texture_for_channel( &mut self, channel: u8 ) {
 		if self.active_textures[ channel as usize ].is_none() {
 			// :TODO: is this ok?
@@ -559,11 +602,101 @@ impl Renderer {
 		self.add_triangle( v[ 0 ], v[ 1 ], v[ 2 ] );
 		self.add_triangle( v[ 2 ], v[ 3 ], v[ 0 ] );
 	}
+/*
+	pub fn render_textured_quad_with_tex_matrix( &mut self, pos: &Vector2, size: &Vector2, mtx: &Matrix32 ) {
+//		let mtx = Matrix22::z_rotation( angle );
 
+		let positions = [
+			Vector2::new( -0.5,  0.5 ),
+			Vector2::new( -0.5, -0.5 ),
+			Vector2::new(  0.5, -0.5 ),
+			Vector2::new(  0.5,  0.5 ),
+		];
+
+		let tex_coords = [
+			Vector2::new( 0.0, 0.0 ),
+			Vector2::new( 0.0, 1.0 ),
+			Vector2::new( 1.0, 1.0 ),
+			Vector2::new( 1.0, 0.0 ),
+		];
+
+//		let tex_mtx = Matrix32::identity();
+		let ti = self.active_textures[ 0 ].unwrap_or( 0 );
+		let at = self.texture_manager.get( ti as usize ).unwrap_or(
+			self.texture_manager.get( 0 ).unwrap()
+		);
+
+//		let tex_mtx = *at.mtx();
+		let tex_mtx = mtx;	// :TODO: combine with active texture matrix - if we want fonts in atlases
+		let user_tex_mtx = self.tex_matrix;
+
+		let mut v = [0u32;4];
+
+		// :TODO: future optimization once we have full matrix implementation
+//		let mtx_tr = Matrix32::translation( pos.x, pos.y );
+//		let mtx = mtx_r.mul_matrix( &mtx );
+		for i in 0..4 {
+			let p = positions[ i ];
+			let p = p.scale_vector2( &size );
+//			let p = mtx.mul_vector2( &p ).add( &pos );
+
+			// :TODO: decide if we might want to move this calculation to set_tex_coords
+			let t = tex_coords[ i ];
+			let t = user_tex_mtx.mul_vector2( &t );
+			let t = tex_mtx.mul_vector2( &t );
+		
+			self.set_tex_coords( &t );
+			v[ i ] = self.add_vertex( &p );
+		}
+
+		self.add_triangle( v[ 0 ], v[ 1 ], v[ 2 ] );
+		self.add_triangle( v[ 2 ], v[ 3 ], v[ 0 ] );
+	}
+*/
 	pub fn find_texture_mut( &mut self, name: &str ) -> Option< &mut Texture > {
 		self.texture_manager.find_mut( |t|{
 			t.name() == name
 		})
+	}
+
+
+	pub fn print( &mut self, pos: &Vector2, text: &str ) {
+		let old_texture_id = self.active_textures[ 0 ];
+		{
+			let font = self.font_manager.get( self.active_font_id );
+			self.active_font_name = font.name().to_owned();
+		}
+		// :HACK:
+		/*
+		let font_name = match self.active_font_id {
+					0 => "pink",
+					_ => "pink_huge", // font.name();
+		};
+		*/
+		let font_name = self.active_font_name.clone();
+		self.use_texture( &font_name );
+
+
+
+		let mut layout = TextLayout::new();
+		{
+			let font = self.font_manager.get( self.active_font_id );
+			layout.layout( font, &Vector2::zero(), text );
+		}
+
+		for q in layout.quads() {
+			self.set_tex_matrix( &q.tex_mtx );
+			// :TODO: fix position for alignment
+			self.render_textured_quad( &q.pos.add( &pos ), &q.size );
+//			self.render_textured_quad_with_tex_matrix( &q.pos, &q.size, &q.tex_mtx );
+		}
+
+//		dbg!(&layout);
+//		todo!("die");
+
+		self.set_tex_matrix( &Matrix32::identity() );
+		self.active_textures[ 0 ] = old_texture_id;
+		self.switch_active_material_if_needed();
 	}
 
 }
@@ -662,6 +795,27 @@ impl <T>Manager<T> {
 }
 
 
+#[derive(Debug)]
+struct FontManager {
+	fonts: HashMap< u8, Font >,
+}
+
+impl FontManager {
+	pub fn new() -> Self {
+		Self {
+			fonts: HashMap::new(),
+		}
+	}
+
+	pub fn add( &mut self, id: u8, font: Font ) {
+		self.fonts.insert( id, font );
+	}
+
+	pub fn get( &self, id: u8 ) -> &Font {
+		self.fonts.get( &id ).unwrap()
+	}
+}
+
 mod animated_texture;
 	pub use animated_texture::AnimatedTexture as AnimatedTexture;
 
@@ -673,6 +827,8 @@ mod gl {
 
 mod effect;
 	pub use effect::Effect as Effect;
+mod font;
+	pub use font::Font;
 mod material;
 	pub use material::Material as Material;
 //mod material_builder;
@@ -680,6 +836,8 @@ mod material;
 mod program;
 	pub use program::Program as Program;
 	pub use program::ShaderType as ShaderType;
+mod text_layout;
+	pub use text_layout::TextLayout;
 mod texture;
 	pub use texture::Texture as Texture;
 mod texture_atlas;

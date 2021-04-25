@@ -29,6 +29,18 @@ omt-atlas combine --border 1 --size 2048 \
 		../fiiish-content/gui/screen_frame_2.png	\
 		../fiiish-content/gui/screen_frame.png
 
+omt-font create --border 2									\
+	--texsize 1024 --size 52 								\
+	--output ../fiiish-data/pink							\
+	--distancefield-max-distance 4 --distancefield-scale 4	\
+	--input ../fiiish-content/fonts/all_things_pink.ttf
+
+omt-font create --border 2									\
+	--texsize 1024 --size 104 								\
+	--output ../fiiish-data/pink_huge						\
+	--distancefield-max-distance 4 --distancefield-scale 4	\
+	--input ../fiiish-content/fonts/all_things_pink.ttf
+
 ## now create the archives
 # :TODO: fix for non unix systems
 cd ../fiiish-data

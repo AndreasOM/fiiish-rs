@@ -277,6 +277,7 @@ impl GameUi {
 										renderer,
 										EffectId::ColoredTextured as u16,
 										EffectId::Colored as u16,
+										EffectId::FontColored as u16,
 										LayerId::Ui as u8,
 										LayerId::UiFront as u8,									
 									);

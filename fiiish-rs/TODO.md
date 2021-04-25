@@ -4,12 +4,11 @@
 ## In Progress
 
 - [ ] Implement UI system
-- [ ] Add result dialog
-- [ ] Add UiSpacer
+- [ ] Add font rendering
+	- [ ] Fix font layout
 
 ## TODO
 
-- [ ] Add font rendering
 - [ ] Finalize UiLabel rendering
 - [ ] Hook up counters
 - [ ] Cleanup: Remov unnecessary `use ...`
@@ -52,6 +51,8 @@
 
 ## DONE
 
+- [x] Add result dialog
+- [x] Add UiSpacer
 - [x] Add in-game counters
 - [x] Stub UiLabel
 - [x] Improve UI debug rendering to include bounding rectangles

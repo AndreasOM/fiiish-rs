@@ -4,6 +4,7 @@ use std::cell::RefCell;
 
 use super::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
+use crate::fiiish::font_ids::FontId;
 use crate::math::{ Matrix44, Vector2 };
 use crate::renderer::{
 	Color,
@@ -160,6 +161,7 @@ impl FiiishApp {
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Textured as u16 , "Textured" , "textured_vs.glsl", "textured_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::ColoredTextured as u16 , "ColoredTextured" , "coloredtextured_vs.glsl", "coloredtextured_fs.glsl" ) );
 		renderer.register_effect( Effect::create( &mut self.system, EffectId::Background as u16 , "Background" , "background_vs.glsl", "background_fs.glsl" ) );
+		renderer.register_effect( Effect::create( &mut self.system, EffectId::FontColored as u16 , "FontColored" , "fontcolored_vs.glsl", "fontcolored_fs.glsl" ) );
 
 		TextureAtlas::load_all( &mut self.system, &mut renderer, "game-atlas-%d" );
 		TextureAtlas::load_all( &mut self.system, &mut renderer, "gui-atlas-%d" );
@@ -167,6 +169,9 @@ impl FiiishApp {
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_1" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "test_texture_2" ) );
 		renderer.register_texture( Texture::create( &mut self.system, "cursor" ) );
+
+		renderer.load_font( &mut self.system, FontId::Default as u8, "pink" );
+		renderer.load_font( &mut self.system, FontId::Huge as u8, "pink_huge" );
 
 //		todo!("die");
 		// setup sub parts
@@ -357,6 +362,18 @@ impl FiiishApp {
 					let debug_renderer = debug_renderer.borrow();
 					debug_renderer.render( renderer );
 				}
+
+//				renderer.use_texture( "pink" );
+//				renderer.use_texture( "cursor" );
+//				renderer.render_textured_quad( &Vector2::new( -64.0, 0.0 ), &Vector2::new( 128.0, 128.0 ) );
+
+				renderer.use_effect( EffectId::FontColored as u16 );
+//				renderer.use_font( FontId::Default as u8 );
+				renderer.use_font( FontId::Huge as u8 );
+				renderer.print( &Vector2::new( 0.0, 0.0 ), "abcdefghijklmnopqrstuvwxyz Test Text -=_" );
+				renderer.use_font( FontId::Default as u8 );
+
+//				renderer.render_textured_quad( &Vector2::new( 64.0, 0.0 ), &Vector2::new( 128.0, 128.0 ) );
 
 				renderer.end_frame();
 			},
