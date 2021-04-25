@@ -370,7 +370,7 @@ impl FiiishApp {
 				renderer.use_effect( EffectId::FontColored as u16 );
 //				renderer.use_font( FontId::Default as u8 );
 				renderer.use_font( FontId::Huge as u8 );
-				renderer.print( &Vector2::new( 0.0, 0.0 ), "abcdefghijklmnopqrstuvwxyz Test Text -=_" );
+				renderer.print( &Vector2::new( -800.0, 0.0 ), "abcdefghijklmnopqrstuvwxyz Test Text -=_" );
 				renderer.use_font( FontId::Default as u8 );
 
 //				renderer.render_textured_quad( &Vector2::new( 64.0, 0.0 ), &Vector2::new( 128.0, 128.0 ) );
