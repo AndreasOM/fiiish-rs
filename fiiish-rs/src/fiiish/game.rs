@@ -318,7 +318,10 @@ impl Game {
 					},
 					GameState::Dead => {
 						if p.can_respawn() {
-							self.state = GameState::None;
+//							if wuc.was_key_pressed( 'r' as u8 ) {
+							if wuc.is_space_pressed {
+								self.state = GameState::None;
+							}
 						}
 					},
 				}
@@ -422,5 +425,24 @@ impl Game {
 	}
 	pub fn toggle_sound( &mut self ) {
 		self.is_sound_enabled = !self.is_sound_enabled;
+	}
+
+	pub fn can_respawn( &self ) -> bool {
+		for p in self.fishes.iter() {
+			if p.name() == "fish" {
+				if p.can_respawn() {
+					return true;
+				}
+			}				
+		}
+		false
+	}
+
+	pub fn play( &mut self ) {
+		if self.state == GameState::Dead {
+			if self.can_respawn() {
+				self.state =GameState::None;
+			}
+		}
 	}
 }

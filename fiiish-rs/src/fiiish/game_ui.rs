@@ -226,6 +226,14 @@ impl GameUi {
 						settings_dialog.fade_out( 1.0 );
 					}
 				}
+				if let Some( mut result_dialog ) = root.find_child_mut( &[ "ResultDialog" ] ) {
+					let mut result_dialog = result_dialog.borrow_mut();
+					if game.is_dead() {
+						result_dialog.fade_in( 1.0 );
+					} else {
+						result_dialog.fade_out( 1.0 );
+					}
+				}
 			}
 			root.update( wuc.time_step() );
 

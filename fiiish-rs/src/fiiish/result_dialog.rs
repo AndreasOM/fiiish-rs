@@ -27,12 +27,14 @@ use crate::ui::{
 #[derive(Debug)]
 pub struct ResultDialog {
 	game: Rc< RefCell< Game > >,
+	play_button: Option< UiElementContainerHandle >,
 }
 
 impl ResultDialog {
 	pub fn new( game: &mut Rc< RefCell< Game > > ) -> Self {
 		Self {
 			game: game.clone(),
+			play_button: None,
 		}
 	}
 }
@@ -91,6 +93,7 @@ impl UiElement for ResultDialog {
 									let mut parent = hbox.borrow_mut();
 									let mut play_button = parent.add_child_element( UiButton::new( "button_play", &Vector2::new( 128.0, 128.0 ) ) );
 									play_button.borrow_mut().set_name( "PlayButton" );
+									self.play_button = Some( play_button.clone() );
 									parent.add_child_element( UiBlock::new( &Vector2::new( 256.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.2, 0.5 ) ) ); // right space
 								}
 							}
@@ -138,6 +141,13 @@ impl UiElement for ResultDialog {
 	fn update( &mut self, _container: &UiElementContainerData, _time_step: f64 ) {
 		let game = self.game.borrow_mut();
 
+		if let Some( play_button ) = &mut self.play_button {
+			if game.can_respawn() {
+				play_button.borrow_mut().fade_in( 1.0 );
+			} else {
+				play_button.borrow_mut().fade_out( 1.0 );
+			}
+		}
 		// :TODO: update coin & distance labels
 		/*
 		if let Some( music_togglebutton ) = &mut self.music_togglebutton {
@@ -157,8 +167,22 @@ impl UiElement for ResultDialog {
 		*/
 	}
 
-	fn handle_ui_event( &mut self, _container: &mut UiElementContainerData, _event: &UiEvent, _event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Option< Box < dyn UiEventResponse > > {
-		// stop traversal into children
-		None
+	fn handle_ui_event_response( &mut self, response: Box< dyn UiEventResponse > ) -> Option< Box< dyn UiEventResponse > > {
+		match response.as_any().downcast_ref::<UiEventResponseButtonClicked>() {
+			Some( e ) => {
+				println!("ResultDialog: Button {} clicked", &e.button_name );
+				match e.button_name.as_str() {
+					"PlayButton" => {
+						self.game.borrow_mut().play();
+						return None;
+					},
+					_ => {
+//						println!( "Unhandled button click from {}", &e.button_name );
+					},
+				}
+			},
+			_ => {},
+		}
+		Some( response )
 	}
 }
