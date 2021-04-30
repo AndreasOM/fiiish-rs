@@ -100,14 +100,20 @@ impl <'a> UiRenderer<'a> {
 	pub fn use_font( &mut self, font_id: u8 ) {
 		self.renderer.use_font( font_id );
 	}
-	pub fn print( &mut self, pos: &Vector2, text: &str ) {
+	pub fn print(
+		&mut self,
+		pos: &Vector2,
+		size: &Vector2,
+		alignment: &Vector2,
+		text: &str
+	) {
 		let transformed_pos = self.transform_mtx.mul_vector2( &pos );
 		let mut color = *self.color_stack.top();
 		color.a *= self.opacity;
 		self.renderer.set_color( &color );
 		self.renderer.use_layer( self.front_layer_id );
 		self.renderer.use_effect( self.font_render_effect_id );
-		self.renderer.print( &transformed_pos, text );
+		self.renderer.print( &transformed_pos, &size, &alignment, text );
 	}
 
 }

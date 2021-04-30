@@ -19,6 +19,7 @@ pub struct UiLabel {
 	size: Vector2,
 	color: Color,
 	text: String,
+	alignment: Vector2,
 }
 
 impl UiLabel {
@@ -27,6 +28,7 @@ impl UiLabel {
 			size: *size,
 			color: Color::from_rgba( 0.8, 0.8, 0.8, 0.8 ),
 			text: text.to_owned(),
+			alignment: Vector2::new( -1.0, 0.0 ), // :BIKESHED: decide default vertical alignment
 		}
 	}
 }
@@ -48,7 +50,11 @@ impl UiElement for UiLabel {
 			ui_renderer.push_opacity( l );
 			//ui_renderer.render_quad( &container.pos, &self.size );
 			// :TODO: font
-			ui_renderer.print( &container.pos, &self.text );
+			ui_renderer.print(
+				&container.pos,
+				&container.size,
+				&self.alignment,
+				&self.text );
 
 			ui_renderer.pop_opacity();
 			ui_renderer.pop_color();

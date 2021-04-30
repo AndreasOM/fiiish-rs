@@ -1,6 +1,8 @@
 
 use std::collections::HashMap;
 
+use crate::debug_renderer;
+
 use crate::math::{ 
 	Matrix22,
 	Matrix32,
@@ -10,6 +12,7 @@ use crate::math::{
 };
 use crate::system::System;
 use crate::window::Window;
+
 
 //use material::Material;
 
@@ -660,7 +663,13 @@ impl Renderer {
 	}
 
 
-	pub fn print( &mut self, pos: &Vector2, text: &str ) {
+	pub fn print(
+		&mut self,
+		pos: &Vector2,
+		size: &Vector2,
+		alignment: &Vector2,
+		text: &str
+	) {
 		let old_texture_id = self.active_textures[ 0 ];
 		{
 			let font = self.font_manager.get( self.active_font_id );
@@ -684,10 +693,18 @@ impl Renderer {
 			layout.layout( font, &Vector2::zero(), text );
 		}
 
+//		let layout_pos = pos;	// :TODO: apply alignment
+		let layout_size_half = layout.size().scaled( 0.5 );
+//		let layout_pos = pos.sub( &layout_size_half );
+//		let cpos       = ws.sub( &cs ).scaled( 0.5 ).scaled_vector2( &g );
+		let layout_pos = size.sub( layout.size() ).scaled( 0.5 ).scaled_vector2( alignment );
+		let layout_pos = pos.add( &layout_pos );
+		let layout_pos_2 = layout_pos.sub( &layout_size_half );
+
 		for q in layout.quads() {
 			self.set_tex_matrix( &q.tex_mtx );
 			// :TODO: fix position for alignment
-			self.render_textured_quad( &q.pos.add( &pos ), &q.size );
+			self.render_textured_quad( &q.pos.add( &layout_pos_2 ), &q.size );
 //			self.render_textured_quad_with_tex_matrix( &q.pos, &q.size, &q.tex_mtx );
 		}
 
@@ -697,6 +714,21 @@ impl Renderer {
 		self.set_tex_matrix( &Matrix32::identity() );
 		self.active_textures[ 0 ] = old_texture_id;
 		self.switch_active_material_if_needed();
+
+		debug_renderer::debug_renderer_add_frame(
+			&pos,
+			&size,
+			5.0,
+			&Color::from_rgba( 0.9, 0.75, 0.3, 0.6 ),
+		);
+
+		debug_renderer::debug_renderer_add_frame(
+			&layout_pos,
+			&layout.size(),
+			3.0,
+			&Color::from_rgba( 0.4, 0.75, 0.3, 0.6 ),
+		);
+
 	}
 
 }

@@ -380,7 +380,12 @@ impl FiiishApp {
 				renderer.use_effect( EffectId::FontColored as u16 );
 //				renderer.use_font( FontId::Default as u8 );
 				renderer.use_font( FontId::Huge as u8 );
-				renderer.print( &Vector2::new( -800.0*1.0, 0.0 ), "abcdefghijklmnopqrstuvwxyz Test Text -=_" );
+				let pp = Vector2::new( -800.0*0.0, 0.0 );
+				let ps = Vector2::new( 512.0, 512.0 );
+				let pa = Vector2::new( ( 1.0*self.total_time as f32 ).sin(), ( 1.2*self.total_time as f32 ).sin() );
+				// "abcdefghijklmnopqrstuvwxyz Test Text -=_"
+				let pt = "abcgjpqy_";
+				renderer.print( &pp, &ps, &pa, pt );
 //				renderer.print( &Vector2::new( -800.0*0.0, 0.0 ), "deqr_h-=^\"Bhijklmn" );
 //				renderer.print( &Vector2::new( -800.0*0.0, 0.0 ), "jk" );
 				renderer.use_font( FontId::Default as u8 );

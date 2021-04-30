@@ -16,12 +16,14 @@ pub struct TextLayoutQuad {
 #[derive(Debug)]
 pub struct TextLayout {
 	quads: Vec< TextLayoutQuad >,
+	size: Vector2,
 }
 
 impl TextLayout {
 	pub fn new() -> Self {
 		Self {
 			quads: Vec::new(),
+			size: Vector2::zero(),
 		}
 	}
 
@@ -38,6 +40,8 @@ impl TextLayout {
 
 		todo!("die");
 		*/
+		let mut bottom_y = f32::MAX;
+		let mut top_y = f32::MIN;
 		for c in text.bytes() {
 			if let Some( g ) = font.find_glyph( c as u8 ) {
 //				println!("{} -> {:?}", c, g);
@@ -66,22 +70,39 @@ impl TextLayout {
 							]
 					*/
 				};
+				/*
 				debug_renderer::debug_renderer_add_frame(
 					&q.pos,
 					&q.size,
 					3.0,
 					&Color::red(),
 				);
+				*/
 //				dbg!(&q);
 //				dbg!(&pos);
+				if q.pos.y < bottom_y {
+					bottom_y = q.pos.y;
+				}
+				if q.pos.y + q.size.y > top_y {
+					top_y = q.pos.y + q.size.y;
+				}
 				self.quads.push( q );
 				pos.x += g.advance as f32;
+
+				self.size.x = pos.x;
 			}
 		}
+		// :TODO: fixe for center line
+		self.size.y = top_y - bottom_y;
 //		todo!("die");
 	}
 
 	pub fn quads( &self ) -> &Vec< TextLayoutQuad > {
 		&self.quads
-	} 
+	}
+
+	pub fn size( &self ) -> &Vector2 {
+		&self.size
+	}
+
 }

@@ -7,10 +7,12 @@
 - [ ] Add font rendering
 	- [ ] Fix font layout
 	- [x] Fix positioning of glyphs inside text
+	- [ ] Fix calculation of text layout height
+- [ ] Finalize UiLabel rendering
 
 ## TODO
 
-- [ ] Finalize UiLabel rendering
+- [ ] Add version number to settings dialog
 - [ ] Hook up counters
 - [ ] Cleanup: Remov unnecessary `use ...`
 - [ ] Improve next zone selection
