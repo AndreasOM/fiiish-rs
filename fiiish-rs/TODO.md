@@ -6,6 +6,7 @@
 - [ ] Implement UI system
 - [ ] Add font rendering
 	- [ ] Fix font layout
+	- [x] Fix positioning of glyphs inside text
 
 ## TODO
 
@@ -18,6 +19,7 @@
 - [ ] Fix Windows build (cheat mode, keyword: shader-crusher)
 - [ ] Expand EntityConfiguration to allow multiple AnimatedTextures
 
+- [ ] Create macros for DebugRender
 - [ ] Create release builds via github actions (cheat mode)
 - [ ] Cleanup Pickups (remove Coins)
 - [ ] Split renderer context from window

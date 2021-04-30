@@ -2,7 +2,8 @@
 
 use crate::math::Vector2;
 use crate::math::Matrix32;
-use crate::renderer::Font;
+use crate::renderer::{ Color, Font };
+use crate::debug_renderer;
 
 #[derive(Debug)]
 pub struct TextLayoutQuad {
@@ -49,9 +50,11 @@ impl TextLayout {
 				let yt = yb + g.height as f32;
 */
 				let s = Vector2::new( g.width as f32, g.height as f32 );
+				let y_offset = g.y_offset as f32;// * 260.0*5.0;
 				let q = TextLayoutQuad {
 //					pos: pos.add( &Vector2::new( g.x as f32, g.y as f32 ) ),
-					pos: pos.add( &Vector2::new( 0.0, g.y_offset as f32 * -260.0 ) ).sub( &s.scaled( 0.5 ) ),
+//					pos: pos.add( &Vector2::new( 0.0, g.y_offset as f32 * -260.0 ) ).sub( &s.scaled( 0.5 ) ),
+					pos: Vector2::new( pos.x + 0.5*s.x, pos.y + 0.5*s.y - y_offset ),
 					size: s,
 					tex_mtx: g.matrix.into(),
 					/*
@@ -63,10 +66,19 @@ impl TextLayout {
 							]
 					*/
 				};
+				debug_renderer::debug_renderer_add_frame(
+					&q.pos,
+					&q.size,
+					3.0,
+					&Color::red(),
+				);
+//				dbg!(&q);
+//				dbg!(&pos);
 				self.quads.push( q );
 				pos.x += g.advance as f32;
 			}
 		}
+//		todo!("die");
 	}
 
 	pub fn quads( &self ) -> &Vec< TextLayoutQuad > {

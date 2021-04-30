@@ -1,3 +1,7 @@
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use lazy_static::lazy_static;
 
 use crate::math::Matrix22;
 use crate::math::Vector2;
@@ -22,6 +26,64 @@ pub struct DebugRenderer {
 	effect: u16,
 	lines: Vec< Line >,
 }
+
+//pub static mut DEFAULT_DEBUGRENDERER: Option< Arc< Mutex< DebugRenderer > > > = None;
+//pub static DEFAULT_DEBUGRENDERER: Arc< Mutex < Option< DebugRenderer > > > = Arc::new( Mutex::new( None ) );
+
+lazy_static! {
+//    static ref ARRAY: Mutex<Vec<u8>> = Mutex::new(vec![]);
+	pub static ref DEFAULT_DEBUGRENDERER: Arc< Mutex < Option< DebugRenderer > > > = Arc::new( Mutex::new( None ) );
+}
+
+// :TODO: make these macros that compiles to NOP
+pub fn debug_renderer_toggle( layer_id: u8, effect_id: u16 ) {
+	let mut lock = DEFAULT_DEBUGRENDERER.try_lock();
+	if let Ok(ref mut dr) = lock {
+		if dr.is_none() {
+			**dr = Some( DebugRenderer::new( layer_id, effect_id ) );
+		} else {
+			**dr = None;
+		}		
+	}	
+}
+
+pub fn debug_renderer_add_line( start: &Vector2, end: &Vector2, width: f32, color: &Color ) {
+	let mut lock = DEFAULT_DEBUGRENDERER.try_lock();
+	if let Ok(ref mut dr) = lock {
+		if let Some( dr ) = &mut **dr {
+			dr.add_line( start, end, width, color );
+		}		
+	}
+}
+pub fn debug_renderer_add_frame( pos: &Vector2, size: &Vector2, width: f32, color: &Color ) {
+	let mut lock = DEFAULT_DEBUGRENDERER.try_lock();
+	if let Ok(ref mut dr) = lock {
+		if let Some( dr ) = &mut **dr {
+			dr.add_frame( pos, size, width, color );
+		}		
+	}
+}
+
+pub fn debug_renderer_begin_frame( ) {
+	let mut lock = DEFAULT_DEBUGRENDERER.try_lock();
+	if let Ok(ref mut dr) = lock {
+		if let Some( dr ) = &mut **dr {
+			dr.begin_frame( );
+		}		
+	}
+}
+
+pub fn debug_renderer_render( renderer: &mut Renderer ) {
+	let mut lock = DEFAULT_DEBUGRENDERER.try_lock();
+	if let Ok(ref mut dr) = lock {
+		if let Some( dr ) = &mut **dr {
+			dr.render( renderer );
+		}
+	}
+}
+
+
+// end of macros
 
 impl DebugRenderer {
 	pub fn new( layer: u8, effect: u16 ) -> Self {

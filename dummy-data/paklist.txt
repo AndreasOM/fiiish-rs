@@ -9,6 +9,8 @@ cursor.png
 default_fs.glsl
 default_vs.glsl
 fish_swim0000.png
+fontcolored_fs.glsl
+fontcolored_vs.glsl
 test.txt
 test_texture_1.jpg
 test_texture_1.png

@@ -30,6 +30,8 @@ use crate::fiiish::GameUi;
 
 use crate::DebugRenderer;
 
+use crate::debug_renderer;
+
 use super::demo::Demo;
 use super::mixel::Mixel;
 
@@ -226,11 +228,19 @@ impl FiiishApp {
 			}
 		}
 
+		if wuc.was_key_pressed( 'j' as u8 ) {
+			debug_renderer::debug_renderer_toggle(
+				LayerId::DebugRenderer as u8,
+				EffectId::Colored as u16
+			);			
+		}
 
 		if let Some( debug_renderer ) = &*self.debug_renderer {
 			let mut debug_renderer = debug_renderer.borrow_mut();
 			debug_renderer.begin_frame();
 		}
+
+		debug_renderer::debug_renderer_begin_frame();
 
 
 		self.count += 1;
@@ -370,11 +380,15 @@ impl FiiishApp {
 				renderer.use_effect( EffectId::FontColored as u16 );
 //				renderer.use_font( FontId::Default as u8 );
 				renderer.use_font( FontId::Huge as u8 );
-				renderer.print( &Vector2::new( -800.0, 0.0 ), "abcdefghijklmnopqrstuvwxyz Test Text -=_" );
+				renderer.print( &Vector2::new( -800.0*1.0, 0.0 ), "abcdefghijklmnopqrstuvwxyz Test Text -=_" );
+//				renderer.print( &Vector2::new( -800.0*0.0, 0.0 ), "deqr_h-=^\"Bhijklmn" );
+//				renderer.print( &Vector2::new( -800.0*0.0, 0.0 ), "jk" );
 				renderer.use_font( FontId::Default as u8 );
 
 //				renderer.render_textured_quad( &Vector2::new( 64.0, 0.0 ), &Vector2::new( 128.0, 128.0 ) );
 
+//				debug_renderer::debug_renderer_add_line( &Vector2::zero(), &Vector2::new( 512.0, 512.0 ), 10.0, &Color::white() );
+				debug_renderer::debug_renderer_render( renderer );
 				renderer.end_frame();
 			},
 			None => {},

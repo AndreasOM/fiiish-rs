@@ -32,7 +32,14 @@ impl Glyph {
 		self.height	= ( self.matrix[ 1*3 + 1 ] * texsize as f32 ).trunc() as u32;
 		self.x		= ( self.matrix[ 0*3 + 2 ] * texsize as f32 ).trunc() as u32;
 		self.y		= ( self.matrix[ 1*3 + 2 ] * texsize as f32 ).trunc() as u32;
+
+		// :HACK: since omt-font might be broken
+		if self.codepoint != 32 { // leave SPACE alone
+			self.advance = self.width as u16;
+		}
+		self.y_offset = self.y_offset * texsize as f32;
 	}
+
 }
 
 
@@ -99,6 +106,10 @@ impl Font {
 				*m = f.read_f32();
 			}
 			glyph.advance = f.read_f32() as u16;
+			if codepoint == 32 { //SPACE	// :HACK: since space is written with an advance of 0
+				glyph.advance = self.size / 4;
+				dbg!(&glyph);
+			}
 			glyph.y_offset = f.read_f32();
 			self.glyphs.push( glyph );
 		}
