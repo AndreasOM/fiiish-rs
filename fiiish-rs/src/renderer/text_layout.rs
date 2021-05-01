@@ -28,6 +28,7 @@ impl TextLayout {
 	}
 
 	pub fn layout( &mut self, font: &Font, pos: &Vector2, text: &str ) {
+		let initial_pos = pos;
 		let mut pos = *pos;
 		/*
 		if let Some( g ) = font.find_glyph( 'j' as u8 ) {
@@ -42,61 +43,40 @@ impl TextLayout {
 		*/
 		let mut bottom_y = f32::MAX;
 		let mut top_y = f32::MIN;
+		self.size.y = font.size();
+		let mut line_count = 1;
 		for c in text.bytes() {
+			if c as u8 == 0x0a {
+				pos.x = initial_pos.x;
+				pos.y -= font.size();
+				self.size.y += font.size();
+				line_count += 1;
+				continue;
+			}
 			if let Some( g ) = font.find_glyph( c as u8 ) {
 //				println!("{} -> {:?}", c, g);
-				// :TODO: use y_offset
-
-/*
-				let xl = pos.x + g.x as f32;
-				let xr = xl + g.width as f32;
-				let yb = pos.y + g.y as f32;// + g.y_offset;
-				let yt = yb + g.height as f32;
-*/
 				let s = Vector2::new( g.width as f32, g.height as f32 );
 				let y_offset = g.y_offset as f32;// * 260.0*5.0;
 				let q = TextLayoutQuad {
-//					pos: pos.add( &Vector2::new( g.x as f32, g.y as f32 ) ),
-//					pos: pos.add( &Vector2::new( 0.0, g.y_offset as f32 * -260.0 ) ).sub( &s.scaled( 0.5 ) ),
 					pos: Vector2::new( pos.x + 0.5*s.x, pos.y + 0.5*s.y - y_offset ),
 					size: s,
 					tex_mtx: g.matrix.into(),
-					/*
-					vertices: [
-							Vector2::new( xl, yt ),
-							Vector2::new( xl, yb ),
-							Vector2::new( xr, yb ),
-							Vector2::new( xr, yt ),
-							]
-					*/
 				};
-				/*
-				debug_renderer::debug_renderer_add_frame(
-					&q.pos,
-					&q.size,
-					3.0,
-					&Color::red(),
-				);
-				*/
-//				dbg!(&q);
-//				dbg!(&pos);
-				if q.pos.y < bottom_y {
-					bottom_y = q.pos.y;
-				}
-				if q.pos.y + q.size.y > top_y {
-					top_y = q.pos.y + q.size.y;
-				}
 				self.quads.push( q );
 				pos.x += g.advance as f32;
 
-				self.size.x = pos.x;
+				if self.size.x < pos.x {
+					self.size.x = pos.x;
+				}
 			}
 		}
-		// :TODO: fixe for center line
-//		println!("Bottom - Top: {} - {}", bottom_y, top_y);
-//		self.size.y = top_y - bottom_y;
-		self.size.y = font.size();
-//		todo!("die");
+
+		if line_count > 1 {
+			let y_fix = ( line_count - 1 ) as f32 * font.size();
+			for q in self.quads.iter_mut() {
+				q.pos.y += y_fix;
+			}
+		}
 	}
 
 	pub fn quads( &self ) -> &Vec< TextLayoutQuad > {

@@ -7,7 +7,6 @@
 
 ## TODO
 
-- [ ] Add version number to settings dialog
 - [ ] Cleanup: Remove unnecessary `use ...`
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
@@ -52,6 +51,8 @@
 
 ## DONE
 
+- [x] Add basic multiline text
+- [x] Add version number to settings dialog
 - [x] Finalize UiLabel rendering
 - [x] Hook up counters
 - [x] Add font rendering

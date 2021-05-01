@@ -266,6 +266,10 @@ impl UiElementContainer {
 
 
 	pub fn render_debug( &self, debug_renderer: &mut DebugRenderer, offset: &Vector2 ) {
+		if *self.fade_state() == UiElementFadeState::FadedOut {
+			return;
+		}
+
 		self.element.render_debug( &self.data, debug_renderer, offset );
 		for c in self.data.borrow_children().iter() {
 			let co = offset.add( c.borrow().pos() );

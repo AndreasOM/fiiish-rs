@@ -128,6 +128,7 @@ impl GameUi {
 		let settings_dialog = root.add_child_element( SettingsDialog::new( &mut self.game.as_mut().unwrap() )  );
 		settings_dialog.borrow_mut().set_name( "SettingsDialog" );
 		settings_dialog.borrow_mut().fade_out( 0.0 );
+//		settings_dialog.borrow_mut().fade_in( 1.0 );
 
 		// ResultDialog
 		match root.borrow_element_mut().as_any_mut().downcast_mut::<UiGravityBox>() {
