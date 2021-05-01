@@ -292,7 +292,6 @@ impl Game {
 		for p in self.fishes.iter_mut() {
 			if p.name() == "fish" {
 				fish_movement = *p.movement();
-				self.distance += fish_movement.x / self.pixels_per_meter;
 				match self.state {
 					GameState::None => {
 						println!("Respawn");
@@ -382,6 +381,7 @@ impl Game {
 				}
 				self.collide_with_obstacles( &euc );
 				self.collect_pickups( &euc );
+				self.distance -= euc.world_movement().x / self.pixels_per_meter;
 			}
 		} else {
 			// :HACK: for visualising collisions even when paused
