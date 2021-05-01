@@ -1,16 +1,18 @@
 
-use std::fs::File;
+use std::fs::{ File, OpenOptions };
 use std::io::{BufReader,SeekFrom};
 use std::io::prelude::*;
 
-use crate::system::filesystem_stream::FilesystemStream;
+use crate::system::filesystem_stream::{ FilesystemStream, FilesystemStreamMode };
 
 pub struct FilesystemStreamDisk {
 	filename: String,	// only needed for better debugging
 	file: Option< BufReader< File > >,
+	file_write: Option< File >,
 //	file: Option< File >,
 	size: usize,
 	pos: usize,
+	mode: FilesystemStreamMode,
 }
 
 impl FilesystemStreamDisk {
@@ -18,8 +20,10 @@ impl FilesystemStreamDisk {
 		let mut s = Self {
 			filename: filename.to_string(),
 			file: None,
+			file_write: None,
 			size: 0,
 			pos: 0,
+			mode: FilesystemStreamMode::Read,
 		};
 
 		if let Ok( mut f ) = File::open( &s.filename ) {
@@ -36,6 +40,43 @@ impl FilesystemStreamDisk {
 
 		s
 	}
+
+	pub fn create( filename: &str, overwrite: bool ) -> Self {
+		let mut s = Self {
+			filename: filename.to_string(),
+			file: None,
+			file_write: None,
+			size: 0,
+			pos: 0,
+			mode: FilesystemStreamMode::Write,
+		};
+
+		let file = OpenOptions::new()
+					.write( true )
+					.truncate( true )
+					.create_new( !overwrite )
+					.open( &s.filename );
+//		dbg!(&file);
+		if let Ok( mut f ) = file {
+			s.size = 0;
+			/*
+			let f = BufReader::new(f);
+			*/
+			s.file_write = Some( f );
+		};
+
+
+		s
+	}
+}
+
+impl Drop for FilesystemStreamDisk {
+    fn drop(&mut self) {
+    	if let Some( f ) = &mut self.file_write {
+    		f.sync_all().unwrap();
+    		self.file_write = None;
+    	}
+    }
 }
 
 impl FilesystemStream for FilesystemStreamDisk {
@@ -58,6 +99,11 @@ impl FilesystemStream for FilesystemStreamDisk {
 			None => {},
 		}
 	}
+
+	fn mode( &self ) -> FilesystemStreamMode {
+		self.mode
+	}
+
 	fn read_u8( &mut self ) -> u8 {
 
 		match &mut self.file {
@@ -78,8 +124,32 @@ impl FilesystemStream for FilesystemStreamDisk {
 		}
 
 	}
+	fn write_u8( &mut self, data: u8 ) {
+		match &mut self.file_write {
+			Some( f ) => {
+				let mut buf = [ data ];
+				match f.write( &mut buf ) {
+					Ok( _ ) => {
+						self.pos += 1;
+					},
+					Err( _ ) => {},
+				}
+
+			},
+			None => {
+			},
+		}
+	}
+
 	fn is_valid( &self ) -> bool {
-		self.file.is_some()
+		match self.mode {
+			FilesystemStreamMode::Read => {
+				self.file.is_some()
+			},			
+			FilesystemStreamMode::Write => {
+				self.file_write.is_some()
+			},
+		}
 	}
 	fn eof( &self ) -> bool {
 		self.pos >= self.size

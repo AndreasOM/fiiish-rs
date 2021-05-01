@@ -195,7 +195,13 @@ impl Game {
 		self.entity_manager.add( Box::new( test_rock ) );
 		*/
 
-		self.player.load( system );
+		if !self.player.load( system ) {
+//			todo!("Handle broken savegame");
+		}
+//		self.player.save( system ); // :HACK:
+
+		dbg!(&self.player);
+//		todo!("die");
 	}
 
 	pub fn autosave( &mut self, system: &mut System ) -> bool {

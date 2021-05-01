@@ -1,4 +1,6 @@
-use crate::system::System;
+use crate::system::{ Serializer, System };
+
+const SERIALIZED_VERSION: u16 = 0x0001;
 
 #[derive(Debug)]
 pub struct Player {
@@ -24,13 +26,72 @@ impl Player {
 		self.is_dirty
 	}
 	pub fn load( &mut self, system: &mut System ) -> bool {
+		let filename = format!("{}{}", "default", ".fiiishsave" );
+		let mut f = system.savegame_filesystem_mut().open( &filename );
+		if !f.is_valid() {
+			println!("Not loading player. File not found {}", &filename );
+			return false;
+		}
+		println!("Loading player from {}", &filename );
+
+		let mut s = Serializer::new( f );
+
+		if !self.serialize( &mut s ) {
+			return false;
+		}
+
 		self.is_dirty = false;
 		true
 	}
 
 	pub fn save( &mut self, system: &mut System ) -> bool {
 		println!("Saving player {:?}", self );
+		let filename = format!("{}{}", "default", ".fiiishsave" );
+		let mut f = system.savegame_filesystem_mut().create( &filename, true );
+		if !f.is_valid() {
+			println!("Not saving player. Couldn't create {}", &filename );
+			return false;
+		}
+		println!("Saving player to {}", &filename );
+		let mut s = Serializer::new( f );
+
+		if !self.serialize( &mut s ) {
+			return false;
+		}
+
+//		f.write_u8( 0xaa );
+//		dbg!(&f);
+
+		dbg!(&s);
+
 		self.is_dirty = false;
+		true
+	}
+
+	fn serialize( &mut self, s: &mut Serializer ) -> bool {
+		const MAGIC: [u8;8] = [ 0x4f, 0x4d, 0x46, 0x49, 0x49, 0x49, 0x53, 0x48 ];
+		let mut buff = MAGIC;
+		for ( i, m ) in buff.iter_mut().enumerate() {
+			s.serialize_u8( m );
+
+			if *m != MAGIC[ i ] {
+				println!( "Magic mismatch in savegame" );
+				return false;
+			}
+		}
+
+		let mut version = SERIALIZED_VERSION;
+		s.serialize_u16( &mut version );
+		if version != SERIALIZED_VERSION {
+			println!( "Version mismatch in savegame" );
+			return false;
+		}
+
+
+		s.serialize_u32( &mut self.coins );
+		s.serialize_u32( &mut self.last_distance );	// :TODO: do we even need to store this?
+		s.serialize_u32( &mut self.total_distance );
+		s.serialize_u32( &mut self.best_distance );
 		true
 	}
 

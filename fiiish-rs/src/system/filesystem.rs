@@ -1,11 +1,21 @@
 
 use crate::system::filesystem_stream::FilesystemStream;
 
+use crate::system::filesystem_stream_empty::FilesystemStreamEmpty;
 
 pub trait Filesystem {
 
 	fn open( &mut self, name: &str ) -> Box< dyn FilesystemStream >;
+	fn create( &mut self, name: &str, overwrite: bool ) -> Box< dyn FilesystemStream > {
+		let stream = FilesystemStreamEmpty::open( name );
+
+		Box::new( stream )		
+	}
 	fn exists( &mut self, _name: &str ) -> bool {
+		false
+	}
+
+	fn writable( &self ) -> bool {
 		false
 	}
 

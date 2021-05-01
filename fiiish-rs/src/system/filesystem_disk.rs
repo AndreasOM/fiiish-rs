@@ -5,13 +5,19 @@ use crate::system::filesystem_stream_disk::FilesystemStreamDisk;
 
 pub struct FilesystemDisk {
 	basedir: String,
+	writable: bool,
 }
 
 impl FilesystemDisk {
 	pub fn new( basedir: &str ) -> Self {
 		Self {
 			basedir: basedir.to_string(),
+			writable: false,
 		}
+	}
+
+	pub fn enable_write( &mut self ) {
+		self.writable = true;
 	}
 }
 
@@ -22,9 +28,20 @@ impl Filesystem for FilesystemDisk {
 
 		Box::new( stream )
 	}
+	fn create( &mut self, name: &str, overwrite: bool ) -> Box< dyn FilesystemStream > {
+		let fullname = format!("{}/{}", &self.basedir, &name);
+		let stream = FilesystemStreamDisk::create( &fullname, overwrite );
+
+		Box::new( stream )
+	}
+
 	fn exists( &mut self, name: &str ) -> bool {
 		let fullname = format!("{}/{}", &self.basedir, &name);
 		std::path::Path::new(&fullname).exists()
+	}
+
+	fn writable( &self ) -> bool {
+		self.writable
 	}
 
 	fn name( &self ) -> &str {

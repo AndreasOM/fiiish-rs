@@ -6,12 +6,14 @@ use crate::system::filesystem_empty::FilesystemEmpty;
 #[derive(Debug)]
 pub struct System {
 	default_filesystem: Box<dyn Filesystem>,
+	savegame_filesystem: Box< dyn Filesystem>,
 }
 
 impl System {
 	pub fn new() -> Self {
 		Self {
 			default_filesystem: Box::new( FilesystemEmpty::new() ),
+			savegame_filesystem: Box::new( FilesystemEmpty::new() ),
 		}
 	}
 
@@ -21,6 +23,14 @@ impl System {
 
 	pub fn default_filesystem_mut( &mut self ) -> &mut Box< dyn Filesystem > {
 		&mut self.default_filesystem
+	}
+
+	pub fn set_savegame_filesystem(&mut self, fs: Box< dyn Filesystem > ) {
+		self.savegame_filesystem = fs;
+	}
+
+	pub fn savegame_filesystem_mut( &mut self ) -> &mut Box< dyn Filesystem > {
+		&mut self.savegame_filesystem
 	}
 }
 
@@ -40,3 +50,6 @@ pub mod filesystem_memory;
 pub mod filesystem_stream_memory;
 
 pub mod filesystem_layered;
+
+mod serializer;
+	pub use serializer::Serializer;

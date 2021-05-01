@@ -4,6 +4,7 @@
 ## In Progress
 
 - [ ] Finalize ResultDialog
+- [ ] Add savegame
 
 ## TODO
 

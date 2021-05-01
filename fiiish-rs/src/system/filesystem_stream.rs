@@ -1,14 +1,24 @@
 
+#[derive(Debug,Copy,Clone,Eq,PartialEq)]
+pub enum FilesystemStreamMode {
+	Read,
+	Write
+}
 
 pub trait FilesystemStream {
 	fn size( &self, ) -> usize;
 	fn pos( &self,  ) -> usize;
 	fn set_pos( &mut self, pos: usize );
 	fn read_u8( &mut self ) -> u8;
+	fn write_u8( &mut self, data: u8 ){}
 	fn is_valid( &self ) -> bool;
 	fn eof( &self ) -> bool;
 	fn name( &self ) -> &str;
 	fn filesystem_stream_type( &self ) -> &str;
+
+	fn mode( &self ) -> FilesystemStreamMode {
+		FilesystemStreamMode::Read
+	}
 
 	fn read_as_string( &mut self ) -> String {
 		let mut s = String::new();

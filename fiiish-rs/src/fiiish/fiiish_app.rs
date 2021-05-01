@@ -87,12 +87,15 @@ impl FiiishApp {
 		}
 	}
 
-	fn add_filesystem_disk( &mut self, lfs: &mut FilesystemLayered, path: &str ) {
+	fn add_filesystem_disk( &mut self, lfs: &mut FilesystemLayered, path: &str, enable_write: bool ) {
 		let cwd = std::env::current_dir().unwrap();
 		let cwd = cwd.to_string_lossy();
 
 		let datadir = format!("{}/{}", &cwd, &path);
-		let dfs = FilesystemDisk::new( &datadir );
+		let mut dfs = FilesystemDisk::new( &datadir );
+		if enable_write {
+			dfs.enable_write();
+		}
 		lfs.add_filesystem( Box::new( dfs ) );
 	}
 	fn add_pakfile_from_data( &mut self, lfs: &mut FilesystemLayered, name: &str, data: &Vec< u8 > ) {
@@ -142,15 +145,23 @@ impl FiiishApp {
 		self.add_pakfile_from_data( &mut lfs, "fiiish-data.omar", &FiiishApp::get_fiiish_data_omar_data().to_vec() );
 
 		// check local files first for faster development (and easier modding)
-		self.add_filesystem_disk( &mut lfs, "../dummy-data" );
-		self.add_filesystem_disk( &mut lfs, "../fiiish-data" );
+		self.add_filesystem_disk( &mut lfs, "../dummy-data", false );
+		self.add_filesystem_disk( &mut lfs, "../fiiish-data", false );
 
-		self.system.set_default_filesystem( Box::new( lfs ) );
-
-		// :TODO: load confiiguration
+		// :TODO: load configuration
 
 		let fs = self.system.default_filesystem_mut();
 		dbg!(&fs);
+
+		self.system.set_default_filesystem( Box::new( lfs ) );
+
+		// savegame filesystem
+		let mut lfs = FilesystemLayered::new();
+
+		self.add_filesystem_disk( &mut lfs, "../savegame-fs/", true );
+
+		self.system.set_savegame_filesystem( Box::new( lfs ) );
+
 
 
 		window.set_title("Fiiish! RS");
