@@ -47,6 +47,45 @@ pub enum GameState {
 }
 
 #[derive(Debug)]
+struct TimedTransfer {
+	total_time: f32,
+	duration: f32,
+	delay: f32,
+	per_second: f32,
+	amount: f32,
+}
+
+impl TimedTransfer {
+	pub fn new( duration: f32, delay: f32 ) -> Self {
+		Self {
+			total_time: 0.0,
+			duration,
+			delay,
+			per_second: 0.0,
+			amount: 0.0,
+		}
+	}
+
+	pub fn reset( &mut self, total_amount: u32 ) {
+		self.per_second = total_amount as f32 / self.duration;
+		self.amount = 0.0;
+		self.total_time = 0.0;
+	}
+
+	pub fn tick( &mut self, time_step: f32 ) -> u32 {
+		self.total_time += time_step;
+		if self.total_time > self.delay {
+			let to_transfer = self.amount + self.per_second * time_step;
+			let full_to_transfer = to_transfer.floor() as u32;
+			let leftover_to_transfer = to_transfer - full_to_transfer as f32;
+			self.amount = leftover_to_transfer;
+			full_to_transfer
+		} else {
+			0
+		}
+	}
+}
+#[derive(Debug)]
 pub struct Game {
 	fishes: Vec<Fish>,
 	entity_manager: EntityManager,
@@ -66,8 +105,8 @@ pub struct Game {
 	pixels_per_meter: f32,
 
 	player: Player,			// since the game always exists (for Fiiish!) we can :HACK: it this way
-	coins_to_take: f32,
-	coins_to_take_per_second: f32,
+	coin_transfer:		TimedTransfer,
+	distance_transfer:	TimedTransfer,
 }
 
 impl Game {
@@ -88,8 +127,8 @@ impl Game {
 			distance:						0.0,
 			pixels_per_meter:				100.0,
 			player:							Player::new(),
-			coins_to_take:					0.0,
-			coins_to_take_per_second:		0.0,
+			coin_transfer:					TimedTransfer::new( 1.0, 2.0 ),
+			distance_transfer:				TimedTransfer::new( 2.0, 3.0 ),
 		}
 	}
 
@@ -313,9 +352,12 @@ impl Game {
 							self.player.give_coins( self.coins );
 							self.coins = 0;
 						}
-						self.coins_to_take = 0.0;
+						if self.distance > 0.0 {
+							self.player.add_to_last_distance( self.distance.floor() as u32 );
+							self.distance = 0.0;
+						}
 //						self.coins = 0;
-						self.distance = 0.0;
+//						self.distance = 0.0;
 					},
 					GameState::WaitForStart => {
 						if wuc.is_space_pressed {
@@ -345,8 +387,9 @@ impl Game {
 						self.zone_manager.clear_zone();
 						self.state = GameState::Dead;
 						self.time_in_state = 0.0;
-						const TRANSFER_TIME: f32 = 2.0;
-						self.coins_to_take_per_second = self.coins as f32 / TRANSFER_TIME;
+						self.coin_transfer.reset( self.coins );
+						self.distance_transfer.reset( self.distance.floor() as u32 );
+						self.player.reset_last_distance();
 					},
 					GameState::Dead => {
 						if p.can_respawn() {
@@ -363,16 +406,12 @@ impl Game {
 
 		match self.state {
 			GameState::Dead => {
-				const TRANSFER_DELAY: f32 = 1.0;
-				if self.time_in_state > TRANSFER_DELAY {
-					let coins_to_take = self.coins_to_take + self.coins_to_take_per_second * auc.time_step() as f32;
-					let full_coins_to_take = coins_to_take.floor() as u32;
-					let leftover_coins_to_take = coins_to_take - full_coins_to_take as f32;
-					self.coins_to_take = leftover_coins_to_take;
-
-					let c = self.take_coins( full_coins_to_take );
-					self.player.give_coins( c );
-				}
+				let c = self.coin_transfer.tick( auc.time_step() as f32 );
+				let c = self.take_coins( c );
+				self.player.give_coins( c );
+				let d = self.distance_transfer.tick( auc.time_step() as f32 );
+				let d = self.take_distance( d );
+				self.player.add_to_last_distance( d );
 			},
 			_ => {},
 		}
@@ -471,6 +510,20 @@ impl Game {
 	pub fn distance( &self ) -> u32 {
 		self.distance.floor() as u32
 	}
+
+	fn take_distance( &mut self, amount: u32 ) -> u32 {
+		let fd = self.distance.floor() as u32;
+		let d = if amount > fd {
+			fd
+		} else {
+			amount
+		};
+
+		self.distance -= d as f32;
+
+		d
+	}
+
 
 	pub fn is_waiting_for_start( &self ) -> bool {
 		self.state == GameState::WaitForStart

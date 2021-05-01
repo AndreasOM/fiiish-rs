@@ -119,8 +119,14 @@ impl UiElement for ResultDialog {
 
 								{
 									let mut parent = hbox.borrow_mut();
-									self.total_labels[ i ] = Some( parent.add_child_element( UiLabel::new( &Vector2::new( 250.0, 79.0 ), "" ) ).clone() );
-									self.current_labels[ i ] = Some( parent.add_child_element( UiLabel::new( &Vector2::new( 250.0, 79.0 ), "" ) ).clone() );
+
+									let mut l = UiLabel::new( &Vector2::new( 250.0, 79.0 ), "" );
+									l.set_alignment( &Vector2::new( 1.0, 0.0 ) );
+									self.total_labels[ i ] = Some( parent.add_child_element( l ).clone() );
+
+									let mut l = UiLabel::new( &Vector2::new( 250.0, 79.0 ), "" );
+									l.set_alignment( &Vector2::new( 1.0, 0.0 ) );
+									self.current_labels[ i ] = Some( parent.add_child_element( l ).clone() );
 								}
 							}
 						}
@@ -168,6 +174,9 @@ impl UiElement for ResultDialog {
 		let mut distance = 0;
 		let mut coins = 0;
 		let mut player_coins = 0;
+		let mut last_distance = 0;
+		let mut best_distance = 0;
+		let mut total_distance = 0;
 		{
 			let game = self.game.borrow_mut();
 			distance = game.distance();
@@ -175,6 +184,9 @@ impl UiElement for ResultDialog {
 
 			let player = game.player();
 			player_coins = player.coins();
+			last_distance = player.last_distance();
+			best_distance = player.best_distance();
+			total_distance = player.total_distance();
 
 			if let Some( play_button ) = &mut self.play_button {
 				if game.can_respawn() {
@@ -186,8 +198,19 @@ impl UiElement for ResultDialog {
 		}
 
 		self.set_total_label_text( RESULTINDEX_COINS, &format!("{}", player_coins ) );
-		self.set_current_label_text( RESULTINDEX_COINS, &format!("{}", coins ) );
-		self.set_current_label_text( RESULTINDEX_DISTANCE, &format!("{}m", distance ) );
+		self.set_total_label_text( RESULTINDEX_DISTANCE, &format!("{}m", last_distance ) );
+		self.set_total_label_text( RESULTINDEX_BESTDISTANCE, &format!("{}m", best_distance ) );
+		self.set_total_label_text( RESULTINDEX_TOTALDISTANCE, &format!("{}m", total_distance ) );
+		if coins == 0 {
+			self.set_current_label_text( RESULTINDEX_COINS, &format!("") );
+		} else {
+			self.set_current_label_text( RESULTINDEX_COINS, &format!("{}", coins ) );
+		}
+		if distance == 0 {
+			self.set_current_label_text( RESULTINDEX_DISTANCE, &format!("") );
+		} else {
+			self.set_current_label_text( RESULTINDEX_DISTANCE, &format!("{}m", distance ) );
+		}
 	}
 
 	fn handle_ui_event_response( &mut self, response: Box< dyn UiEventResponse > ) -> Option< Box< dyn UiEventResponse > > {
