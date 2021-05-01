@@ -194,9 +194,21 @@ impl Game {
 		test_rock.set_rotation( 30.0 );
 		self.entity_manager.add( Box::new( test_rock ) );
 		*/
+
+		self.player.load( system );
 	}
 
-	pub fn teardown( &mut self ) {
+	pub fn autosave( &mut self, system: &mut System ) -> bool {
+		if self.player.is_dirty() {
+			self.player.save( system )
+		} else {
+			false
+		}
+	}
+
+
+	pub fn teardown( &mut self, system: &mut System ) {
+		self.autosave( system );
 		self.entity_manager.teardown();
 		for p in self.fishes.iter_mut() {
 			p.teardown( );

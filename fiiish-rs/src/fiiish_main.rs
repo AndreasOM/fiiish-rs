@@ -31,7 +31,13 @@ fn main() -> anyhow::Result<()>{
 //		dbg!(&wuc);
 		app.update( wuc );
 		app.render();
-		app.is_done()
+		if app.is_done() {
+			println!("App is done, tearing down");
+			app.teardown();
+			true
+		} else {
+			false
+		}
 	});
 
 //	window.run( ... )

@@ -199,7 +199,7 @@ impl FiiishApp {
 		self.demo.teardown();
 
 		self.game_ui.teardown();
-		self.game.borrow_mut().teardown();
+		self.game.borrow_mut().teardown( &mut self.system );
 		self.renderer = None;
 	}
 
