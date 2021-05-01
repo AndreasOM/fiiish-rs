@@ -30,7 +30,7 @@ impl TextLayout {
 	pub fn layout( &mut self, font: &Font, pos: &Vector2, text: &str ) {
 		let mut pos = *pos;
 		/*
-		if let Some( g ) = font.find_glyph( 'a' as u8 ) {
+		if let Some( g ) = font.find_glyph( 'j' as u8 ) {
 			dbg!(g);
 		}
 
@@ -93,7 +93,9 @@ impl TextLayout {
 			}
 		}
 		// :TODO: fixe for center line
-		self.size.y = top_y - bottom_y;
+//		println!("Bottom - Top: {} - {}", bottom_y, top_y);
+//		self.size.y = top_y - bottom_y;
+		self.size.y = font.size();
 //		todo!("die");
 	}
 

@@ -58,9 +58,22 @@ impl Font {
 		f
 	}
 	pub fn recalc_from_matrix( &mut self, texsize: u32 ) {
+		let mut hi_code = 0;
+		let mut hi_h = 0;
 		for g in &mut self.glyphs {
 			g.recalc_from_matrix( texsize );
+			let y = ( g.height as f32 - g.y_offset ) as u32;
+			if y > hi_h {
+				hi_h = y;
+				hi_code = g.codepoint;
+//				dbg!(&g);
+			}
 		}
+
+//		dbg!(&hi_code, &hi_h, self.size);
+		// :HACK: cheat, since the font converter doesn't give us what we need
+		self.size = hi_h as u16;
+//		todo!("die");
 	}
 
 	fn new( name: &str ) -> Self {
@@ -129,5 +142,9 @@ impl Font {
 
 	pub fn name( &self ) -> &str {
 		&self.name
+	}
+
+	pub fn size( &self ) -> f32 {
+		self.size as f32
 	}
 }
