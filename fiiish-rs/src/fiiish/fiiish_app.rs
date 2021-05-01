@@ -382,9 +382,10 @@ impl FiiishApp {
 				renderer.use_font( FontId::Huge as u8 );
 				let pp = Vector2::new( -800.0*0.0, 0.0 );
 				let ps = Vector2::new( 512.0, 512.0 );
-				let pa = Vector2::new( ( 1.0*self.total_time as f32 ).sin(), ( 1.2*self.total_time as f32 ).sin() );
-				// "abcdefghijklmnopqrstuvwxyz Test Text -=_"
-				let pt = "abcgjpqy_";
+				let pa = Vector2::new( ( 1.0*self.total_time as f32 ).sin(), 0.0*( 1.2*self.total_time as f32 ).sin() );
+				let pt = "abcdefghijklmnopqrstuvwxyz Test Text -=_";
+//				let pt = "Fiiish loves you all. See you in a few minutes!";
+//				let pt = "abcgjpqy_";
 				renderer.print( &pp, &ps, &pa, pt );
 //				renderer.print( &Vector2::new( -800.0*0.0, 0.0 ), "deqr_h-=^\"Bhijklmn" );
 //				renderer.print( &Vector2::new( -800.0*0.0, 0.0 ), "jk" );
