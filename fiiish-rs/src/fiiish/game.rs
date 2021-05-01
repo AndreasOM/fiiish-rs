@@ -58,6 +58,10 @@ pub struct Game {
 	is_sound_enabled: bool,
 
 	debug_renderer: Rc < Option < RefCell< DebugRenderer >  > >,
+
+	coins: u32,
+	distance: f32,
+	pixels_per_meter: f32,
 }
 
 impl Game {
@@ -73,6 +77,9 @@ impl Game {
 			is_music_enabled:				true,
 			is_sound_enabled:				true,
 			debug_renderer:					Rc::new( None ),
+			coins:							0,
+			distance:						0.0,
+			pixels_per_meter:				100.0,
 		}
 	}
 
@@ -264,6 +271,7 @@ impl Game {
 						if dist < pickup_range { // fish over pickup
 //							println!("Collected Pickup");
 							p.kill();
+							self.coins += 1;
 						} else if dist < magnet_range {
 							let magnet_speed = 300.0 * euc.time_step() as f32;
 							let delta = delta.normalized();
@@ -284,11 +292,14 @@ impl Game {
 		for p in self.fishes.iter_mut() {
 			if p.name() == "fish" {
 				fish_movement = *p.movement();
+				self.distance += fish_movement.x / self.pixels_per_meter;
 				match self.state {
 					GameState::None => {
 						println!("Respawn");
 						p.respawn();
 						self.state = GameState::WaitForStart;
+						self.coins = 0;
+						self.distance = 0.0;
 					},
 					GameState::WaitForStart => {
 						if wuc.is_space_pressed {
@@ -396,6 +407,14 @@ impl Game {
 		for e in self.entity_manager.iter_mut() {
 			e.render( renderer );
 		}
+	}
+
+	pub fn coins( &self ) -> u32 {
+		self.coins
+	}
+
+	pub fn distance( &self ) -> u32 {
+		self.distance.floor() as u32
 	}
 
 	pub fn is_waiting_for_start( &self ) -> bool {

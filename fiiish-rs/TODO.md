@@ -4,17 +4,11 @@
 ## In Progress
 
 - [ ] Implement UI system
-- [ ] Add font rendering
-	- [ ] Fix font layout
-	- [x] Fix positioning of glyphs inside text
-	- [ ] Fix calculation of text layout height
-- [ ] Finalize UiLabel rendering
 
 ## TODO
 
 - [ ] Add version number to settings dialog
-- [ ] Hook up counters
-- [ ] Cleanup: Remov unnecessary `use ...`
+- [ ] Cleanup: Remove unnecessary `use ...`
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
 - [ ] Add fadeout for entities
@@ -30,6 +24,8 @@
 - [ ] Refactor WindowUpdateContext
 - [ ] Avoid duplication in texture manager
 - [ ] Write better formatter for Matrix?? and Vector?
+- [ ] Fix texture edges in atlas bleeding over
+- [ ] Allow tp specify font for UiLabel
 
 ## Future
 
@@ -56,6 +52,12 @@
 
 ## DONE
 
+- [x] Finalize UiLabel rendering
+- [x] Hook up counters
+- [x] Add font rendering
+	- [x] Fix font layout
+	- [x] Fix positioning of glyphs inside text
+	- [x] Fix calculation of text layout height
 - [x] Add result dialog
 - [x] Add UiSpacer
 - [x] Add in-game counters

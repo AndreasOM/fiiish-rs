@@ -28,8 +28,20 @@ impl UiLabel {
 			size: *size,
 			color: Color::from_rgba( 0.8, 0.8, 0.8, 0.8 ),
 			text: text.to_owned(),
-			alignment: Vector2::new( -1.0, 0.0 ), // :BIKESHED: decide default vertical alignment
+			alignment: Vector2::new( -1.0, 0.0 ),
 		}
+	}
+
+	pub fn set_alignment( &mut self, alignment: &Vector2 ) {
+		self.alignment = *alignment;
+	}
+
+	pub fn set_text( &mut self, text: &str ) {
+		self.text = text.to_owned();
+	}
+
+	pub fn set_color( &mut self, color: &Color ) {
+		self.color = *color;
 	}
 }
 
@@ -48,8 +60,6 @@ impl UiElement for UiLabel {
 			let l = container.get_fade_level();
 			ui_renderer.push_color( &self.color );
 			ui_renderer.push_opacity( l );
-			//ui_renderer.render_quad( &container.pos, &self.size );
-			// :TODO: font
 			ui_renderer.print(
 				&container.pos,
 				&container.size,
