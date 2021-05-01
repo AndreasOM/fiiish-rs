@@ -706,6 +706,12 @@ impl Renderer {
 			// :TODO: fix position for alignment
 			self.render_textured_quad( &q.pos.add( &layout_pos_2 ), &q.size );
 //			self.render_textured_quad_with_tex_matrix( &q.pos, &q.size, &q.tex_mtx );
+			debug_renderer::debug_renderer_add_frame(
+				&q.pos.add( &layout_pos_2 ),
+				&q.size,
+				3.0,
+				&Color::red(),
+			);
 		}
 
 //		dbg!(&layout);

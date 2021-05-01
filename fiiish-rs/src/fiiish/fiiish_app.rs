@@ -377,20 +377,39 @@ impl FiiishApp {
 //				renderer.use_texture( "cursor" );
 //				renderer.render_textured_quad( &Vector2::new( -64.0, 0.0 ), &Vector2::new( 128.0, 128.0 ) );
 
+				/*
 				renderer.use_effect( EffectId::FontColored as u16 );
 //				renderer.use_font( FontId::Default as u8 );
 				renderer.use_font( FontId::Huge as u8 );
+				
 				let pp = Vector2::new( -800.0*0.0, 0.0 );
 				let ps = Vector2::new( 512.0, 512.0 );
-				let pa = Vector2::new( ( 1.0*self.total_time as f32 ).sin(), 0.0*( 1.2*self.total_time as f32 ).sin() );
+				let pa = Vector2::new( ( 1.0*self.total_time as f32 ).sin(), 1.0*( 1.2*self.total_time as f32 ).sin() );
+//				let pa = Vector2::new( 0.0, 1.0 );
 				let pt = "abcdefghijklmnopqrstuvwxyz Test Text -=_";
 //				let pt = "Fiiish loves you all. See you in a few minutes!";
 //				let pt = "abcgjpqy_";
-				renderer.print( &pp, &ps, &pa, pt );
+//				renderer.print( &pp, &ps, &pa, pt );
+				renderer.print( &Vector2::new( -800.0*1.0, 0.0 ), &ps, &pa, "_ajf$\"^" );
+				renderer.print( &Vector2::new(    0.0, 0.0 ), &ps, &pa, "_");
+				renderer.print( &Vector2::new(  100.0, 0.0 ), &ps, &pa, "ajf$" );
+				renderer.print( &Vector2::new(  200.0, 0.0 ), &ps, &pa, "\"^" );
+				let m3 = self.total_time.rem_euclid( 4.0 );
+				let t = if m3 < 1.0 {
+					"_"
+				} else if m3 < 2.0 {
+					"a"
+				} else if m3 < 3.0 {
+					"^"
+				} else {
+					"$"
+				};
+				renderer.print( &Vector2::new(  0.0, 128.0 ), &ps, &pa, t );
 //				renderer.print( &Vector2::new( -800.0*0.0, 0.0 ), "deqr_h-=^\"Bhijklmn" );
 //				renderer.print( &Vector2::new( -800.0*0.0, 0.0 ), "jk" );
+				
 				renderer.use_font( FontId::Default as u8 );
-
+				*/
 //				renderer.render_textured_quad( &Vector2::new( 64.0, 0.0 ), &Vector2::new( 128.0, 128.0 ) );
 
 //				debug_renderer::debug_renderer_add_line( &Vector2::zero(), &Vector2::new( 512.0, 512.0 ), 10.0, &Color::white() );

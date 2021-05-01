@@ -46,6 +46,7 @@
 - [ ] Fix linkage between TextureAtlas sub Texture via hwid
 - [ ] Play music
 - [ ] Add SFX
+- [ ] Fix font converter to include correct line height, and baseline
 
 ## Out of scope (for now)
 
