@@ -59,6 +59,20 @@ impl UiElement for CounterDialog {
 			let mut hbox = UiHbox::new();
 			hbox.set_padding( 16.0 );
 			let mut hbox = UiElementContainer::new_from_element( hbox );
+			let mut l = UiLabel::new( &Vector2::new( 128.0, 64.0 ), "666" );
+			l.set_alignment( &Vector2::new( 1.0, 0.0 ) );
+//			l.set_color( &Color::from_rgba( 0.8, 0.35, 0.05, 1.0 ) ) ;
+			l.set_color( &Color::from_rgba( 0.9, 0.9, 0.9, 1.0 ) ) ;
+			let l = hbox.add_child_element( l );
+			self.coins_label = Some( l.clone() );
+			hbox.add_child_element( UiImage::new( "mini_icon_coin", &Vector2::new( 64.0, 64.0 ) ) );
+			vbox.add_child( hbox );
+		}
+
+		{
+			let mut hbox = UiHbox::new();
+			hbox.set_padding( 16.0 );
+			let mut hbox = UiElementContainer::new_from_element( hbox );
 			let mut l = UiLabel::new( &Vector2::new( 128.0, 64.0 ), "1024m" );
 			l.set_alignment( &Vector2::new( 1.0, 0.0 ) );
 //			l.set_color( &Color::from_rgba( 1.0, 0.35, 0.05, 1.0 ) ) ;
@@ -67,20 +81,6 @@ impl UiElement for CounterDialog {
 			self.distance_label = Some( l.clone() );
 
 			hbox.add_child_element( UiImage::new( "mini_icon_flag", &Vector2::new( 64.0, 64.0 ) ) );
-			vbox.add_child( hbox );
-		}
-
-		{
-			let mut hbox = UiHbox::new();
-			hbox.set_padding( 16.0 );
-			let mut hbox = UiElementContainer::new_from_element( hbox );
-			let mut l = UiLabel::new( &Vector2::new( 128.0, 64.0 ), "666" );
-			l.set_alignment( &Vector2::new( 1.0, 0.0 ) );
-//			l.set_color( &Color::from_rgba( 0.8, 0.35, 0.05, 1.0 ) ) ;
-			l.set_color( &Color::from_rgba( 0.9, 0.9, 0.9, 1.0 ) ) ;
-			let l = hbox.add_child_element( l );
-			self.coins_label = Some( l.clone() );
-			hbox.add_child_element( UiImage::new( "mini_icon_coin", &Vector2::new( 64.0, 64.0 ) ) );
 			vbox.add_child( hbox );
 		}
 

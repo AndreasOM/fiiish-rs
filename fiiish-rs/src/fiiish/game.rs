@@ -27,6 +27,7 @@ use crate::fiiish::entities::{
 use crate::fiiish::EntityUpdateContext;
 //use crate::fiiish::layer_ids::LayerId;
 //use crate::fiiish::{ Shape, SubShape };
+use crate::fiiish::Player;
 use crate::fiiish::ShapeCache;
 use crate::fiiish::ZoneManager;
 
@@ -53,6 +54,7 @@ pub struct Game {
 	zone_manager: ZoneManager,
 	shape_cache: ShapeCache,
 	state: GameState,
+	time_in_state: f32,
 	is_paused: bool,
 	is_music_enabled: bool,
 	is_sound_enabled: bool,
@@ -62,6 +64,10 @@ pub struct Game {
 	coins: u32,
 	distance: f32,
 	pixels_per_meter: f32,
+
+	player: Player,			// since the game always exists (for Fiiish!) we can :HACK: it this way
+	coins_to_take: f32,
+	coins_to_take_per_second: f32,
 }
 
 impl Game {
@@ -73,6 +79,7 @@ impl Game {
 			zone_manager:					ZoneManager::new(),
 			shape_cache:					ShapeCache::new(),
 			state:							GameState::None,
+			time_in_state:					0.0,
 			is_paused:						false,
 			is_music_enabled:				true,
 			is_sound_enabled:				true,
@@ -80,6 +87,9 @@ impl Game {
 			coins:							0,
 			distance:						0.0,
 			pixels_per_meter:				100.0,
+			player:							Player::new(),
+			coins_to_take:					0.0,
+			coins_to_take_per_second:		0.0,
 		}
 	}
 
@@ -287,7 +297,7 @@ impl Game {
 	}
 	// :TODO: decide if we need the full WindowUpdateContext here
 	pub fn update( &mut self, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
-
+		self.time_in_state += auc.time_step() as f32;
 		let mut fish_movement = Vector2::zero();
 		for p in self.fishes.iter_mut() {
 			if p.name() == "fish" {
@@ -297,12 +307,20 @@ impl Game {
 						println!("Respawn");
 						p.respawn();
 						self.state = GameState::WaitForStart;
-						self.coins = 0;
+						self.time_in_state = 0.0;
+						if self.coins > 0 {
+//							let c = self.take_coins( self.coins );
+							self.player.give_coins( self.coins );
+							self.coins = 0;
+						}
+						self.coins_to_take = 0.0;
+//						self.coins = 0;
 						self.distance = 0.0;
 					},
 					GameState::WaitForStart => {
 						if wuc.is_space_pressed {
 							self.state = GameState::Playing;
+							self.time_in_state = 0.0;
 						}
 					},
 					GameState::Playing => {
@@ -316,6 +334,7 @@ impl Game {
 						}
 						if !p.is_alive() {
 							self.state = GameState::Die;
+							self.time_in_state = 0.0;
 						}
 					},
 					GameState::Die => {
@@ -325,17 +344,37 @@ impl Game {
 						}
 						self.zone_manager.clear_zone();
 						self.state = GameState::Dead;
+						self.time_in_state = 0.0;
+						const TRANSFER_TIME: f32 = 2.0;
+						self.coins_to_take_per_second = self.coins as f32 / TRANSFER_TIME;
 					},
 					GameState::Dead => {
 						if p.can_respawn() {
 //							if wuc.was_key_pressed( 'r' as u8 ) {
 							if wuc.is_space_pressed {
 								self.state = GameState::None;
+								self.time_in_state = 0.0;
 							}
 						}
 					},
 				}
 			}
+		}
+
+		match self.state {
+			GameState::Dead => {
+				const TRANSFER_DELAY: f32 = 1.0;
+				if self.time_in_state > TRANSFER_DELAY {
+					let coins_to_take = self.coins_to_take + self.coins_to_take_per_second * auc.time_step() as f32;
+					let full_coins_to_take = coins_to_take.floor() as u32;
+					let leftover_coins_to_take = coins_to_take - full_coins_to_take as f32;
+					self.coins_to_take = leftover_coins_to_take;
+
+					let c = self.take_coins( full_coins_to_take );
+					self.player.give_coins( c );
+				}
+			},
+			_ => {},
 		}
 
 
@@ -409,8 +448,24 @@ impl Game {
 		}
 	}
 
+	pub fn player( &self ) -> &Player {
+		&self.player
+	}
+
 	pub fn coins( &self ) -> u32 {
 		self.coins
+	}
+
+	fn take_coins( &mut self, count: u32 ) -> u32 {
+		let c = if count > self.coins {
+			self.coins
+		} else {
+			count
+		};
+
+		self.coins -= c;
+
+		c
 	}
 
 	pub fn distance( &self ) -> u32 {
@@ -447,12 +502,14 @@ impl Game {
 	}
 
 	pub fn can_respawn( &self ) -> bool {
-		for p in self.fishes.iter() {
-			if p.name() == "fish" {
-				if p.can_respawn() {
-					return true;
-				}
-			}				
+		if self.time_in_state > 3.0 {
+			for p in self.fishes.iter() {
+				if p.name() == "fish" {
+					if p.can_respawn() {
+						return true;
+					}
+				}				
+			}
 		}
 		false
 	}

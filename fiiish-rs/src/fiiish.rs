@@ -20,6 +20,8 @@ mod result_dialog;
 mod settings_dialog;
 	pub use settings_dialog::SettingsDialog as SettingsDialog;
 
+mod player;
+	pub use player::Player;
 mod shape;
 	pub use shape::Shape as Shape;
 	pub use shape::SubShape as SubShape;

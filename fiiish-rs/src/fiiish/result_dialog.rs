@@ -25,10 +25,18 @@ use crate::ui::{
 	UiVbox,
 };
 
+
+const RESULTINDEX_COINS:			usize = 0;
+const RESULTINDEX_DISTANCE:			usize = 1;
+const RESULTINDEX_BESTDISTANCE:		usize = 2;
+const RESULTINDEX_TOTALDISTANCE:	usize = 3;
+
 #[derive(Debug)]
 pub struct ResultDialog {
 	game: Rc< RefCell< Game > >,
 	play_button: Option< UiElementContainerHandle >,
+	total_labels: [Option< UiElementContainerHandle >;4],
+	current_labels: [Option< UiElementContainerHandle >;4],
 }
 
 impl ResultDialog {
@@ -36,6 +44,32 @@ impl ResultDialog {
 		Self {
 			game: game.clone(),
 			play_button: None,
+			total_labels: [None,None,None,None],
+			current_labels: [None,None,None,None],
+		}
+	}
+	fn set_total_label_text( &mut self, index: usize, text: &str ) {
+		if let Some( l ) = &mut self.total_labels[ index ] {
+			let mut l = l.borrow_mut();
+			let l = l.borrow_element_mut();
+			match l.as_any_mut().downcast_mut::<UiLabel>() {
+				Some( l ) => {
+					l.set_text( text );
+				},
+				None => panic!("{:?} isn't a UiLabel!", &l),
+			};
+		}
+	}
+	fn set_current_label_text( &mut self, index: usize, text: &str ) {
+		if let Some( l ) = &mut self.current_labels[ index ] {
+			let mut l = l.borrow_mut();
+			let l = l.borrow_element_mut();
+			match l.as_any_mut().downcast_mut::<UiLabel>() {
+				Some( l ) => {
+					l.set_text( text );
+				},
+				None => panic!("{:?} isn't a UiLabel!", &l),
+			};
 		}
 	}
 }
@@ -77,7 +111,7 @@ impl UiElement for ResultDialog {
 						{
 							let mut parent = vbox.borrow_mut();
 
-							for _ in 0..4
+							for i in 0..4
 							{
 								let mut hbox = UiHbox::new();
 								hbox.set_padding( 20.0 );
@@ -85,8 +119,8 @@ impl UiElement for ResultDialog {
 
 								{
 									let mut parent = hbox.borrow_mut();
-									parent.add_child_element( UiLabel::new( &Vector2::new( 250.0, 79.0 ), "[COIN TOTAL]" ) );
-									parent.add_child_element( UiLabel::new( &Vector2::new( 250.0, 79.0 ), "[COIN CURRENT]" ) );
+									self.total_labels[ i ] = Some( parent.add_child_element( UiLabel::new( &Vector2::new( 250.0, 79.0 ), "" ) ).clone() );
+									self.current_labels[ i ] = Some( parent.add_child_element( UiLabel::new( &Vector2::new( 250.0, 79.0 ), "" ) ).clone() );
 								}
 							}
 						}
@@ -129,33 +163,31 @@ impl UiElement for ResultDialog {
 		}
 		container.set_size( background.borrow().size() );
 	}
-	fn update( &mut self, _container: &UiElementContainerData, _time_step: f64 ) {
-		let game = self.game.borrow_mut();
 
-		if let Some( play_button ) = &mut self.play_button {
-			if game.can_respawn() {
-				play_button.borrow_mut().fade_in( 1.0 );
-			} else {
-				play_button.borrow_mut().fade_out( 1.0 );
+	fn update( &mut self, _container: &UiElementContainerData, _time_step: f64 ) {
+		let mut distance = 0;
+		let mut coins = 0;
+		let mut player_coins = 0;
+		{
+			let game = self.game.borrow_mut();
+			distance = game.distance();
+			coins = game.coins();
+
+			let player = game.player();
+			player_coins = player.coins();
+
+			if let Some( play_button ) = &mut self.play_button {
+				if game.can_respawn() {
+					play_button.borrow_mut().fade_in( 1.0 );
+				} else {
+					play_button.borrow_mut().fade_out( 1.0 );
+				}
 			}
 		}
-		// :TODO: update coin & distance labels
-		/*
-		if let Some( music_togglebutton ) = &mut self.music_togglebutton {
-			let mut music_togglebutton = music_togglebutton.borrow_mut();
-			let music_togglebutton = music_togglebutton.borrow_element_mut();
-			match music_togglebutton.as_any_mut().downcast_mut::<UiToggleButton>() {
-				Some( mtb ) => {
-					if game.is_music_enabled() {
-						mtb.goto_a();
-					} else {
-						mtb.goto_b();
-					}
-				},
-				None => panic!("{:?} isn't a UiToggleButton!", &music_togglebutton),
-			};
-		}
-		*/
+
+		self.set_total_label_text( RESULTINDEX_COINS, &format!("{}", player_coins ) );
+		self.set_current_label_text( RESULTINDEX_COINS, &format!("{}", coins ) );
+		self.set_current_label_text( RESULTINDEX_DISTANCE, &format!("{}m", distance ) );
 	}
 
 	fn handle_ui_event_response( &mut self, response: Box< dyn UiEventResponse > ) -> Option< Box< dyn UiEventResponse > > {

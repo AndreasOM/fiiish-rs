@@ -3,10 +3,11 @@
 
 ## In Progress
 
-- [ ] Implement UI system
+- [ ] Finalize ResultDialog
 
 ## TODO
 
+- [ ] Change UiElement handling from Box <...> to Rc< RefCell< ... > >
 - [ ] Cleanup: Remove unnecessary `use ...`
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
@@ -51,6 +52,7 @@
 
 ## DONE
 
+- [x] Implement UI system
 - [x] Add basic multiline text
 - [x] Add version number to settings dialog
 - [x] Finalize UiLabel rendering
