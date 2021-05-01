@@ -408,6 +408,7 @@ impl Game {
 						self.coin_transfer.reset( self.coins );
 						self.distance_transfer.reset( self.distance.floor() as u32 );
 						self.player.reset_last_distance();
+						self.player.log_play( self.coins, self.distance.floor() as u32 );
 					},
 					GameState::Dead => {
 						if p.can_respawn() {

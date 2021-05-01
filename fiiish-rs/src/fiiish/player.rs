@@ -1,6 +1,7 @@
 use crate::system::{ Serializer, System };
 
-const SERIALIZED_VERSION: u16 = 0x0001;
+const SERIALIZED_VERSION: u16 = 0x0002;
+const OLDEST_SERIALIZED_VERSION: u16 = 0x0001;
 
 #[derive(Debug)]
 pub struct Player {
@@ -8,6 +9,7 @@ pub struct Player {
 	last_distance:	u32,
 	total_distance: u32,
 	best_distance:	u32,
+	play_count:		u32,
 	is_dirty:		bool,
 }
 
@@ -18,6 +20,7 @@ impl Player {
 			last_distance: 	0,
 			total_distance: 0,
 			best_distance:	0,
+			play_count:		0,
 			is_dirty:		false,
 		}
 	}
@@ -83,8 +86,11 @@ impl Player {
 		let mut version = SERIALIZED_VERSION;
 		s.serialize_u16( &mut version );
 		if version != SERIALIZED_VERSION {
-			println!( "Version mismatch in savegame" );
-			return false;
+			if version < OLDEST_SERIALIZED_VERSION {
+				println!( "Version mismatch in savegame" );
+				return false;				
+			}
+			println!("Loading old version ({}) savegame, current is {}", version, SERIALIZED_VERSION );
 		}
 
 
@@ -92,6 +98,11 @@ impl Player {
 		s.serialize_u32( &mut self.last_distance );	// :TODO: do we even need to store this?
 		s.serialize_u32( &mut self.total_distance );
 		s.serialize_u32( &mut self.best_distance );
+//		if version >= SERIALIZED_VERSION {	// reader defaults to "0"
+			s.serialize_u32( &mut self.play_count );
+//		} else {
+//			self.play_count = 0;
+//		}
 		true
 	}
 
@@ -115,6 +126,10 @@ impl Player {
 		self.is_dirty = true;
 		self.coins += count;
 		self.coins
+	}
+
+	pub fn log_play( &mut self, _coins: u32, _distance: u32 ) {
+		self.play_count += 1;
 	}
 
 	pub fn reset_last_distance( &mut self ) {
