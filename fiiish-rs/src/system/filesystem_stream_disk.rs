@@ -54,17 +54,22 @@ impl FilesystemStreamDisk {
 		let file = OpenOptions::new()
 					.write( true )
 					.truncate( true )
+					.create( overwrite )
 					.create_new( !overwrite )
 					.open( &s.filename );
 //		dbg!(&file);
-		if let Ok( mut f ) = file {
-			s.size = 0;
-			/*
-			let f = BufReader::new(f);
-			*/
-			s.file_write = Some( f );
-		};
-
+		match file {
+			Ok( mut f ) => {
+				s.size = 0;
+				/*
+				let f = BufReader::new(f);
+				*/
+				s.file_write = Some( f );
+			},
+			Err( e ) => {
+				println!("Error creating >{}< -> {:?}", &filename, &e );
+			}
+		}
 
 		s
 	}

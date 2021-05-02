@@ -51,6 +51,7 @@ impl Player {
 		println!("Saving player {:?}", self );
 		let filename = format!("{}{}", "default", ".fiiishsave" );
 		let mut f = system.savegame_filesystem_mut().create( &filename, true );
+		dbg!(&f);
 		if !f.is_valid() {
 			println!("Not saving player. Couldn't create {}", &filename );
 			return false;

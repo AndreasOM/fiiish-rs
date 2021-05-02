@@ -21,10 +21,14 @@ pub trait Filesystem {
 
 	fn name( &self ) -> &str;
 	fn filesystem_type( &self ) -> &str;
+
+	fn format( &self, f: &mut std::fmt::Formatter ) -> std::fmt::Result {
+		writeln!( f,"[Trait] Filesystem: {} [{}]", self.name(), self.filesystem_type() )
+	}
 }
 
 impl std::fmt::Debug for dyn Filesystem {
 	fn fmt( &self, f: &mut std::fmt::Formatter ) -> std::fmt::Result {
-		writeln!( f,"[Trait] Filesystem: {} [{}]", self.name(), self.filesystem_type() )
+		self.format( f )
 	}
 }

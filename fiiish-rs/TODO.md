@@ -4,7 +4,6 @@
 ## In Progress
 
 - [ ] Finalize ResultDialog
-- [ ] Add savegame
 
 ## TODO
 
@@ -53,6 +52,8 @@
 
 ## DONE
 
+- [x] Add savegame
+	- [x] Fix savegame location
 - [x] Implement UI system
 - [x] Add basic multiline text
 - [x] Add version number to settings dialog

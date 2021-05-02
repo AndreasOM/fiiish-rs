@@ -88,10 +88,16 @@ impl FiiishApp {
 	}
 
 	fn add_filesystem_disk( &mut self, lfs: &mut FilesystemLayered, path: &str, enable_write: bool ) {
-		let cwd = std::env::current_dir().unwrap();
-		let cwd = cwd.to_string_lossy();
+		let datadir = if path.starts_with( "/" ) {
+			path.to_owned()
+		} else {
+			let cwd = std::env::current_dir().unwrap();
+			let cwd = cwd.to_string_lossy();
 
-		let datadir = format!("{}/{}", &cwd, &path);
+			let datadir = format!("{}/{}", &cwd, &path);
+			datadir
+		};
+
 		let mut dfs = FilesystemDisk::new( &datadir );
 		if enable_write {
 			dfs.enable_write();
@@ -158,8 +164,9 @@ impl FiiishApp {
 		// savegame filesystem
 		let mut lfs = FilesystemLayered::new();
 
-		self.add_filesystem_disk( &mut lfs, "../savegame-fs/", true );
-
+		let doc_dir = System::get_document_dir( "fiiish-rs" );
+		self.add_filesystem_disk( &mut lfs, &doc_dir, true );
+		
 		self.system.set_savegame_filesystem( Box::new( lfs ) );
 
 

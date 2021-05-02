@@ -1,4 +1,6 @@
 
+use std::fs;
+
 use crate::system::filesystem::Filesystem;
 use crate::system::filesystem_empty::FilesystemEmpty;
 //use crate::system::filesystem_stream::FilesystemStream;
@@ -31,6 +33,15 @@ impl System {
 
 	pub fn savegame_filesystem_mut( &mut self ) -> &mut Box< dyn Filesystem > {
 		&mut self.savegame_filesystem
+	}
+
+	pub fn get_document_dir( name: &str ) -> String {
+		let doc_dir = dirs_next::document_dir().unwrap();
+		let doc_dir = doc_dir.to_string_lossy();
+		let dir = format!("{}/{}", doc_dir, name );
+
+		fs::create_dir_all( &dir ).unwrap();
+		dir
 	}
 }
 

@@ -51,4 +51,8 @@ impl Filesystem for FilesystemDisk {
 	fn filesystem_type( &self ) -> &str {
 		"Disk"
 	}
+
+	fn format( &self, f: &mut std::fmt::Formatter ) -> std::fmt::Result {
+		writeln!( f,"Filesystem: {} [{}] -> {}", self.name(), self.filesystem_type(), &self.basedir )
+	}	
 }
