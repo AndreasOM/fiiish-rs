@@ -3,9 +3,12 @@
 
 ## In Progress
 
+- [ ] Create release helper scripts
 - [ ] Finalize ResultDialog
 
 ## TODO
+
+- [ ] Create .app bundle for macOS
 
 - [ ] Change UiElement handling from Box <...> to Rc< RefCell< ... > >
 - [ ] Cleanup: Remove unnecessary `use ...`
