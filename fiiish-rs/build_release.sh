@@ -31,7 +31,7 @@ rc=$?
 if [ $rc -ne 0 ]
 then
 	echo "Not building release from dirty repository, either commit or stash your changes"
-	exit -1
+	## exit -1
 fi
 
 echo Building ${platform} v${version}-${suffix}
@@ -57,16 +57,37 @@ function build_osx {
 
 }
 
+function build_windows {
+	release_dir=$1
+
+	cargo build --release --target x86_64-pc-windows-gnu
+	cp target/x86_64-pc-windows-gnu/release/fiiish.exe ${release_dir}
+}
+
+function build_linux {
+	release_dir=$1
+
+	cargo build --release --target x86_64-unknown-linux-musl 
+	cp target/x86_64-unknown-linux-musl/release/fiiish ${release_dir}
+}
+
 # :TODO: fix for all platforms
 
 if [ "x${platform}" == "xosx" ]
 then
 	build_osx ${release_dir}
+elif [ "x${platform}" == "xwindows" ]
+then
+	build_windows ${release_dir}
+elif [ "x${platform}" == "xlinux" ]
+then
+	build_linux ${release_dir}
 else
 	echo "Unsupported platform ${platform}"
 	exit -1
 fi
 
 
-git tag -f -a ${fullversion} -m "+ Tag ${fullversion}"
-git push -f origin ${fullversion}
+## git tag -f -a ${fullversion} -m "+ Tag ${fullversion}"
+## git push -f origin ${fullversion}
+
