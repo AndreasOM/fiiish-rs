@@ -82,24 +82,28 @@ function build_osx {
 		exp2="s/<key>CFBundleShortVersionString<\\/key><string>.*<\\/string>/<key>CFBundleVersion<\\/key><string>${version}<\\/string>/g"
 		cat Info.plist|sed ${exp1} |sed ${exp2} > ${app_dir}/Contents/Info.plist
 
+		# :HACK: icons
+
+		temp=$(mktemp -d)
+		/Applications/Xcode.app/Contents/Developer/usr/bin/actool \
+			--compile ${app_dir}/Contents/Resources/ \
+			--app-icon AppIcon \
+			--platform macosx \
+			--minimum-deployment-target 10.0 \
+			Assets.xcassets \
+			--output-partial-info-plist ${temp}/Info.plist		# :TODO: this should be merged with Info.plist above
+
+		rm -r ${temp}
+
 		# resources
 		cp fiiish-data.omar ${app_dir}/Contents/Resources/
 		cp dummy-data.omar ${app_dir}/Contents/Resources/
 
+		sleep 3		# system might be blocking the folder
 		cd ${release_dir}
 		exa -l --tree 
 		cd -
 	fi
-
-## .app bundle
-#MyApp.app/
-#   Contents/
-#      Info.plist
-#      MacOS/
-#      Resources/
-
-	
-	
 
 }
 

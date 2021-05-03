@@ -6,7 +6,6 @@
 
 ## TODO
 
-- [ ] Add icon to .app bundle for macOS
 
 - [ ] Change UiElement handling from Box <...> to Rc< RefCell< ... > >
 - [ ] Cleanup: Remove unnecessary `use ...`
@@ -54,11 +53,15 @@
 
 ## DONE
 
+
+## Released
+
+### v0.6.1-alpha
+
+- [x] Add icon to .app bundle for macOS
 - [x] Create .app bundle for macOS
 - [x] Finalize ResultDialog
 - [x] Create release helper scripts
-
-## Released
 
 ### v0.6.0-alpha
 

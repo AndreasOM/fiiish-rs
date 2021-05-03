@@ -16,6 +16,16 @@
     <key>CFBundleExecutable</key>
     <string>fiiish</string>
 
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <key>CFBundleSupportedPlatforms</key>
+    <array>
+        <string>MacOSX</string>
+    </array>
+
     <key>CFBundleShortVersionString</key><string>0.0.1</string>
+    <key>CFBundleIconFile</key><string>AppIcon</string>
+	<key>CFBundleIconName</key><string>AppIcon</string>
 </dict>
 </plist>
