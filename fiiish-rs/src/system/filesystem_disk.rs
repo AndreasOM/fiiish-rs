@@ -56,3 +56,10 @@ impl Filesystem for FilesystemDisk {
 		writeln!( f,"Filesystem: {} [{}] -> {}", self.name(), self.filesystem_type(), &self.basedir )
 	}	
 }
+
+impl std::fmt::Debug for FilesystemDisk {
+	fn fmt( &self, f: &mut std::fmt::Formatter ) -> std::fmt::Result {
+		self.format( f )
+	}
+}
+

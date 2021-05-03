@@ -49,16 +49,16 @@ function build_osx {
 	release_dir=$1
 	app_name=$2
 
-	# build M1
-#	cargo build --release --target aarch64-apple-darwin
-
-	# build Intel
-#	cargo build --release --target x86_64-apple-darwin
 
 ## standalone binary
 	if [ "x${app_name}" == "x" ]
 	then
 		echo "Building standalone binary"
+
+		# build M1
+		cargo build --release --target aarch64-apple-darwin --features standalone
+		# build Intel
+		cargo build --release --target x86_64-apple-darwin --features standalone
 		lipo -create -output ${release_dir}/fiiish target/aarch64-apple-darwin/release/fiiish target/x86_64-apple-darwin/release/fiiish
 
 		exa -l ${release_dir}/fiiish
@@ -68,7 +68,10 @@ function build_osx {
 		mkdir -p ${app_dir}/Contents/MacOS	# save a few mkdir calls by starting with a deep directory
 		mkdir -p ${app_dir}/Contents/Resources
 
-
+		# build M1
+		cargo build --release --target aarch64-apple-darwin
+		# build Intel
+		cargo build --release --target x86_64-apple-darwin
 		lipo -create -output ${app_dir}/Contents/MacOS/fiiish target/aarch64-apple-darwin/release/fiiish target/x86_64-apple-darwin/release/fiiish
 
 		build_number=$(git rev-list --all --count)
@@ -77,8 +80,11 @@ function build_osx {
 		cp Info.plist ${app_dir}/Contents/
 		exp1="s/<key>CFBundleVersion<\\/key><string>.*<\\/string>/<key>CFBundleVersion<\\/key><string>${build_number}<\\/string>/g"
 		exp2="s/<key>CFBundleShortVersionString<\\/key><string>.*<\\/string>/<key>CFBundleVersion<\\/key><string>${version}<\\/string>/g"
-		echo ${exp1} 
 		cat Info.plist|sed ${exp1} |sed ${exp2} > ${app_dir}/Contents/Info.plist
+
+		# resources
+		cp fiiish-data.omar ${app_dir}/Contents/Resources/
+		cp dummy-data.omar ${app_dir}/Contents/Resources/
 
 		cd ${release_dir}
 		exa -l --tree 

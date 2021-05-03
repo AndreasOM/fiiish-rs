@@ -3,10 +3,10 @@
 
 ## In Progress
 
-- [x] Create .app bundle for macOS
 
 ## TODO
 
+- [ ] Add icon to .app bundle for macOS
 
 - [ ] Change UiElement handling from Box <...> to Rc< RefCell< ... > >
 - [ ] Cleanup: Remove unnecessary `use ...`
@@ -26,7 +26,10 @@
 - [ ] Avoid duplication in texture manager
 - [ ] Write better formatter for Matrix?? and Vector?
 - [ ] Fix texture edges in atlas bleeding over
-- [ ] Allow tp specify font for UiLabel
+- [ ] Allow to specify font for UiLabel
+
+- [ ] Play music
+- [ ] Add SFX
 
 ## Future
 
@@ -41,8 +44,6 @@
 - [ ] Add Read, BufRead, and Seek trait to FilesystemStream
 - [ ] Add Angle helpers
 - [ ] Fix linkage between TextureAtlas sub Texture via hwid
-- [ ] Play music
-- [ ] Add SFX
 - [ ] Fix font converter to include correct line height, and baseline
 
 ## Out of scope (for now)
@@ -53,6 +54,7 @@
 
 ## DONE
 
+- [x] Create .app bundle for macOS
 - [x] Finalize ResultDialog
 - [x] Create release helper scripts
 

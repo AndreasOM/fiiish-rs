@@ -1,5 +1,6 @@
 
 use std::fs;
+use std::path::Path;
 
 use crate::system::filesystem::Filesystem;
 use crate::system::filesystem_empty::FilesystemEmpty;
@@ -42,6 +43,33 @@ impl System {
 
 		fs::create_dir_all( &dir ).unwrap();
 		dir
+	}
+
+	pub fn get_resource_path( name: &str ) -> Option<String> {
+		let exe_dir = std::env::current_exe().unwrap();
+		let exe_path = Path::new( &exe_dir ).parent().unwrap();
+
+
+//		dbg!(&exe_path);
+
+		let p = exe_path.join( "../Resources" ).join( &name );
+//		dbg!(&p);
+		if p.exists() {
+			return Some( p.to_string_lossy().to_string() );
+		}
+
+		let p = exe_path.join( &name );
+//		dbg!(&p);
+		if p.exists() {
+			return Some( p.to_string_lossy().to_string() );
+		}
+
+		let p = exe_path.join( "../.." ).join( &name );
+//		dbg!(&p);
+		if p.exists() {
+			return Some( p.to_string_lossy().to_string() );
+		}
+		None
 	}
 }
 

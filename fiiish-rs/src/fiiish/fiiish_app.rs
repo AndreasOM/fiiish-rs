@@ -14,7 +14,7 @@ use crate::renderer::{
 	TextureAtlas,
 };
 use crate::system::System;
-//use crate::system::filesystem::Filesystem;
+use crate::system::filesystem::Filesystem;
 use crate::system::filesystem_archive::FilesystemArchive;
 use crate::system::filesystem_disk::FilesystemDisk;
 use crate::system::filesystem_layered::FilesystemLayered;
@@ -104,13 +104,43 @@ impl FiiishApp {
 		}
 		lfs.add_filesystem( Box::new( dfs ) );
 	}
-	fn add_pakfile_from_data( &mut self, lfs: &mut FilesystemLayered, name: &str, data: &Vec< u8 > ) {
+	fn add_pakfile_from_data( &mut self, lfs: &mut FilesystemLayered, name: &str, data: &Vec< u8 > ) -> bool {
 		if data.len() > 0 {
 			let mut mfs = FilesystemMemory::new();
 			let mut omar_file = mfs.open_from_data( name, &data.to_vec() );
 
 			let afs = FilesystemArchive::new_from_file( name, &mut omar_file );
 			lfs.add_filesystem( Box::new( afs ) );
+
+			true
+		} else {
+			false
+		}
+	}
+
+	fn add_pakfile_from_file( &mut self, lfs: &mut FilesystemLayered, name: &str ) -> bool {
+		if let Some( p ) = System::get_resource_path( name ) {
+			let base_dir = if p.starts_with( "/" ) {
+				// println!("Absolute");
+				""
+			} else {
+				// println!("Relative");
+				"."
+			};
+			let mut mfs = FilesystemDisk::new( base_dir );
+			let mut omar_file = mfs.open( &p );
+
+			if omar_file.is_valid() {
+				let afs = FilesystemArchive::new_from_file( name, &mut omar_file );
+				lfs.add_filesystem( Box::new( afs ) );
+
+				true
+			} else {
+				println!("Broken pakfile {} from {:?}", &p, &mfs );
+				false
+			}
+		} else {
+			false
 		}
 	}
 
@@ -147,8 +177,25 @@ impl FiiishApp {
 		let mut lfs = FilesystemLayered::new();
 		// Note: Filesystems will be searched last to first (lifo)
 
-		self.add_pakfile_from_data( &mut lfs, "dummy-data.omar", &FiiishApp::get_dummy_data_omar_data().to_vec() );
-		self.add_pakfile_from_data( &mut lfs, "fiiish-data.omar", &FiiishApp::get_fiiish_data_omar_data().to_vec() );
+		if self.add_pakfile_from_data( &mut lfs, "dummy-data.omar", &FiiishApp::get_dummy_data_omar_data().to_vec() ) {
+			println!("Using linked in data");
+		} else {
+			if self.add_pakfile_from_file( &mut lfs, "dummy-data.omar" ) {
+				println!("Using external archive");
+			} else {
+				println!("No archive used")
+			}
+		}
+
+		if self.add_pakfile_from_data( &mut lfs, "fiiish-data.omar", &FiiishApp::get_fiiish_data_omar_data().to_vec() ) {
+			println!("Using linked in data");
+		} else {
+			if self.add_pakfile_from_file( &mut lfs, "fiiish-data.omar" ) {
+				println!("Using external archive");
+			} else {
+				println!("No archive used")
+			}
+		}
 
 		// check local files first for faster development (and easier modding)
 		self.add_filesystem_disk( &mut lfs, "../dummy-data", false );
@@ -161,12 +208,13 @@ impl FiiishApp {
 
 		self.system.set_default_filesystem( Box::new( lfs ) );
 
+//		todo!("die");
 		// savegame filesystem
 		let mut lfs = FilesystemLayered::new();
 
 		let doc_dir = System::get_document_dir( "fiiish-rs" );
 		self.add_filesystem_disk( &mut lfs, &doc_dir, true );
-		
+
 		self.system.set_savegame_filesystem( Box::new( lfs ) );
 
 

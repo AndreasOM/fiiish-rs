@@ -11,6 +11,10 @@ build = "build.rs"
 name="fiiish"
 path="src/fiiish_main.rs"
 
+[features]
+default = []
+standalone = []
+
 [dependencies]
 glutin = "0.26.0"
 anyhow = "1.0.40"
