@@ -3,12 +3,10 @@
 
 ## In Progress
 
-- [ ] Create release helper scripts
-- [ ] Finalize ResultDialog
+- [x] Create .app bundle for macOS
 
 ## TODO
 
-- [ ] Create .app bundle for macOS
 
 - [ ] Change UiElement handling from Box <...> to Rc< RefCell< ... > >
 - [ ] Cleanup: Remove unnecessary `use ...`
@@ -54,6 +52,13 @@
 - [ ] Reimplement all Matrix & Vector math
 
 ## DONE
+
+- [x] Finalize ResultDialog
+- [x] Create release helper scripts
+
+## Released
+
+### v0.6.0-alpha
 
 - [x] Add savegame
 	- [x] Fix savegame location
