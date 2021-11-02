@@ -44,6 +44,7 @@ impl Vector2 {
 		}	
 	}
 
+	// :TODO: seems to be duplicated from scale_vector2
 	pub fn scaled_vector2( &self, factor: &Vector2 ) -> Self {
 		Self {
 			x: self.x * factor.x,

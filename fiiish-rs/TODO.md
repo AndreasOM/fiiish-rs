@@ -6,17 +6,21 @@
 
 ## TODO
 
+- [ ] Switch to 2021 edition of Rust
+- [ ] Add fadeout for entities
+- [ ] Create release builds via github actions (cheat mode)
+
+- [ ] Play music
+- [ ] Add SFX
 
 - [ ] Change UiElement handling from Box <...> to Rc< RefCell< ... > >
 - [ ] Cleanup: Remove unnecessary `use ...`
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
-- [ ] Add fadeout for entities
 - [ ] Fix Windows build (cheat mode, keyword: shader-crusher)
 - [ ] Expand EntityConfiguration to allow multiple AnimatedTextures
 
 - [ ] Create macros for DebugRender
-- [ ] Create release builds via github actions (cheat mode)
 - [ ] Cleanup Pickups (remove Coins)
 - [ ] Split renderer context from window
 - [ ] Extend Vector2 with more functionality
@@ -27,8 +31,6 @@
 - [ ] Fix texture edges in atlas bleeding over
 - [ ] Allow to specify font for UiLabel
 
-- [ ] Play music
-- [ ] Add SFX
 
 ## Future
 
