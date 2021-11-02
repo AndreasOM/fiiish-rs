@@ -6,7 +6,7 @@
 
 ## TODO
 
-- [ ] Switch to 2021 edition of Rust
+- [ ] Try to update crates to newer versions
 - [ ] Add fadeout for entities
 - [ ] Create release builds via github actions (cheat mode)
 
@@ -54,6 +54,8 @@
 - [ ] Reimplement all Matrix & Vector math
 
 ## DONE
+
+- [x] Switch to 2021 edition of Rust
 
 
 ## Released
