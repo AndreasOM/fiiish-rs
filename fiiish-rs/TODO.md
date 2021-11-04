@@ -3,7 +3,6 @@
 
 ## In Progress
 
-- [ ] Add fadeout for entities
 
 ## TODO
 
@@ -34,6 +33,7 @@
 - [ ] Allow to specify font for UiLabel
 
 - [ ] Use deadness for fish death animation?!
+- [ ] Improve coin dropping on death
 
 ## Future
 
@@ -58,6 +58,7 @@
 
 ## DONE
 
+- [x] Add fadeout for entities
 - [x] Switch to 2021 edition of Rust
 
 

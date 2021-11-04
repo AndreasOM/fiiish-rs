@@ -4,12 +4,14 @@ use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
 use crate::fiiish::entities::EntityData;
+use crate::fiiish::entities::EntityState;
 use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
 use crate::math::Vector2;
 use crate::renderer::{
 	AnimatedTexture,
+	Color,
 	Renderer
 };
 
@@ -27,7 +29,7 @@ pub struct Coin {
 
 impl Coin {
 	pub fn new(pos: &Vector2, animation_offset: u16, crc: u32 ) -> Self {
-		Self {
+		let mut s = Self {
 			name: String::new(),
 			crc: crc,
 			pos: *pos, //Vector2::zero(),
@@ -36,7 +38,11 @@ impl Coin {
 			animation_offset,
 			alive: true,
 			entity_data: EntityData::default(),
-		}
+		};
+
+		s.entity_data.dieing_time = 3.0;
+
+		s
 	}
 
 	pub fn set_pos( &mut self, pos: &Vector2 ) {
@@ -44,6 +50,10 @@ impl Coin {
 	}
 	pub fn pos( &self ) -> &Vector2 {
 		&self.pos
+	}
+
+	pub fn collect( &mut self ) {
+		self.entity_data.state = EntityState::Dead;
 	}
 }
 
@@ -74,23 +84,25 @@ impl Entity for Coin {
 			// :TODO: decide if self destruction is a good idea
 			self.kill();
 		}
+		self.entity_data.update( euc.time_step() );		
 	}
 
 	fn render( &mut self, renderer: &mut Renderer ){
 		if self.alive {
+			let deadness = self.entity_data.deadness();
+			let opacity = 1.0 - deadness;
+
 			renderer.use_layer( LayerId::Pickups as u8 );
-			renderer.use_effect( EffectId::Textured as u16 );
+			renderer.use_effect( EffectId::ColoredTextured as u16 );
+			renderer.set_color( &Color::from_a( opacity as f32 ) );
 			self.animated_texture.r#use( renderer );
-			renderer.render_textured_quad( &self.pos, &self.size );
+			let o = Vector2::new( 0.0, -5000.0*( deadness*deadness ) as f32 );
+			renderer.render_textured_quad( &self.pos.add( &o ), &self.size );
 		}
 	}
 
 	fn kill( &mut self ) {
-		self.alive = false;
-	}
-
-	fn is_alive( &self ) -> bool {
-		self.alive
+		self.entity_data.state = EntityState::Dieing{ time: 0.0 };
 	}
 
 	fn name( &self ) -> &str {

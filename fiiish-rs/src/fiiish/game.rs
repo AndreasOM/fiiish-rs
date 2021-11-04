@@ -337,7 +337,8 @@ impl Game {
 //						dbg!(&dist);
 						if dist < pickup_range { // fish over pickup
 //							println!("Collected Pickup");
-							p.kill();
+//							p.kill();
+							p.collect();
 							self.coins += 1;
 						} else if dist < magnet_range {
 							let magnet_speed = 300.0 * euc.time_step() as f32;
