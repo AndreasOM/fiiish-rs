@@ -3,6 +3,7 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::entities::Entity;
 use crate::fiiish::entities::EntityConfiguration;
+use crate::fiiish::entities::EntityData;
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::entities::EntityType;
 use crate::math::Matrix22;
@@ -42,6 +43,7 @@ pub struct Fish {
 	time_since_dying: f32,
 	animated_texture: AnimatedTexture,
 	animated_texture_dying: AnimatedTexture,
+	entity_data: EntityData,
 }
 
 impl Fish {
@@ -59,6 +61,7 @@ impl Fish {
 			time_since_dying: f32::MAX,
 			animated_texture: AnimatedTexture::new(),
 			animated_texture_dying: AnimatedTexture::new(),
+			entity_data: EntityData::default(),
 		}
 	}
 
@@ -248,6 +251,9 @@ impl Fish {
 }
 
 impl Entity for Fish {
+	fn data(&self) -> &EntityData {
+		&self.entity_data
+	}
 	fn as_any(&self) -> &dyn std::any::Any {
 		self
 	}

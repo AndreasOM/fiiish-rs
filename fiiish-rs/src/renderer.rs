@@ -67,6 +67,15 @@ impl Color {
 		}
 	}
 
+	pub fn from_a( a: f32 ) -> Self {
+		Self {
+			r: a,
+			g: a,
+			b: a,
+			a,
+		}
+	}
+
 	pub fn as_rgba8( &self ) -> u32 {
 		let r = ( self.r * 255.0 ) as u32;
 		let g = ( self.g * 255.0 ) as u32;

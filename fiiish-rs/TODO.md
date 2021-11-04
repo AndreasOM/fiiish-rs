@@ -3,11 +3,13 @@
 
 ## In Progress
 
+- [ ] Add fadeout for entities
 
 ## TODO
 
+- [ ] Make build script more robust
+- [ ] Add check to ensure version matches tag
 - [ ] Try to update crates to newer versions
-- [ ] Add fadeout for entities
 - [ ] Create release builds via github actions (cheat mode)
 
 - [ ] Play music
@@ -31,6 +33,7 @@
 - [ ] Fix texture edges in atlas bleeding over
 - [ ] Allow to specify font for UiLabel
 
+- [ ] Use deadness for fish death animation?!
 
 ## Future
 

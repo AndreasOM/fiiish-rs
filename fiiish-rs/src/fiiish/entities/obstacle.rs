@@ -2,6 +2,8 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityData;
+use crate::fiiish::entities::EntityState;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::entities::EntityId;
 use crate::fiiish::entities::EntityType;
@@ -24,8 +26,8 @@ pub struct Obstacle {
 	rotation: f32,
 	animated_texture: AnimatedTexture,
 	layer: LayerId,
-	alive: bool,
 	entity_id: EntityId,
+	entity_data: EntityData,
 }
 
 // rock-f 413 x 538
@@ -39,8 +41,8 @@ impl Obstacle {
 			rotation: 0.0,
 			animated_texture: AnimatedTexture::new(),
 			layer: LayerId::Obstacles,
-			alive: true,
 			entity_id: EntityId::NONE,
+			entity_data: EntityData::default(),
 		}
 	}
 
@@ -74,6 +76,9 @@ impl Obstacle {
 }
 
 impl Entity for Obstacle {
+	fn data(&self) -> &EntityData {
+		&self.entity_data
+	}
 	fn as_any(&self) -> &dyn std::any::Any {
 		self
 	}
@@ -98,6 +103,8 @@ impl Entity for Obstacle {
 			self.kill();
 		}
 
+		self.entity_data.update( euc.time_step() );
+
 		if let Some( debug_renderer ) = &*euc.debug_renderer {
 			let mut debug_renderer = debug_renderer.borrow_mut();
 			let color = Color::from_rgba( 0.1, 0.5, 0.1, 0.8 );
@@ -110,21 +117,20 @@ impl Entity for Obstacle {
 	}
 
 	fn render( &mut self, renderer: &mut Renderer ){
-		if !self.is_alive() {
+		if self.is_dead() {
 			return;
 		}
+		let opacity = 1.0 - self.entity_data.deadness();
+
 		renderer.use_layer( self.layer as u8 );
-		renderer.use_effect( EffectId::Textured as u16 );
+		renderer.use_effect( EffectId::ColoredTextured as u16 );
+		renderer.set_color( &Color::from_a( opacity as f32 ) );
 		self.animated_texture.r#use( renderer );
 		renderer.render_textured_quad_with_rotation( &self.pos, &self.size, self.rotation );
 	}
 
 	fn kill( &mut self ) {
-		self.alive = false;
-	}
-
-	fn is_alive( &self ) -> bool {
-		self.alive
+		self.entity_data.state = EntityState::Dieing{ time: 0.0 };
 	}
 
 	fn name( &self ) -> &str {

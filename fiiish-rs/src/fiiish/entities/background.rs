@@ -3,6 +3,7 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityData;
 use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
@@ -30,6 +31,7 @@ pub struct Background {
 	phase: f32,
 	state: State,
 	time: f32,
+	entity_data: EntityData,
 }
 
 impl Background {
@@ -40,6 +42,7 @@ impl Background {
 			phase: 0.0,
 			state: State::FadedOut,
 			time: 0.0,
+			entity_data: EntityData::default(),
 		}
 	}
 /*
@@ -85,6 +88,9 @@ impl Background {
 }
 
 impl Entity for Background {
+	fn data(&self) -> &EntityData {
+		&self.entity_data
+	}
 	fn as_any(&self) -> &dyn std::any::Any {
 		self
 	}

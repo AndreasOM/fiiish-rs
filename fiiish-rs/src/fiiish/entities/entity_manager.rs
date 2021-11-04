@@ -32,7 +32,7 @@ impl EntityManager {
 	pub fn remove_dead( &mut self ) {
 //		let ni = self.entities.len();
 		for i in ( 0..self.entities.len() ).rev() {
-			if !self.entities[ i ].is_alive() {
+			if self.entities[ i ].is_dead() {
 //				println!("Cleaning dead {:?}", &self.entities[ i ] );
 				self.entities.swap_remove( i );
 			}

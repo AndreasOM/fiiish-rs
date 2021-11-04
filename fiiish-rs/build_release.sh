@@ -63,7 +63,8 @@ function build_osx {
 
 		exa -l ${release_dir}/fiiish
 	else
-		echo "Building bunlde for ${app_name}"
+		trap "echo TRAP SIX 6; exit" 6
+		echo "Building bundle for ${app_name}"
 		app_dir=${release_dir}/${app_name}.app
 		mkdir -p ${app_dir}/Contents/MacOS	# save a few mkdir calls by starting with a deep directory
 		mkdir -p ${app_dir}/Contents/Resources
@@ -84,6 +85,11 @@ function build_osx {
 
 		# :HACK: icons
 
+#		echo "Release Dir: ${release_dir}"
+#		cd ${release_dir}
+#		exa -l --tree 
+#		cd -
+
 		temp=$(mktemp -d)
 		/Applications/Xcode.app/Contents/Developer/usr/bin/actool \
 			--compile ${app_dir}/Contents/Resources/ \
@@ -99,10 +105,14 @@ function build_osx {
 		cp fiiish-data.omar ${app_dir}/Contents/Resources/
 		cp dummy-data.omar ${app_dir}/Contents/Resources/
 
+		while date; do
 		sleep 3		# system might be blocking the folder
+		echo "Release Dir: ${release_dir}"
 		cd ${release_dir}
-		exa -l --tree 
+		find . 
+		(exa -l --tree)
 		cd -
+		done
 	fi
 
 }

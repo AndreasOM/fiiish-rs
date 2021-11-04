@@ -3,6 +3,7 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 
 use crate::fiiish::entities::Entity;
+use crate::fiiish::entities::EntityData;
 use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
@@ -21,6 +22,7 @@ pub struct Coin {
 	animated_texture: AnimatedTexture,
 	animation_offset: u16,
 	alive: bool,
+	entity_data: EntityData,
 }
 
 impl Coin {
@@ -33,6 +35,7 @@ impl Coin {
 			animated_texture: AnimatedTexture::new(),
 			animation_offset,
 			alive: true,
+			entity_data: EntityData::default(),
 		}
 	}
 
@@ -45,6 +48,9 @@ impl Coin {
 }
 
 impl Entity for Coin {
+	fn data(&self) -> &EntityData {
+		&self.entity_data
+	}
 	fn as_any(&self) -> &dyn std::any::Any {
 		self
 	}
