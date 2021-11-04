@@ -18,7 +18,7 @@ pub struct EntityData {
 	pub dieing_time: f64,
 }
 
-const DIEING_TIME: f64 = 10.0;
+const DIEING_TIME: f64 = 1.0;
 
 impl EntityData {
 	pub fn default() -> Self {
