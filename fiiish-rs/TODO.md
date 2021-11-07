@@ -58,11 +58,14 @@
 
 ## DONE
 
-- [x] Add fadeout for entities
-- [x] Switch to 2021 edition of Rust
 
 
 ## Released
+
+### v0.6.3-alpha
+
+- [x] Add fadeout for entities
+- [x] Switch to 2021 edition of Rust
 
 ### v0.6.1-alpha
 
