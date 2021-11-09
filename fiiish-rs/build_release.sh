@@ -105,14 +105,14 @@ function build_osx {
 		cp fiiish-data.omar ${app_dir}/Contents/Resources/
 		cp dummy-data.omar ${app_dir}/Contents/Resources/
 
-		while date; do
+#		while date; do
 		sleep 3		# system might be blocking the folder
 		echo "Release Dir: ${release_dir}"
 		cd ${release_dir}
 		find . 
 		(exa -l --tree)
 		cd -
-		done
+#		done
 	fi
 
 }
