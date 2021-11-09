@@ -3,16 +3,26 @@
 
 ## In Progress
 
+- [ ] Bump OMT to allow bumping regex crate
 
 ## TODO
 
 - [ ] Make build script more robust
 - [ ] Add check to ensure version matches tag
-- [ ] Try to update crates to newer versions
 - [ ] Create release builds via github actions (cheat mode)
 
 - [ ] Play music
 - [ ] Add SFX
+
+- [ ] Remove warnings
+
+- [ ] replace `#[derive(Debug)]` with `#[derivative(Debug)]`
+
+- [ ] External: Update OMT to newer regex crate
+
+- [ ] Remove unnecessary crates. Candidates:
+	- [ ] regex
+
 
 - [ ] Change UiElement handling from Box <...> to Rc< RefCell< ... > >
 - [ ] Cleanup: Remove unnecessary `use ...`
@@ -55,9 +65,14 @@
 - [ ] Select active Material via configuration
 - [ ] Multitextureing with tex coords for channel 1, or following is currently not supported
 - [ ] Reimplement all Matrix & Vector math
+- [ ] Remove glutin dependency
+
+- [ ] Create iOS version
 
 ## DONE
 
+
+- [x] Update crates to newer versions
 
 
 ## Released
