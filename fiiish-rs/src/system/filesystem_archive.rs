@@ -133,20 +133,10 @@ impl FilesystemArchive {
 			_ => ' '
 		}).collect();
 
-		// crc 1.8.x
-//		let crc = crc::crc32::checksum_ieee(clean_name.as_bytes());
-		// crc 2.1.0
-		// Algorithm { poly: 0x04c11db7, init: 0x00000000, refin: false, refout: false, xorout: 0xffffffff, check: 0x765e7680, residue: 0xc704dd7b };
-//		const crc32: crc::Crc<u32> = crc::Crc::<u32>::new(&crc::CRC_32_BZIP2);
 		const CRC32: crc::Crc<u32> = crc::Crc::<u32>::new(&crc::CRC_32_ISO_HDLC);
-//		let mut digest = crc.digest();
-//		digest.update(clean_name.as_bytes());
-//		let crc = digest.finalize();
 		let crc = CRC32.checksum( clean_name.as_bytes() );
 
 //		println!("CRC: {:?} -> {:?} crc: {:?} {:#10X}\n", name, clean_name, crc, crc );
-//	      puts "CRC: " + filename + " -> " + name + " crc: " + @crc.to_s
-
 //		panic!("CRC");
 
 		crc
