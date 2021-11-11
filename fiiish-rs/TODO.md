@@ -3,7 +3,7 @@
 
 ## In Progress
 
-- [ ] Bump OMT to allow bumping regex crate
+- [ ] Play music
 
 ## TODO
 
@@ -11,7 +11,6 @@
 - [ ] Add check to ensure version matches tag
 - [ ] Create release builds via github actions (cheat mode)
 
-- [ ] Play music
 - [ ] Add SFX
 
 - [ ] Remove warnings
@@ -73,6 +72,7 @@
 
 
 - [x] Update crates to newer versions
+- [x] Bump OMT to allow bumping regex crate
 
 
 ## Released
