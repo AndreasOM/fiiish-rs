@@ -12,6 +12,8 @@
 		E92A9C29273D83DE00ED321E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E92A9C28273D83DE00ED321E /* Assets.xcassets */; };
 		E92A9C2C273D83DE00ED321E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E92A9C2A273D83DE00ED321E /* Main.storyboard */; };
 		E92A9C2E273D83DE00ED321E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E92A9C2D273D83DE00ED321E /* main.m */; };
+		E92A9C37273D854B00ED321E /* theme-00.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E92A9C36273D854B00ED321E /* theme-00.mp3 */; };
+		E92A9C3A273D85D400ED321E /* AVFAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E92A9C39273D85D400ED321E /* AVFAudio.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		E92A9C2B273D83DE00ED321E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E92A9C2D273D83DE00ED321E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		E92A9C2F273D83DE00ED321E /* MacOS_MusicPlayer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MacOS_MusicPlayer.entitlements; sourceTree = "<group>"; };
+		E92A9C36273D854B00ED321E /* theme-00.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "theme-00.mp3"; sourceTree = "<group>"; };
+		E92A9C39273D85D400ED321E /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E92A9C3A273D85D400ED321E /* AVFAudio.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,8 +45,10 @@
 		E92A9C16273D83DC00ED321E = {
 			isa = PBXGroup;
 			children = (
+				E92A9C35273D852E00ED321E /* data */,
 				E92A9C21273D83DD00ED321E /* MacOS-MusicPlayer */,
 				E92A9C20273D83DD00ED321E /* Products */,
+				E92A9C38273D85D400ED321E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,6 +73,22 @@
 				E92A9C2F273D83DE00ED321E /* MacOS_MusicPlayer.entitlements */,
 			);
 			path = "MacOS-MusicPlayer";
+			sourceTree = "<group>";
+		};
+		E92A9C35273D852E00ED321E /* data */ = {
+			isa = PBXGroup;
+			children = (
+				E92A9C36273D854B00ED321E /* theme-00.mp3 */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		E92A9C38273D85D400ED321E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E92A9C39273D85D400ED321E /* AVFAudio.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,6 +148,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E92A9C37273D854B00ED321E /* theme-00.mp3 in Resources */,
 				E92A9C29273D83DE00ED321E /* Assets.xcassets in Resources */,
 				E92A9C2C273D83DE00ED321E /* Main.storyboard in Resources */,
 			);
