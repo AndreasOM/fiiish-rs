@@ -9,7 +9,6 @@
 
 ## TODO
 
-- [ ] Store music (& audio) setting
 - [ ] Make build script more robust
 - [ ] Add check to ensure version matches tag
 - [ ] Create release builds via github actions (cheat mode)
@@ -74,6 +73,7 @@
 ## DONE
 
 
+- [x] Store music (& audio) setting
 - [x] Update crates to newer versions
 - [x] Bump OMT to allow bumping regex crate
 

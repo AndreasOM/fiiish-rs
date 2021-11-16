@@ -1,6 +1,6 @@
 use crate::system::{ Serializer, System };
 
-const SERIALIZED_VERSION: u16 = 0x0002;
+const SERIALIZED_VERSION: u16 = 0x0003;
 const OLDEST_SERIALIZED_VERSION: u16 = 0x0001;
 
 #[derive(Debug)]
@@ -10,6 +10,8 @@ pub struct Player {
 	total_distance: u32,
 	best_distance:	u32,
 	play_count:		u32,
+	is_music_enabled:	bool,
+	is_sound_enabled:	bool,
 	is_dirty:		bool,
 }
 
@@ -21,6 +23,8 @@ impl Player {
 			total_distance: 0,
 			best_distance:	0,
 			play_count:		0,
+			is_music_enabled: 	true,
+			is_sound_enabled:	true,
 			is_dirty:		false,
 		}
 	}
@@ -92,6 +96,7 @@ impl Player {
 				return false;				
 			}
 			println!("Loading old version ({}) savegame, current is {}", version, SERIALIZED_VERSION );
+//			panic!("");
 		}
 
 
@@ -104,6 +109,11 @@ impl Player {
 //		} else {
 //			self.play_count = 0;
 //		}
+
+		if version >= 0x0003 {	// oldest version with music & sound settings
+			s.serialize_bool( &mut self.is_music_enabled );
+			s.serialize_bool( &mut self.is_sound_enabled );
+		} 
 		true
 	}
 
@@ -146,5 +156,23 @@ impl Player {
 		}
 		self.total_distance += amount;
 		self.last_distance
+	}
+
+	pub fn set_music_enabled(&mut self, enabled: bool ) {
+		self.is_dirty = true;
+		self.is_music_enabled = enabled;
+	}
+
+	pub fn set_sound_enabled(&mut self, enabled: bool ) {
+		self.is_dirty = true;
+		self.is_sound_enabled = enabled;
+	}
+
+	pub fn music_enabled( &self ) -> bool {
+		self.is_music_enabled
+	}
+
+	pub fn sound_enabled( &self ) -> bool {
+		self.is_sound_enabled
 	}
 }

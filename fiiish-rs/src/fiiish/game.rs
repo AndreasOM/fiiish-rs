@@ -155,7 +155,6 @@ impl Game {
 			println!("Error loading music");
 		}
 
-		self.music.play();
 
 		// load texture
 
@@ -209,6 +208,12 @@ impl Game {
 
 		if !self.player.load( system ) {
 //			todo!("Handle broken savegame");
+		}
+
+		self.is_music_enabled = self.player.music_enabled();
+		self.is_sound_enabled = self.player.sound_enabled();
+		if self.is_music_enabled {
+			self.music.play();
 		}
 //		self.player.save( system ); // :HACK:
 
@@ -582,6 +587,7 @@ impl Game {
 	}
 	pub fn toggle_music( &mut self ) {
 		self.is_music_enabled = !self.is_music_enabled;
+		self.player.set_music_enabled( self.is_music_enabled );
 		if self.is_music_enabled {
 			self.music.play();
 		} else {
@@ -590,6 +596,10 @@ impl Game {
 	}
 	pub fn toggle_sound( &mut self ) {
 		self.is_sound_enabled = !self.is_sound_enabled;
+		self.player.set_sound_enabled( self.is_sound_enabled );
+		if self.is_sound_enabled {
+		} else {
+		}
 	}
 
 	pub fn can_respawn( &self ) -> bool {

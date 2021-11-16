@@ -70,4 +70,21 @@ impl Serializer {
 			| ( ( c as u32 ) <<  8 )
 			| (   d as u32         );
 	}
+
+	pub fn serialize_bool( &mut self, value: &mut bool ) {
+		let mut v: u8 = if *value {
+			1
+		} else {
+			0
+		};
+
+		self.serialize_u8( &mut v );
+
+		*value = if v > 0 {
+			true
+		} else {
+			false
+		}
+	}
+
 }
