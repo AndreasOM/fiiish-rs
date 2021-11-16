@@ -22,7 +22,7 @@ AVAudioPlayer* player = nil;
 	NSString *resourcePath = [main pathForResource:@"theme-00" ofType:@"mp3"];
 	
 //	NSString* resourcePath = [NSString stringWithUTF8String:"theme-00.mp3"];
-	
+	[NSData length];
 	// load data into memory
 	NSData* data = [NSData dataWithContentsOfFile:resourcePath];
 	// play music from data

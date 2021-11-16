@@ -3,6 +3,7 @@ extern crate derivative;
 
 
 // App generic
+pub mod audio;
 pub mod math;
 pub mod renderer;
 pub mod system;
