@@ -3,10 +3,6 @@
 
 ## In Progress
 
-- [ ] Play music
-	- [x] Play music on macOS
-	- [ ] Stub music on Windows & Linux
-
 ## TODO
 
 - [ ] Make build script more robust
@@ -14,6 +10,9 @@
 - [ ] Create release builds via github actions (cheat mode)
 
 - [ ] Add SFX
+
+- [ ] Play music on Windows
+- [ ] Play music on Linux
 
 - [ ] Remove warnings
 
@@ -73,6 +72,8 @@
 ## DONE
 
 
+- [x] Play music on macOS
+- [x] Stub music on Windows & Linux
 - [x] Store music (& audio) setting
 - [x] Update crates to newer versions
 - [x] Bump OMT to allow bumping regex crate
