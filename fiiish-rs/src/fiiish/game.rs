@@ -1,6 +1,7 @@
 use std::rc::Rc;
 use std::cell::RefCell;
 
+use crate::audio::Music;
 use crate::math::Vector2;
 use crate::renderer::{
 //	AnimatedTexture,
@@ -107,6 +108,9 @@ pub struct Game {
 	player: Player,			// since the game always exists (for Fiiish!) we can :HACK: it this way
 	coin_transfer:		TimedTransfer,
 	distance_transfer:	TimedTransfer,
+
+
+	music: Music,
 }
 
 impl Game {
@@ -129,6 +133,7 @@ impl Game {
 			player:							Player::new(),
 			coin_transfer:					TimedTransfer::new( 1.0, 2.0 ),
 			distance_transfer:				TimedTransfer::new( 2.0, 3.0 ),
+			music:							Music::new(),
 		}
 	}
 
@@ -144,6 +149,13 @@ impl Game {
 		// load configuration
 		// :TODO: actually load from a file
 		self.entity_configuration_manager.load( system, "entity_config.whatever" );
+
+		// :TODO: remove .mp3
+		if !self.music.load( system, "theme-00.mp3" ) {
+			println!("Error loading music");
+		}
+
+		self.music.play();
 
 		// load texture
 
@@ -355,6 +367,7 @@ impl Game {
 	}
 	// :TODO: decide if we need the full WindowUpdateContext here
 	pub fn update( &mut self, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
+		self.music.update( wuc.time_step );
 		self.time_in_state += auc.time_step() as f32;
 		let mut fish_movement = Vector2::zero();
 		for p in self.fishes.iter_mut() {
@@ -569,6 +582,11 @@ impl Game {
 	}
 	pub fn toggle_music( &mut self ) {
 		self.is_music_enabled = !self.is_music_enabled;
+		if self.is_music_enabled {
+			self.music.play();
+		} else {
+			self.music.pause();
+		}
 	}
 	pub fn toggle_sound( &mut self ) {
 		self.is_sound_enabled = !self.is_sound_enabled;

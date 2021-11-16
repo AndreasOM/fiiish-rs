@@ -28,6 +28,7 @@ dirs-next = "2.0.0"
 
 # consider removing
 regex = "1.5.4"
+objc = "0.2.7"
 
 [build-dependencies]
 gl_generator = "0.14.0"

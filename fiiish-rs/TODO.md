@@ -4,9 +4,12 @@
 ## In Progress
 
 - [ ] Play music
+	- [x] Play music on macOS
+	- [ ] Stub music on Windows & Linux
 
 ## TODO
 
+- [ ] Store music (& audio) setting
 - [ ] Make build script more robust
 - [ ] Add check to ensure version matches tag
 - [ ] Create release builds via github actions (cheat mode)
