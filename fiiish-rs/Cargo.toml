@@ -1,13 +1,13 @@
 [package]
 name = "fiiish-rs"
-version = "0.6.5"
+version = "0.6.6"
 authors = ["Andreas Neukoetter <andreas@omni-mad.com>"]
 edition = "2021"
 
 build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[[bin]]
+[[bin]] 
 name="fiiish"
 path="src/fiiish_main.rs"
 
