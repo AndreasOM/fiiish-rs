@@ -1,6 +1,9 @@
 #!/bin/sh
 
 
+# copy music
+cp ../fiiish-content/music/theme-00.mp3 ../fiiish-data/
+
 ## copy individual images
 ## cp ../fiiish-content/fish/fish_*.png ../fiiish-data/
 
