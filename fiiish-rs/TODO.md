@@ -6,7 +6,6 @@
 
 ## TODO
 
-- [ ] Stub sound effects for Windows & linux
 - [ ] Add drop mode for sounds
 - [ ] Add UI sounds
 - [ ] Allow disabling sounds
@@ -78,6 +77,7 @@
 ## DONE
 
 - [x] Add sound effects on macOS
+- [x] Stub sound effects for Windows & linux
 - [x] Play music on macOS
 - [x] Stub music on Windows & Linux
 - [x] Store music (& audio) setting

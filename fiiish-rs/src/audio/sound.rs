@@ -3,14 +3,12 @@ mod sound_apple;
 #[cfg(target_os = "macos")]
 pub use sound_apple::SoundApple as Sound;
 
-/*
 #[cfg(target_os = "windows")]
-mod music_stub;
+mod sound_stub;
 #[cfg(target_os = "windows")]
-pub use music_stub::MusicStub as Music;
+pub use sound_stub::SoundStub as Sound;
 
 #[cfg(target_os = "linux")]
-mod music_stub;
+mod sound_stub;
 #[cfg(target_os = "linux")]
-pub use music_stub::MusicStub as Music;
-*/
+pub use sound_stub::SoundStub as Sound;
