@@ -9,16 +9,24 @@ use std::collections::{
 use objc::*;
 use objc::runtime::*;
 
+#[derive(Debug)]
+enum DropMode {
+	Newest,
+	Oldest,
+	OlderThan,
+}
 
 #[derive(Debug)]
 struct SoundPool {
-	players: 	 	 	VecDeque< *mut Object >,
+	players:	VecDeque< *mut Object >,
+	drop_mode:	DropMode,
 }
 
 impl SoundPool {
 	pub fn new() -> Self {
 		Self {
-			players: 	 		VecDeque::new(),
+			players: 	VecDeque::new(),
+			drop_mode:	DropMode::OlderThan,
 		}
 	}
 
@@ -113,7 +121,24 @@ impl SoundPool {
 				if !playing {
 					self.players.pop_front()
 				} else {
-					None
+					match self.drop_mode {
+						DropMode::Newest => None,
+						DropMode::Oldest => {
+							let _: () = msg_send![ player, stop ];
+							let _: () = msg_send![ player, setCurrentTime: 0.0 ];
+							self.players.pop_front()
+						},
+						DropMode::OlderThan => {
+							let current_time: f64 = msg_send![ player, currentTime ];
+							if current_time > 0.5 {
+								let _: () = msg_send![ player, stop ];
+								let _: () = msg_send![ player, setCurrentTime: 0.0 ];
+								self.players.pop_front()
+							} else {
+								None
+							}
+						},
+					}
 				}
 			}
 		} else {

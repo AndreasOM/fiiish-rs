@@ -6,7 +6,6 @@
 
 ## TODO
 
-- [ ] Add drop mode for sounds
 - [ ] Add UI sounds
 - [ ] Allow disabling sounds
 - [ ] Load sounds via soundbank configuration
@@ -76,6 +75,7 @@
 
 ## DONE
 
+- [x] Add drop mode for sounds
 - [x] Add sound effects on macOS
 - [x] Stub sound effects for Windows & linux
 - [x] Play music on macOS
