@@ -25,6 +25,12 @@ anchor.shp
 background.png
 background_grad.png
 block-1x1.shp
+bubble_blast_loop.wav
+bubble_pop_01.wav
+bubble_pop_02.wav
+bubble_pop_03.wav
+bubble_pop_04.wav
+button.wav
 coral-aa.shp
 coral-ab.shp
 coral-ba.shp
@@ -32,6 +38,7 @@ coral-bb.shp
 coral-bc.shp
 coral-ca.shp
 coral-cb.shp
+fiish_death.wav
 fish_die00.png
 fish_die01.png
 fish_swim.shp
@@ -74,6 +81,7 @@ game-atlas-2.png
 gui-atlas-0.atlas
 gui-atlas-0.map
 gui-atlas-0.png
+picked_coin.wav
 pink.omfont
 pink.png
 pink_huge.omfont

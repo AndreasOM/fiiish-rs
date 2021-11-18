@@ -3,13 +3,14 @@
 
 ## In Progress
 
+- [ ] Add SFX
+
 ## TODO
 
 - [ ] Make build script more robust
 - [ ] Add check to ensure version matches tag
 - [ ] Create release builds via github actions (cheat mode)
 
-- [ ] Add SFX
 
 - [ ] Play music on Windows
 - [ ] Play music on Linux

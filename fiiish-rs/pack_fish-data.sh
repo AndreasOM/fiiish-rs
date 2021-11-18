@@ -4,6 +4,9 @@
 # copy music
 cp ../fiiish-content/music/theme-00.mp3 ../fiiish-data/
 
+# copy sound :TODO: convert sound if needed
+cp ../fiiish-content/sound/*.wav ../fiiish-data
+
 ## copy individual images
 ## cp ../fiiish-content/fish/fish_*.png ../fiiish-data/
 

@@ -1,7 +1,11 @@
 use std::rc::Rc;
 use std::cell::RefCell;
 
-use crate::audio::Music;
+use crate::audio::{
+	Music,
+	Sound,
+};
+
 use crate::math::Vector2;
 use crate::renderer::{
 //	AnimatedTexture,
@@ -111,6 +115,7 @@ pub struct Game {
 
 
 	music: Music,
+	sound: Sound,
 }
 
 impl Game {
@@ -134,6 +139,7 @@ impl Game {
 			coin_transfer:					TimedTransfer::new( 1.0, 2.0 ),
 			distance_transfer:				TimedTransfer::new( 2.0, 3.0 ),
 			music:							Music::new(),
+			sound:		 					Sound::new(),
 		}
 	}
 
@@ -154,6 +160,9 @@ impl Game {
 		if !self.music.load( system, "theme-00.mp3" ) {
 			println!("Error loading music");
 		}
+
+		// load sounds
+		self.sound.load( system, "picked_coin", 10 );
 
 
 		// load texture
@@ -356,6 +365,8 @@ impl Game {
 //							println!("Collected Pickup");
 //							p.kill();
 							p.collect();
+							// play pickup sound
+							self.sound.play( "picked_coin" );
 							self.coins += 1;
 						} else if dist < magnet_range {
 							let magnet_speed = 300.0 * euc.time_step() as f32;
