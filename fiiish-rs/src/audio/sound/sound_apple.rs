@@ -9,7 +9,7 @@ use objc::runtime::*;
 #[derive(Debug)]
 pub struct SoundApple {
 	players: 	 	 	VecDeque< *mut Object >,
-	playing_players: 	VecDeque< *mut Object >,
+//	playing_players: 	VecDeque< *mut Object >,
 }
 
 impl SoundApple {
@@ -17,7 +17,7 @@ impl SoundApple {
 	pub fn new() -> Self {
 		Self {
 			players: 	 		VecDeque::new(),
-			playing_players: 	VecDeque::new(),
+//			playing_players: 	VecDeque::new(),
 		}
 	}
 
@@ -106,54 +106,23 @@ impl SoundApple {
 	}
 
 	pub fn play( &mut self, name: &str ) {
-		
-		if let Some( player ) = match self.players.pop_front() {
-			Some( player ) => Some( player ),
-			None => {
-				if let Some( &player ) = self.playing_players.front() {
-					unsafe {
-						let playing: bool = msg_send![ player, isPlaying ];
-						if !playing {
-							self.playing_players.pop_front()
-						} else {
-							None
-						}
-					}
+		if let Some( player ) = if let Some( &player ) = self.players.front( ) {
+			unsafe {
+				let playing: bool = msg_send![ player, isPlaying ];
+				if !playing {
+					self.players.pop_front()
 				} else {
 					None
 				}
-			},
+			}
+		} else {
+			None
 		} {
 			unsafe {
 				let _: () = msg_send![ player, play ];
 			}
-			self.playing_players.push_back( player );
-		};
-
-
-/*
-
-		if let Some( player ) = self.players.pop_front() {
-			unsafe {
-				let _: () = msg_send![ player, play ];
-			}
-			self.playing_players.push_back( player );
-		} else {
-			if let Some( &player ) = self.playing_players.front() {
-				unsafe {
-					let playing: bool = msg_send![ player, isPlaying ];
-					if !playing {
-						if let Some( player ) = self.playing_players.pop_front() {
-							unsafe {
-								let _: () = msg_send![ player, play ];
-							}
-							self.playing_players.push_back( player );							
-						}
-					}
-				}
-			}
+			self.players.push_back( player );
 		}
-*/
 	}
 
 	pub fn update( &mut self, _time_step: f64 ) {
