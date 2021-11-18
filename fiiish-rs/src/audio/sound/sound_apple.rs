@@ -1,19 +1,23 @@
 
 use crate::system::System;
 
+use std::collections::VecDeque;
+
 use objc::*;
 use objc::runtime::*;
 
 #[derive(Debug)]
 pub struct SoundApple {
-	player: Option< *mut Object >,
+	players: 	 	 	VecDeque< *mut Object >,
+	playing_players: 	VecDeque< *mut Object >,
 }
 
 impl SoundApple {
 
 	pub fn new() -> Self {
 		Self {
-			player: None,
+			players: 	 		VecDeque::new(),
+			playing_players: 	VecDeque::new(),
 		}
 	}
 
@@ -56,11 +60,10 @@ impl SoundApple {
 
 			let prep_result: bool = msg_send![ player, prepareToPlay ];
 			if prep_result {
-				self.player = Some( player );
+				self.players.push_back( player );
 //				let _: () = msg_send![ player, setNumberOfLoops: -1 ];
 				true
 			} else {
-				self.player = None;
 				false
 			}
 //			let _: () = msg_send![ player, setVolume: 0.2 fadeDuration: 10.0 ];
@@ -86,13 +89,16 @@ impl SoundApple {
 
 		if let Some( filename ) = filename_maybe {
 			let data = SoundApple::load_data( system, &filename );
-			if self.load_from_data( data ) {
-				true
-			} else {
-				println!("Couldn't read Sound {} from {}!", &name, &filename);
 
-				false
+
+			for n in 0..number {
+				if !self.load_from_data( data ) {
+					println!("Couldn't read Sound {} from {}!", &name, &filename);
+					return false
+				}
 			}
+			dbg!( self.players.len() );
+			true
 		} else {
 			println!("Sound {} not found", &name );
 			false
@@ -101,18 +107,53 @@ impl SoundApple {
 
 	pub fn play( &mut self, name: &str ) {
 		
-		if let Some( player ) = self.player {
+		if let Some( player ) = match self.players.pop_front() {
+			Some( player ) => Some( player ),
+			None => {
+				if let Some( &player ) = self.playing_players.front() {
+					unsafe {
+						let playing: bool = msg_send![ player, isPlaying ];
+						if !playing {
+							self.playing_players.pop_front()
+						} else {
+							None
+						}
+					}
+				} else {
+					None
+				}
+			},
+		} {
 			unsafe {
 				let _: () = msg_send![ player, play ];
 			}
+			self.playing_players.push_back( player );
+		};
+
+
+/*
+
+		if let Some( player ) = self.players.pop_front() {
+			unsafe {
+				let _: () = msg_send![ player, play ];
+			}
+			self.playing_players.push_back( player );
+		} else {
+			if let Some( &player ) = self.playing_players.front() {
+				unsafe {
+					let playing: bool = msg_send![ player, isPlaying ];
+					if !playing {
+						if let Some( player ) = self.playing_players.pop_front() {
+							unsafe {
+								let _: () = msg_send![ player, play ];
+							}
+							self.playing_players.push_back( player );							
+						}
+					}
+				}
+			}
 		}
-
-	}
-
-	pub fn pause( &mut self ) {
-	}
-
-	pub fn stop( &mut self ) {
+*/
 	}
 
 	pub fn update( &mut self, _time_step: f64 ) {
