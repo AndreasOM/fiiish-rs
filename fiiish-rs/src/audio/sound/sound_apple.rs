@@ -1,23 +1,24 @@
 
 use crate::system::System;
 
-use std::collections::VecDeque;
+use std::collections::{
+	HashMap,
+	VecDeque,
+};
 
 use objc::*;
 use objc::runtime::*;
 
+
 #[derive(Debug)]
-pub struct SoundApple {
+struct SoundPool {
 	players: 	 	 	VecDeque< *mut Object >,
-//	playing_players: 	VecDeque< *mut Object >,
 }
 
-impl SoundApple {
-
+impl SoundPool {
 	pub fn new() -> Self {
 		Self {
 			players: 	 		VecDeque::new(),
-//			playing_players: 	VecDeque::new(),
 		}
 	}
 
@@ -88,7 +89,7 @@ impl SoundApple {
 		);
 
 		if let Some( filename ) = filename_maybe {
-			let data = SoundApple::load_data( system, &filename );
+			let data = SoundPool::load_data( system, &filename );
 
 
 			for n in 0..number {
@@ -105,7 +106,7 @@ impl SoundApple {
 		}
 	}
 
-	pub fn play( &mut self, name: &str ) {
+	pub fn play( &mut self ) {
 		if let Some( player ) = if let Some( &player ) = self.players.front( ) {
 			unsafe {
 				let playing: bool = msg_send![ player, isPlaying ];
@@ -126,10 +127,42 @@ impl SoundApple {
 	}
 
 	pub fn update( &mut self, _time_step: f64 ) {
+	}
+}
 
+#[derive(Debug)]
+pub struct SoundApple {
+	sound_pools: HashMap< String, SoundPool>,
+}
+
+impl SoundApple {
+
+	pub fn new() -> Self {
+		Self {
+			sound_pools: HashMap::new(),
+		}
 	}
 
+	pub fn load( &mut self, system: &mut System, name: &str, number: u16 ) -> bool {
+		let mut sound_pool = SoundPool::new();
+		if sound_pool.load( system, name, number ) {
+			self.sound_pools.insert( name.to_string(), sound_pool );
+			true
+		} else {
+			false
+		}
+	}
 
+	pub fn play( &mut self, name: &str ) {
+		if let Some( sound_pool ) = self.sound_pools.get_mut( name ) {
+			sound_pool.play();
+		}
+	}
 
+	pub fn update( &mut self, time_step: f64 ) {
+		for sound_pool in self.sound_pools.values_mut() {
+			sound_pool.update( time_step );
+		}
+	}
 }
 

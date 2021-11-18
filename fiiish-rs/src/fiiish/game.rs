@@ -163,6 +163,7 @@ impl Game {
 
 		// load sounds
 		self.sound.load( system, "picked_coin", 10 );
+		self.sound.load( system, "fiish_death", 1 );
 
 
 		// load texture
@@ -317,6 +318,7 @@ impl Game {
 
 									if OverlapChecker::do_shapes_overlap( &a, &b, &*self.debug_renderer ) {
 										f.kill();
+										self.sound.play( "fiish_death" );
 									}
 								}
 							};

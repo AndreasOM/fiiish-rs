@@ -3,9 +3,14 @@
 
 ## In Progress
 
-- [ ] Add SFX
 
 ## TODO
+
+- [ ] Stub sound effects for Windows & linux
+- [ ] Add drop mode for sounds
+- [ ] Add UI sounds
+- [ ] Allow disabling sounds
+- [ ] Load sounds via soundbank configuration
 
 - [ ] Make build script more robust
 - [ ] Add check to ensure version matches tag
@@ -72,7 +77,7 @@
 
 ## DONE
 
-
+- [x] Add sound effects on macOS
 - [x] Play music on macOS
 - [x] Stub music on Windows & Linux
 - [x] Store music (& audio) setting
