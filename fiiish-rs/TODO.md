@@ -3,6 +3,8 @@
 
 ## In Progress
 
+- [ ] Automate creating a release
+	
 
 ## TODO
 
