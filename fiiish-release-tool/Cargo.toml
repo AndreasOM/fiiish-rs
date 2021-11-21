@@ -1,7 +1,7 @@
 [package]
-name = "fiiish-release-tool"
-version = "0.1.0"
-edition = "2021"
+name = 	 	"fiiish-release-tool"
+version = 	"0.1.0" # :TODO: bump once released
+edition = 	"2021"
 
 [[bin]]
 name = "fiiish-release-tool"
@@ -12,3 +12,6 @@ path = "src/main.rs"
 [dependencies]
 anyhow = "1.0.40"
 git2 = "0.13.18"
+toml_edit = "0.3.1"
+semver = "1.0"
+regex = "1.5.3"

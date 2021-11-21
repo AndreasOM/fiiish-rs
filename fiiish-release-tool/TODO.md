@@ -4,7 +4,7 @@
 
 - [ ] Prepare release
 	- [x] Check workspace/git is clean
-	- [ ] Remove -dev from version, and replaces by alpha/beta/[none]
+	- [x] Remove -dev from version, and replaces by *alpha*/beta/[none]
 	- [ ] Update Cargo.lock `cargo update --workspace --dry-run --verbose`
 	- [ ] Commmit Cargo.toml (and other files as needed)
 	- [ ] Push to git
