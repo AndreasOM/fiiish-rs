@@ -8,9 +8,12 @@ use toml_edit::{
 	Formatted,
 	Item,
 	Value,
+	value,
 };
 
 use semver::{BuildMetadata, Prerelease, Version, VersionReq};
+
+use unescape::unescape;
 
 use regex::Regex;
 
@@ -73,6 +76,8 @@ impl Release {
 		let toml = std::fs::read_to_string("Cargo.toml").unwrap();
 		let mut doc = toml.parse::<Document>().expect("invalid doc");
 
+		let old_version_value = &doc["package"]["version"];
+		dbg!(&old_version_value);
 		let vs = match &doc["package"]["version"] {
 			Item::Value( Value::String( s ) ) => s.to_string(),
 			_ => bail!("Unsupported version format!"),
@@ -95,10 +100,22 @@ impl Release {
 		dbg!(&version.to_string());
 //		dbg!(&doc);
 
-		let full_version = format!("{}\"{}\"{}", &caps[1], &version, &caps[3]);
+//		let full_version = unescape( &format!("{}\"{}\"{}", &caps[1], &version, &caps[3]) ).unwrap();
+//		let full_version = format!("{}\"{}\"{}", &caps[1], &version, &caps[3]);
+		let full_version = version.to_string();
 		dbg!(&full_version);
+		println!("{}", &full_version);
 
-		doc["package"]["version"] = Item::Value( Value::String( Formatted::new( full_version ) ) );
+//		let mut new_version_value = Formatted{
+//			value: full_version,
+//		};
+//		let new_version_value = old_version_value.clone();
+//		new_version_value.value = "TADA";
+		//dbg!(&new_version_value);
+//		let i = Item::Value( Value::String( Formatted::new( full_version ) ) );
+		let i = value( full_version );
+		dbg!(&i);
+		doc["package"]["version"] = i;
 
 		// dbg!(&doc);
 		std::fs::write("Cargo.toml", doc.to_string() ).unwrap();

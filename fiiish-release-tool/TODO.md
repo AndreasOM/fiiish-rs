@@ -13,6 +13,8 @@
 
 ## TODO
 
+- [ ] Preserve formatting of version field in manifest
+
 
 
 - Prepare to continue with development
