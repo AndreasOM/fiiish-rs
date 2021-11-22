@@ -4,7 +4,7 @@
 
 - [ ] Prepare release
 	- [x] Check workspace/git is clean
-	- [x] Remove -dev from version, and replaces by *alpha*/beta/[none]
+	- [x] Remove -dev from version, and replace by *alpha*/beta/[none]
 	- [ ] Update Cargo.lock `cargo update --workspace --dry-run --verbose`
 	- [ ] Commmit Cargo.toml (and other files as needed)
 	- [ ] Push to git
@@ -13,17 +13,18 @@
 
 ## TODO
 
-- [ ] Preserve formatting of version field in manifest
 
 
 
 - Prepare to continue with development
-	- [ ] Bump the local version patch/minor/major
+	- [x] Bump the local version patch/minor/major
+	- [x] Remove *alpha*/beta/[none] from version, and replace by dev
 	- [ ] Commit Cargo.toml
 	- [ ] Push to git
 
 ## DONE
 
+- [x] Preserve formatting of version field in manifest
 - [x] Find git root in folder hierarchy
 
 
