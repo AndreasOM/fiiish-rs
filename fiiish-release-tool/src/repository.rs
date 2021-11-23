@@ -93,8 +93,8 @@ impl Repository {
 					Some( wd ) => wd,
 					None => bail!("No workdir for repository"),
 				};
-				dbg!(&cwd);
-				dbg!(&rwd);				
+//				dbg!(&cwd);
+//				dbg!(&rwd);				
 				for f in files.iter() {
 					let p = Path::new( &cwd ).join( &f );
 //					dbg!(&p);
@@ -123,14 +123,14 @@ pub fn write_tree(&mut self) -> Result<Oid, Error>
 				};
 				index.write()?;
 
-				dbg!(&oid);
+//				dbg!(&oid);
 
 				let tree = match repo.find_tree(oid) {
 					Ok( tree ) => tree,
 					Err( e ) => bail!("Error findind tree for OID {}: {}", &oid, &e),
 				};
 
-				dbg!(&tree);
+//				dbg!(&tree);
 
 				let parent = match repo.revparse_ext( "HEAD" ) {
 					Ok( ( object, _ ) ) => object,
@@ -142,7 +142,7 @@ pub fn write_tree(&mut self) -> Result<Oid, Error>
 					None => bail!( "Parent is not a commit" ),
 				};
 
-				dbg!(&parent);
+//				dbg!(&parent);
 				/*
 pub fn commit(
     &self,
