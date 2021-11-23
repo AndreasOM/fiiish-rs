@@ -66,7 +66,8 @@ impl Release {
 
 		let mut files = Vec::new();
 		files.push( "Cargo.toml".to_owned() );
-		repo.commit( &files, ": Bump version for alpha release" )?;
+		let msg = format!( ": Bump version for alpha release - {}", &release_version );
+		repo.commit( &files, &msg )?;
 
 		// post release
 		manifest.bump_patch_version()?;
@@ -79,8 +80,8 @@ impl Release {
 
 
 		// :TODO: update Cargo.lock
-
-		repo.commit( &files, ": Bump version back to dev release, and bump patch level." )?;
+		let msg = format!( ": Bump version back to dev release, and bump patch level - {}", &new_version );
+		repo.commit( &files, &msg )?;
 
 		let dirty = repo.get_dirty();
 

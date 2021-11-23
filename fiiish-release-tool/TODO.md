@@ -9,7 +9,7 @@
 	- [ ] Update Cargo.lock `cargo update --workspace --dry-run --verbose`
 	- [x] Commmit Cargo.toml
 		- [ ] and other files as needed
-	- [ ] Push to git
+	- [ ] Push to git (fetch, rebase, push)
 	- [ ] Tag the release
 	- [ ] Push the tag
 
@@ -24,10 +24,11 @@
 	- [ ] Update Cargo.lock `cargo update --workspace --dry-run --verbose`
 	- [x] Commit Cargo.toml
 		- [ ] and other files as needed
-	- [ ] Push to git
+	- [ ] Push to git (fetch, rebase, push)
 
 ## DONE
 
+- [x] Commit message includes version
 - [x] Improve output during execution
 - [x] Preserve formatting of version field in manifest
 - [x] Find git root in folder hierarchy
