@@ -1,6 +1,6 @@
 [package]
 name = "fiiish-rs"
-version = "0.6.8-dev"
+version = "0.6.8-alpha"
 authors = ["Andreas Neukoetter <andreas@omni-mad.com>"]
 edition = "2021"
 
