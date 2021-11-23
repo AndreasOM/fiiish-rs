@@ -1,6 +1,6 @@
 [package]
 name = 	 	"fiiish-release-tool"
-version =	"0.1.29-dev" # :TODO: bump once released
+version =	"0.1.29-alpha" # :TODO: bump once released
 edition = 	"2021"
 
 [[bin]]
