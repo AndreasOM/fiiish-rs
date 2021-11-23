@@ -19,8 +19,8 @@ impl Release {
 
 		// check if git is clean
 		let mut repo = Repository::new( "." );
-		if false {
-			repo.open()?;
+		repo.open()?;
+		if false { // skip dirty
 
 			let dirty = repo.get_dirty();
 
@@ -54,11 +54,22 @@ impl Release {
 			}
 		}
 
+		// :TODO: update Cargo.lock
+
+		let mut files = Vec::new();
+		files.push( "Cargo.toml".to_owned() );
+		repo.commit( &files, ": Bump version for alpha release" )?;
+
+		// post release
 		manifest.bump_patch_version()?;
 		manifest.set_version_suffix("dev");
 
 		manifest.save()?;
 
+
+		// :TODO: update Cargo.lock
+
+		repo.commit( &files, ": Bump version back to dev release, and bump patch level." )?;
 
 		let dirty = repo.get_dirty();
 
