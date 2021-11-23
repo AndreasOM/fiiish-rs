@@ -21,6 +21,7 @@ impl Release {
 		let mut repo = Repository::new( "." );
 		repo.open()?;
 		if false { // skip dirty
+			println!("Checking if repository is clean...");
 
 			let dirty = repo.get_dirty();
 
@@ -31,17 +32,24 @@ impl Release {
 				}
 				bail!("Repository is dirty");
 			}
+			println!("Repositiory is clean (enough)");
+		} else {
+			println!("Skipping check if repository is clean!");
 		}
 
-		println!("Repositiory is clean (enough)");
 
 		// load the Cargo.toml
 		let mut manifest = Manifest::new( "Cargo.toml" );
 		manifest.load()?;
 
+		let old_version = manifest.get_pretty_version()?;
+		println!("Current version: {}", &old_version);
 		manifest.set_version_suffix("alpha");
 
 		manifest.save()?;
+
+		let release_version = manifest.get_pretty_version()?;
+		println!("Release version: {}", &release_version);
 
 		// dbg!(&doc);
 
@@ -65,6 +73,9 @@ impl Release {
 		manifest.set_version_suffix("dev");
 
 		manifest.save()?;
+
+		let new_version = manifest.get_pretty_version()?;
+		println!("New development version: {}", &new_version);
 
 
 		// :TODO: update Cargo.lock

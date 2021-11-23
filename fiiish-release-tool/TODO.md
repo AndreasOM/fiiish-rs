@@ -1,6 +1,7 @@
 # TODO
 
-## In Progres
+## In Progress
+
 
 - [ ] Prepare release
 	- [x] Check workspace/git is clean
@@ -27,6 +28,7 @@
 
 ## DONE
 
+- [x] Improve output during execution
 - [x] Preserve formatting of version field in manifest
 - [x] Find git root in folder hierarchy
 

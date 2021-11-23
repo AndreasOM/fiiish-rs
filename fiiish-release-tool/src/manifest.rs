@@ -68,6 +68,11 @@ impl Manifest {
 		return Ok( version );
 	}
 
+	pub fn get_pretty_version( &self ) -> anyhow::Result<(String)> {
+		let v = self.get_version()?;
+		Ok( v.to_string() )
+	}
+
 	pub fn set_version( &mut self, version: &Version ) -> anyhow::Result<()>{
 		let fs = self.get_formatted_version()?;
 
@@ -103,11 +108,11 @@ impl Manifest {
 
 	pub fn bump_patch_version( &mut self ) -> anyhow::Result<()> {
 		let old_version = self.get_version()?;
-		dbg!(&old_version);
+//		dbg!(&old_version);
 
 		let mut new_version = old_version.clone();
 		new_version.patch = old_version.patch + 1;
-		dbg!(&new_version);
+//		dbg!(&new_version);
 
 		self.set_version( &new_version );
 		Ok(())		
