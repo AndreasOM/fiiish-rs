@@ -29,7 +29,7 @@ impl Manifest {
 	}
 
 	pub fn load( &mut self ) -> anyhow::Result<()> {
-		let toml = std::fs::read_to_string( &self.path ).unwrap();
+		let toml = std::fs::read_to_string( &self.path )?;
 		let mut doc = match toml.parse::<Document>(){
 			Ok( doc ) => doc,
 			Err( e ) => bail!( "Couldn't load manifest from >>{}<< {}", &self.path, &e ),

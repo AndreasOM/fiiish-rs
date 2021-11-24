@@ -10,6 +10,8 @@
 	- [x] Commmit Cargo.toml
 		- [ ] and other files as needed
 	- [ ] Push to git (fetch, rebase, push)
+		- [x] fetch
+		- [x] rebase
 	- [ ] Tag the release
 	- [ ] Push the tag
 

@@ -17,8 +17,16 @@ impl Release {
 
 	pub fn run( &self ) -> anyhow::Result<()> {
 
+		if false { // use repository in sub folder for testing
+			let root = std::path::Path::new(&std::env::current_dir()?).join("./automatic-octo-guacamole/");
+			std::env::set_current_dir(&root)?;
+		}
+
+		println!("Working in {:?}", std::env::current_dir()?);
 		// check if git is clean
 		let mut repo = Repository::new( "." );
+//		let mut repo = Repository::new( "./automatic-octo-guacamole/" );
+
 		repo.open()?;
 		if false { // skip dirty
 			println!("Checking if repository is clean...");
@@ -38,6 +46,7 @@ impl Release {
 		}
 
 
+		if true { // skip for faster iteration
 		// load the Cargo.toml
 		let mut manifest = Manifest::new( "Cargo.toml" );
 		manifest.load()?;
@@ -82,6 +91,26 @@ impl Release {
 		// :TODO: update Cargo.lock
 		let msg = format!( ": Bump version back to dev release, and bump patch level - {}", &new_version );
 		repo.commit( &files, &msg )?;
+
+
+		} else {
+			println!( "Skipping everything up to fetch/rebase/push!" );
+		}
+
+		let dirty = repo.get_dirty();
+
+		if dirty.len() > 0 {
+			println!("Dirty files before fetch:");
+			for d in dirty.iter() {
+				println!("{}", d);
+			}
+		}
+
+		if repo.fetch()? > 0 {
+			bail!("Fetch was not empty. Please resolve manually!")
+		};
+		repo.rebase()?;
+		repo.push()?;
 
 		let dirty = repo.get_dirty();
 
