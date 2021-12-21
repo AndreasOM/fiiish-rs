@@ -55,12 +55,12 @@ echo "Packing data"
 cd fiiish-data
 ls -1 |grep -v paklist.txt >paklist.txt
 cd -
-omt-packer pack --basepath ../fiiish-data --output fiiish-data.omar --paklist ../fiiish-data/paklist.txt
+omt-packer pack --basepath fiiish-data --output fiiish-data.omar --paklist fiiish-data/paklist.txt
 
 cd dummy-data
 ls -1 |grep -v paklist.txt >paklist.txt
 cd -
-omt-packer pack --basepath ../dummy-data --output dummy-data.omar --paklist ../dummy-data/paklist.txt
+omt-packer pack --basepath dummy-data --output dummy-data.omar --paklist dummy-data/paklist.txt
 
 
 echo "Adding resources"
