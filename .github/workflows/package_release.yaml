@@ -39,12 +39,12 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
   
-#      - name: Install cargo-get
-#        uses: actions-rs/cargo@v1
-#        with:
-#          command: install
-#          args: cargo-get
-#
+      - name: Install omt
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: omt
+
 
       - name: Run cargo build --release for x86
         uses: actions-rs/cargo@v1
