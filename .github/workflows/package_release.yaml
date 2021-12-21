@@ -1,0 +1,73 @@
+name: package_release
+
+on:
+  push:
+    tags:
+      - "*-test"
+#      - "*-alpha"
+#      - "[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  build:
+
+    runs-on: macos-11
+
+    steps:
+#      - name: Test environment
+#        run: zip -v
+#        shell: bash
+        
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+          target: aarch64-apple-darwin
+
+      - name: Cache crates
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-crates
+        with:
+          path: ~/.cargo
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+  
+#      - name: Install cargo-get
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: install
+#          args: cargo-get
+#
+
+      - name: Run cargo build --release for x86
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --manifest-path fiiish-rs/Cargo.toml --target x86_64-apple-darwin
+
+      - name: Run cargo build --release for M1
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --manifest-path fiiish-rs/Cargo.toml --target aarch64-apple-darwin
+
+      - name: Package MacOS .app
+        run: ./package_macos.sh
+        shell: bash
+
+      - name: Zip up package
+        run: cd package && zip -9 -r macos-app-${{ github.ref_name }}.zip .
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-app-${{ github.ref_name }}
+          path: package/macos-app-${{ github.ref_name }}.zip
+
