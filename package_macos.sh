@@ -1,6 +1,6 @@
 #!/bin/sh
 
-binary=fiiish-rs
+binary=fiiish
 binary_dir=fiiish-rs
 
 platform=macos
@@ -24,7 +24,7 @@ mkdir -p ${app_dir}
 mkdir -p ${app_dir}/Contents/MacOS	# save a few mkdir calls by starting with a deep directory
 mkdir -p ${app_dir}/Contents/Resources
 
-echo "Combining binaries int fat binaries"
+echo "Combining binaries into fat binaries"
 lipo -create -output ${app_dir}/Contents/MacOS/${binary} \
 	${binary_dir}/target/aarch64-apple-darwin/release/${binary} \
 	${binary_dir}/target/x86_64-apple-darwin/release/${binary}
@@ -50,3 +50,10 @@ temp=$(mktemp -d)
 cat ${temp}/Info.plist
 
 rm -r ${temp}
+
+
+echo "Adding resources"
+cp fiiish-data.omar ${app_dir}/Contents/Resources/
+cp dummy-data.omar ${app_dir}/Contents/Resources/
+
+
