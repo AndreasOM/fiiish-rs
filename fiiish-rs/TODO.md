@@ -3,7 +3,6 @@
 
 ## In Progress
 
-- [ ] Automate creating a release
 	
 
 ## TODO
@@ -15,7 +14,9 @@
 - [ ] Make build script more robust
 - [ ] Add check to ensure version matches tag
 - [ ] Create release builds via github actions (cheat mode)
-
+- [ ] Automate upload to itch.io (macOS, cheat mode, off stream)
+- [ ] Automate creating a linux release
+- [ ] Automate creating a windows release
 
 - [ ] Play music on Windows
 - [ ] Play music on Linux
@@ -77,6 +78,7 @@
 
 ## DONE
 
+- [x] Automate creating a release for macOS
 - [x] Add drop mode for sounds
 - [x] Add sound effects on macOS
 - [x] Stub sound effects for Windows & linux
@@ -196,7 +198,3 @@
 - [x] Create gitignore to reduce noise
 - [x] Create initial project
 
-## Released
-
-
-### Version 0.0.1 - Build xxxx
