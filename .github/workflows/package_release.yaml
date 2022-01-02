@@ -12,6 +12,9 @@ jobs:
 
     runs-on: macos-11
 
+    env:
+      APP_NAME: Fiiish-RS
+
     steps:
 #      - name: Test environment
 #        run: zip -v
@@ -63,11 +66,17 @@ jobs:
         shell: bash
 
       - name: Zip up package
-        run: cd package && zip -9 -r macos-app-${{ github.ref_name }}.zip .
+        run: cd package && zip -9 -r ${{env.APP_NAME}}-macos-app-${{ github.ref_name }}.zip .
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: ${{env.APP_NAME}}-macos-app-${{ github.ref_name }}
+#          path: package/${{env.APP_NAME}}-macos-app-${{ github.ref_name }}.zip
+
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
         with:
-          name: macos-app-${{ github.ref_name }}
-          path: package/macos-app-${{ github.ref_name }}.zip
-
+          files: |
+            package/${{env.APP_NAME}}-macos-app-${{ github.ref_name }}.zip

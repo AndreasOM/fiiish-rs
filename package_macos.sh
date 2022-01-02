@@ -1,5 +1,6 @@
 #!/bin/sh
 
+app=${APP_NAME}
 binary=fiiish
 binary_dir=fiiish-rs
 
@@ -16,7 +17,7 @@ build_number=$(git rev-list ${version} --count)
 echo "Build number: ${build_number}"
 
 
-app_dir=package/${platform}-${version}/fiiish-rs.app
+app_dir=package/${app}-${platform}-${version}/fiiish-rs.app
 
 echo "Creating folder structure in ${app_dir}"
 mkdir -p ${app_dir}
