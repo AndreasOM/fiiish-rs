@@ -613,7 +613,7 @@ checksum = "e1769427d0c2b3744756471248e129fa81e1b0b853f243dc44c6a249a3f985d6"
 
 [[package]]
 name = "fiiish-rs"
-version = "0.6.17-dev"
+version = "0.6.17-test"
 dependencies = [
  "anyhow",
  "chrono",
