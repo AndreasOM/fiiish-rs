@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Package MacOS .app
+      - name: Create Carg.lock without our version
         run: ./create_cargo_lock_without_version.sh
         shell: bash
         working-directory: fiiish-rs
