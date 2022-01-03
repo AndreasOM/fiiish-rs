@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
 
       - name: Package MacOS .app
-        run: ./create_cargo_lock_without_version.sh
+        run: ./fiiish-rs/create_cargo_lock_without_version.sh
         shell: bash
 
       - uses: actions-rs/toolchain@v1
