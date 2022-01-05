@@ -1,3 +1,4 @@
+/*
 #[cfg(target_os = "macos")]
 mod sound_apple;
 #[cfg(target_os = "macos")]
@@ -12,3 +13,4 @@ pub use sound_stub::SoundStub as Sound;
 mod sound_stub;
 #[cfg(target_os = "linux")]
 pub use sound_stub::SoundStub as Sound;
+*/

@@ -54,8 +54,8 @@ impl Filesystem for FilesystemLayered {
 		}
 	}
 
-	fn exists( &mut self, name: &str ) -> bool {
-		for fs in self.filesystems.iter_mut().rev() {
+	fn exists( &self, name: &str ) -> bool {
+		for fs in self.filesystems.iter().rev() {
 			if fs.exists( name ) {
 				return true;
 			}

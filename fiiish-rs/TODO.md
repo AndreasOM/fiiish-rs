@@ -3,7 +3,6 @@
 
 ## In Progress
 
-	
 
 ## TODO
 
@@ -52,6 +51,8 @@
 - [ ] Use deadness for fish death animation?!
 - [ ] Improve coin dropping on death
 
+- [ ] Investigate why Filesystem_Memory exists is not implemented
+
 ## Future
 
 
@@ -78,6 +79,7 @@
 
 ## DONE
 
+- [x] Use oml-audio for audio
 - [x] Automate creating a release for macOS
 - [x] Add drop mode for sounds
 - [x] Add sound effects on macOS

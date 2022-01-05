@@ -159,7 +159,7 @@ impl Filesystem for FilesystemArchive {
 		}
 	}
 
-	fn exists( &mut self, name: &str ) -> bool {
+	fn exists( &self, name: &str ) -> bool {
 		let crc = FilesystemArchive::calc_crc_for_name( name );
 		if self.entries.contains_key( &crc ) {
 			true

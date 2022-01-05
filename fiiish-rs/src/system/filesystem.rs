@@ -11,7 +11,7 @@ pub trait Filesystem {
 
 		Box::new( stream )		
 	}
-	fn exists( &mut self, _name: &str ) -> bool {
+	fn exists( &self, _name: &str ) -> bool {
 		false
 	}
 

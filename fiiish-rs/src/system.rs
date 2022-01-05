@@ -28,6 +28,10 @@ impl System {
 		&mut self.default_filesystem
 	}
 
+	pub fn default_filesystem( &self ) -> & Box< dyn Filesystem > {
+		&self.default_filesystem
+	}
+
 	pub fn set_savegame_filesystem(&mut self, fs: Box< dyn Filesystem > ) {
 		self.savegame_filesystem = fs;
 	}
