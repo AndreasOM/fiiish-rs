@@ -21,6 +21,7 @@
 - [ ] Play music on Linux
 
 - [ ] Remove warnings
+- [ ] Cleanup: Remove unnecessary `use ...`
 
 - [ ] replace `#[derive(Debug)]` with `#[derivative(Debug)]`
 
@@ -31,7 +32,6 @@
 
 
 - [ ] Change UiElement handling from Box <...> to Rc< RefCell< ... > >
-- [ ] Cleanup: Remove unnecessary `use ...`
 - [ ] Improve next zone selection
 - [ ] Add skip to next zone button
 - [ ] Fix Windows build (cheat mode, keyword: shader-crusher)
