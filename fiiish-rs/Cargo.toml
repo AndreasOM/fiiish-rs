@@ -28,6 +28,7 @@ dirs-next = "2.0.0"
 
 # consider removing
 regex = "1.5.4"
+oml-audio = "0.1.2"
 
 
 [target.'cfg(target_os = "macos")'.dependencies]
