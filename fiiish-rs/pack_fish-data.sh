@@ -47,6 +47,12 @@ omt-font create --border 2									\
 	--distancefield-max-distance 4 --distancefield-scale 4	\
 	--input ../fiiish-content/fonts/all_things_pink.ttf
 
+
+omt-soundbank build \
+	--use-version 3 \
+	--output ../fiiish-data/default.omsb	\
+	--input ../fiiish-content/sound/default.soundbank
+
 ## now create the archives
 # :TODO: fix for non unix systems
 cd ../fiiish-data

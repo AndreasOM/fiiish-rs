@@ -1,0 +1,5 @@
+# id;file;max instances;drop mode;flags (loop);
+
+picked_coin;picked_coin;10;OLDEST;NONE;
+fiish_death;fiish_death;1;OLDEST;NONE;
+

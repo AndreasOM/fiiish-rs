@@ -38,6 +38,7 @@ coral-bb.shp
 coral-bc.shp
 coral-ca.shp
 coral-cb.shp
+default.omsb
 fiish_death.wav
 fish_die00.png
 fish_die01.png

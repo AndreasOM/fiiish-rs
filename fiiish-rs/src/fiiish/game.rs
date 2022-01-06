@@ -3,17 +3,10 @@ use std::cell::RefCell;
 
 use oml_audio::{
 	Music,
-	Sound,
+	SoundBank,
 };
 
 use crate::audio::audio_fileloader_system::*;
-
-/*
-use crate::audio::{
-	Music,
-	Sound,
-};
-*/
 
 use crate::math::Vector2;
 use crate::renderer::{
@@ -124,7 +117,7 @@ pub struct Game {
 
 
 	music: Music,
-	sound: Sound,
+	sound_bank: SoundBank,
 }
 
 impl Game {
@@ -148,7 +141,7 @@ impl Game {
 			coin_transfer:					TimedTransfer::new( 1.0, 2.0 ),
 			distance_transfer:				TimedTransfer::new( 2.0, 3.0 ),
 			music:							Music::new(),
-			sound:		 					Sound::new(),
+			sound_bank:		 					SoundBank::new(),
 		}
 	}
 
@@ -171,8 +164,10 @@ impl Game {
 		}
 
 		// load sounds
-		self.sound.load( system, "picked_coin", 10 );
-		self.sound.load( system, "fiish_death", 1 );
+//		self.sound.load( system, "picked_coin", 10 );
+//		self.sound.load( system, "fiish_death", 1 );
+
+		self.sound_bank.load( system, "default.omsb" );
 
 
 		// load texture
@@ -327,7 +322,7 @@ impl Game {
 
 									if OverlapChecker::do_shapes_overlap( &a, &b, &*self.debug_renderer ) {
 										f.kill();
-										self.sound.play( "fiish_death" );
+										self.sound_bank.play( "FIISH_DEATH" );
 									}
 								}
 							};
@@ -377,7 +372,8 @@ impl Game {
 //							p.kill();
 							p.collect();
 							// play pickup sound
-							self.sound.play( "picked_coin" );
+//							dbg!(&self.sound_bank);
+							self.sound_bank.play( "PICKED_COIN" );
 							self.coins += 1;
 						} else if dist < magnet_range {
 							let magnet_speed = 300.0 * euc.time_step() as f32;
