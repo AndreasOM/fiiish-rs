@@ -12,8 +12,10 @@ name="fiiish"
 path="src/fiiish_main.rs"
 
 [features]
-default = []
+#default = []
+default = [ "audio-apple" ]
 standalone = []
+audio-apple = [ "oml-audio/apple" ]
 
 [dependencies]
 glutin = "0.27.0"
@@ -28,8 +30,11 @@ dirs-next = "2.0.0"
 
 # consider removing
 regex = "1.5.4"
-oml-audio = "0.2.0"
 
+[dependencies.oml-audio]
+version = "0.5.0"
+features = []
+# features = [ "apple" ]
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"

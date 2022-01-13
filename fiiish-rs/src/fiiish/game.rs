@@ -2,8 +2,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 use oml_audio::{
-	Music,
-	SoundBank,
+	Audio,
 };
 
 use crate::audio::audio_fileloader_system::*;
@@ -116,8 +115,7 @@ pub struct Game {
 	distance_transfer:	TimedTransfer,
 
 
-	music: Music,
-	sound_bank: SoundBank,
+	audio:				Audio,
 }
 
 impl Game {
@@ -140,8 +138,7 @@ impl Game {
 			player:							Player::new(),
 			coin_transfer:					TimedTransfer::new( 1.0, 2.0 ),
 			distance_transfer:				TimedTransfer::new( 2.0, 3.0 ),
-			music:							Music::new(),
-			sound_bank:		 					SoundBank::new(),
+			audio:							Audio::new(),
 		}
 	}
 
@@ -159,7 +156,7 @@ impl Game {
 		self.entity_configuration_manager.load( system, "entity_config.whatever" );
 
 		// :TODO: remove .mp3
-		if !self.music.load( system, "theme-00.mp3" ) {
+		if !self.audio.load_music( system, "theme-00.mp3" ) {
 			println!("Error loading music");
 		}
 
@@ -167,7 +164,7 @@ impl Game {
 //		self.sound.load( system, "picked_coin", 10 );
 //		self.sound.load( system, "fiish_death", 1 );
 
-		self.sound_bank.load( system, "default.omsb" );
+		self.audio.load_sound_bank( system, "default.omsb" );
 
 
 		// load texture
@@ -227,7 +224,7 @@ impl Game {
 		self.is_music_enabled = self.player.music_enabled();
 		self.is_sound_enabled = self.player.sound_enabled();
 		if self.is_music_enabled {
-			self.music.play();
+			self.audio.play_music();
 		}
 //		self.player.save( system ); // :HACK:
 
@@ -322,7 +319,7 @@ impl Game {
 
 									if OverlapChecker::do_shapes_overlap( &a, &b, &*self.debug_renderer ) {
 										f.kill();
-										self.sound_bank.play( "FIISH_DEATH" );
+										self.audio.play_sound( "FIISH_DEATH" );
 									}
 								}
 							};
@@ -373,7 +370,7 @@ impl Game {
 							p.collect();
 							// play pickup sound
 //							dbg!(&self.sound_bank);
-							self.sound_bank.play( "PICKED_COIN" );
+							self.audio.play_sound( "PICKED_COIN" );
 							self.coins += 1;
 						} else if dist < magnet_range {
 							let magnet_speed = 300.0 * euc.time_step() as f32;
@@ -390,7 +387,7 @@ impl Game {
 	}
 	// :TODO: decide if we need the full WindowUpdateContext here
 	pub fn update( &mut self, wuc: &mut WindowUpdateContext, auc: &mut AppUpdateContext ) {
-		self.music.update( wuc.time_step );
+		self.audio.update();
 		self.time_in_state += auc.time_step() as f32;
 		let mut fish_movement = Vector2::zero();
 		for p in self.fishes.iter_mut() {
@@ -607,9 +604,9 @@ impl Game {
 		self.is_music_enabled = !self.is_music_enabled;
 		self.player.set_music_enabled( self.is_music_enabled );
 		if self.is_music_enabled {
-			self.music.play();
+			self.audio.play_music();
 		} else {
-			self.music.pause();
+			self.audio.pause_music();
 		}
 	}
 	pub fn toggle_sound( &mut self ) {
