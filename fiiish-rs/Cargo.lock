@@ -655,17 +655,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e1769427d0c2b3744756471248e129fa81e1b0b853f243dc44c6a249a3f985d6"
 
 [[package]]
-name = "ep-miniaudio-sys"
-version = "2.5.0"
-source = "git+https://github.com/andreasOM/miniaudio-rs/#c7802b45daecf43f59cba3cf2626ce050cb4af3b"
-dependencies = [
- "bindgen",
- "bitflags",
- "cc",
- "libc",
-]
-
-[[package]]
 name = "fastrand"
 version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1069,15 +1058,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "miniaudio"
-version = "0.11.0"
-source = "git+https://github.com/andreasOM/miniaudio-rs/#c7802b45daecf43f59cba3cf2626ce050cb4af3b"
-dependencies = [
- "bitflags",
- "ep-miniaudio-sys",
-]
-
-[[package]]
 name = "minifb"
 version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1378,15 +1358,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "om-fork-ep-miniaudio-sys"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "526a9f948fc509ca473980a715156b84a5d4a20a60af4bda27be336e456b2d30"
+dependencies = [
+ "bindgen",
+ "bitflags",
+ "cc",
+ "libc",
+]
+
+[[package]]
+name = "om-fork-miniaudio"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "34723e06b0a4873bf5759bb314445b6a8f33002cf65e4afd2d85e78ffd64e79b"
+dependencies = [
+ "bitflags",
+ "om-fork-ep-miniaudio-sys",
+]
+
+[[package]]
 name = "oml-audio"
-version = "0.6.4-dev"
-source = "git+https://github.com/andreasOM/oml-audio/#2eeecc3299e8c6c4ece678de773e809376dc511f"
+version = "0.6.5-alpha"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "169e7c9e0a91239d1f3541aa9d8e85e6712cb6342e183856e6662610723b0ac5"
 dependencies = [
  "cfg_aliases",
- "ep-miniaudio-sys",
  "lewton",
- "miniaudio",
  "objc",
+ "om-fork-ep-miniaudio-sys",
+ "om-fork-miniaudio",
  "ringbuf",
 ]
 

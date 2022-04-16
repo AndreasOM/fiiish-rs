@@ -33,7 +33,7 @@ dirs-next = "2.0.0"
 regex = "1.5.4"
 
 [dependencies.oml-audio]
-version = "0.6.4-alpha"
+version = "0.6.5-alpha"
 features = []
 # features = [ "apple" ]
 
@@ -48,6 +48,6 @@ omt = "0.2"
 # split-debuginfo = "unpacked"
 
 [patch.crates-io]
-oml-audio = { git = 'https://github.com/andreasOM/oml-audio/' }
-ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
-miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
+#oml-audio = { git = 'https://github.com/andreasOM/oml-audio/' }
+#ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
+#miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
