@@ -57,6 +57,16 @@ impl FileLoaderFile for FileLoaderFileForStream {
 	fn name( &self ) -> &str {
 		self.stream.name()
 	}
+	fn pos( &self ) -> usize
+	{
+		self.stream.pos()
+	}
+
+	fn set_pos( &mut self, pos: usize ) -> usize
+	{
+		self.stream.set_pos( pos );
+		self.stream.pos()
+	}
 
 }
 

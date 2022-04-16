@@ -1,8 +1,36 @@
 #!/bin/sh
 
+force_ogg="false"
+if [[ ! -z "$1" ]]
+then
+	if [[ x$1 = "xogg" ]]	# :TODO: allow any position in parameter list
+	then
+		force_ogg="true"
+	fi
+fi
+
 
 # copy music
-cp ../fiiish-content/music/theme-00.mp3 ../fiiish-data/
+source=../fiiish-content/music/theme-00.mp3
+mp3=../fiiish-data/theme-00.mp3
+
+if [[ ${source} -nt ${mp3} ]]
+then
+	echo "Converting/copying ${source} to ${mp3}"
+	cp ${source} ${mp3}
+else
+	echo "${mp3} is new enough"
+fi
+
+ogg=${mp3%.mp3}.ogg
+
+if [[ ${mp3} -nt ${ogg} ]]
+then
+	echo "Converting ${mp3} to .ogg"
+	ffmpeg -y -i ${mp3} -ar 48000 ${ogg}
+else
+	echo "${ogg} is new enough"
+fi
 
 # copy sound :TODO: convert sound if needed
 cp ../fiiish-content/sound/*.wav ../fiiish-data
@@ -55,13 +83,31 @@ omt-soundbank build \
 
 ## now create the archives
 # :TODO: fix for non unix systems
+
+exclude="DO_NOT_PACKAGE"
+un=$(uname)
+
+if [[ x${un} = "xDarwin" ]]
+then
+	if [[ x${force_ogg} = "xtrue" ]] # cheating
+	then
+		echo "Packaging on Darwin, but forcing .ogg"
+	else
+		exclude=".ogg"
+	fi
+else
+	exclude=".mp3"
+fi
+
+echo "Excluding ${exclude}"
+
 cd ../fiiish-data
-ls -1 |grep -v paklist.txt >paklist.txt
+ls -1 |grep -v paklist.txt |grep -v "${exclude}" >paklist.txt
 cd -
 omt-packer pack --basepath ../fiiish-data --output fiiish-data.omar --paklist ../fiiish-data/paklist.txt
 
 cd ../dummy-data
-ls -1 |grep -v paklist.txt >paklist.txt
+ls -1 |grep -v paklist.txt |grep -v "${exclude}" >paklist.txt
 cd -
 omt-packer pack --basepath ../dummy-data --output dummy-data.omar --paklist ../dummy-data/paklist.txt
 

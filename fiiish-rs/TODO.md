@@ -6,6 +6,7 @@
 
 ## TODO
 
+- [ ] Only package needed versions of music for platform
 - [ ] Add UI sounds
 - [ ] Allow disabling sounds
 - [ ] Load sounds via soundbank configuration

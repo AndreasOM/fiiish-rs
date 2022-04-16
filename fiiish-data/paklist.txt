@@ -102,3 +102,4 @@ seaweed-f.shp
 seaweed-g.shp
 template.nzne
 theme-00.mp3
+theme-00.ogg

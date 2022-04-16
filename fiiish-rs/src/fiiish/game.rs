@@ -155,8 +155,7 @@ impl Game {
 		// :TODO: actually load from a file
 		self.entity_configuration_manager.load( system, "entity_config.whatever" );
 
-		// :TODO: remove .mp3
-		if !self.audio.load_music( system, "theme-00.mp3" ) {
+		if !self.audio.load_music_native( system, "theme-00" ) {
 			println!("Error loading music");
 		}
 
@@ -229,6 +228,8 @@ impl Game {
 //		self.player.save( system ); // :HACK:
 
 		dbg!(&self.player);
+
+		self.audio.start();
 //		todo!("die");
 	}
 

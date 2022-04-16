@@ -15,7 +15,8 @@ path="src/fiiish_main.rs"
 #default = []
 default = [ "audio-apple" ]
 standalone = []
-audio-apple = [ "oml-audio/apple" ]
+audio-apple = [ "oml-audio/use_apple" ]
+audio-miniaudio = [ "oml-audio/use_miniaudio" ]
 
 [dependencies]
 glutin = "0.27.0"
@@ -32,7 +33,7 @@ dirs-next = "2.0.0"
 regex = "1.5.4"
 
 [dependencies.oml-audio]
-version = "0.5.0"
+version = "0.6.4-alpha"
 features = []
 # features = [ "apple" ]
 
@@ -45,3 +46,8 @@ omt = "0.2"
 
 [profile.dev]
 # split-debuginfo = "unpacked"
+
+[patch.crates-io]
+oml-audio = { git = 'https://github.com/andreasOM/oml-audio/' }
+ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
+miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
