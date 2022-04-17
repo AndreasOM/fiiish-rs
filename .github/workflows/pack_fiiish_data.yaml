@@ -47,14 +47,23 @@ jobs:
 
       - name: Prepare Variables
         run: |
-          temp=${{ runner.temp }}/archive/
-          mkdir -p ${temp}
+          temp=${{ runner.temp }}
           echo "TEMP=${temp}" >> $GITHUB_ENV
-          echo "TEMP=${temp}"
-          archive=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
-          archive_folder=${{ env.DATE }}/${{ env.VERSION }}
-          echo "ARCHIVE=${{ runner.temp }}/${archive}" >> $GITHUB_ENV
-          echo "ARCHIVE_FOLDER=${archive_folder}" >> $GITHUB_ENV
+          parts_folder=${{ runner.temp }}/parts_folder/
+          mkdir -p ${parts_folder}
+          echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
+          package_folder=${{ runner.temp }}/package_folder/
+          mkdir -p ${package_folder}
+          echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
+          runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
+          fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
+          s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
+          echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
+          echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
+          build_number=$(cat build_number.txt)
+          echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          echo "ARCHIVE=${{ runner.temp }}/${fiiish_data_tgz}" >> $GITHUB_ENV
 
       - uses: actions-rs/toolchain@v1
         with:
@@ -90,12 +99,12 @@ jobs:
       - name: Add build number
         run: |
           echo "Adding build number"
-          cp build_number.txt ${{ env.TEMP }}/
+          cp build_number.txt ${{ env.PARTS_FOLDER }}/
 
       - name: Add data
         run: |
           echo "Adding data"
-          cp fiiish-data.omar ${{ env.TEMP }}/
+          cp fiiish-data.omar ${{ env.PARTS_FOLDER }}/
 
       - name: List result
         run: |
@@ -105,11 +114,11 @@ jobs:
           echo "ref_type:   ${{ github.ref_type }}"
           echo "event_name: ${{ github.event_name }}"
           echo "actor:      ${{ github.actor }}"
-          ls -l ${{ env.TEMP }}/
+          ls -l ${{ env.PARTS_FOLDER }}/
           
       - name: Create archive
         run: |
-          cd ${{ env.TEMP }}
+          cd ${{ env.PARTS_FOLDER }}
           tar czf ${{ env.ARCHIVE }} .
           
       - name: Copy archive to S3
@@ -120,11 +129,3 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "eu-west-1"        
 
-###   - name: Upload Articacts for fiiish-data
-###     uses: actions/upload-artifact@v3
-###     with:
-###       name: fiiish-data-${{ env.VERSION }}-music_mp3
-###       path: |
-###         fiiish-data.omar
-###         build_number.txt
-          

@@ -103,7 +103,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --verbose --release --manifest-path fiiish-rs/Cargo.toml --target ${{ matrix.target }} --features ${{ matrix.features }}
+          args: --verbose --release --manifest-path fiiish-rs/Cargo.toml --target ${{ matrix.target }} --no-default-features --features ${{ matrix.features }}
       
       - name: Build AppIcon
         if: ${{ matrix.os }} == 'macos-11'

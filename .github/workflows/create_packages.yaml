@@ -27,7 +27,7 @@ jobs:
       matrix:
         include:
           - os: macos-11
-            target: x86_64-apple-darwin
+            target: aarch64-apple-darwin
             data_variant: music_mp3
 
     steps:
@@ -52,6 +52,8 @@ jobs:
           echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
           echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
           echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
+          build_number=$(cat build_number.txt)
+          echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
 
       - name: Copy runtime archive from S3
         run: |
