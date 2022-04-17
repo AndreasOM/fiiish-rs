@@ -42,7 +42,7 @@ objc = "0.2.7"
 
 [build-dependencies]
 gl_generator = "0.14.0"
-omt = "0.2"
+omt = "0.4.0-alpha"
 
 [profile.dev]
 # split-debuginfo = "unpacked"
