@@ -1,0 +1,50 @@
+name: Build Runtime
+
+on:
+  # :TODO: add push
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-11
+            target: x86_64-apple-darwin
+            features: "audio-apple"
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      # :TODO: setup platform specific dependencies
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+          target: $${{ matrix.target }}
+
+      - name: Cache crates
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-crates
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ matrix.target }}-${{ hashFiles('fiiish-rs/Cargo.lock') }}
+
+      - name: Run cargo build --release for ${{ matrix.target }}
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --verbose --release --manifest-path fiiish-rs/Cargo.toml --target ${{ matrix.target }} --features ${{ matrix.features }}
+
+          
