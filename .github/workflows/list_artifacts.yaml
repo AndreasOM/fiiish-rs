@@ -5,14 +5,11 @@ on:
 
 jobs:
   build:
-#    runs-on: macos-11
-    runs-on: ubuntu-latest
+    runs-on: macos-11
+#    runs-on: ubuntu-latest
 
     steps:
-      - name: S3 Sync
-##        uses: ItsKarma/aws-cli@v1.70.0
-##        with:
-##          args: s3 ls s3://artifacts.fiiish-rs.omnimad.net/
+      - name: S3 List
         run: |
           aws s3 ls s3://artifacts.fiiish-rs.omnimad.net/
         env:
