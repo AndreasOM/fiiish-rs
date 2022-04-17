@@ -29,6 +29,15 @@ jobs:
           - os: macos-11
             target: x86_64-apple-darwin
             features: "audio-apple"
+          - os: macos-11
+            target: aarch64-apple-darwin
+            features: "audio-apple"
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            features: "audio-miniaudio"
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            features: "audio-miniaudio"
 
     steps:
       - uses: actions/checkout@v3
@@ -52,14 +61,23 @@ jobs:
 
       - name: Prepare Variables
         run: |
-          temp=${{ runner.temp }}/archive/
-          mkdir -p ${temp}
+          temp=${{ runner.temp }}
           echo "TEMP=${temp}" >> $GITHUB_ENV
-          echo "TEMP=${temp}"
-          archive=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
-          archive_folder=${{ env.DATE }}/${{ env.VERSION }}
-          echo "ARCHIVE=${{ runner.temp }}/${archive}" >> $GITHUB_ENV
-          echo "ARCHIVE_FOLDER=${archive_folder}" >> $GITHUB_ENV
+          parts_folder=${{ runner.temp }}/parts_folder/
+          mkdir -p ${parts_folder}
+          echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
+          package_folder=${{ runner.temp }}/package_folder/
+          mkdir -p ${package_folder}
+          echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
+          runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
+          fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
+          s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
+          echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
+          echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
+          build_number=$(cat build_number.txt)
+          echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          echo "ARCHIVE=${{ runner.temp }}/${runtime_tgz}" >> $GITHUB_ENV
 
       - uses: actions-rs/toolchain@v1
         with:
@@ -91,23 +109,39 @@ jobs:
         if: ${{ matrix.os }} == 'macos-11'
         run: |
           echo "Creating AppIcon"
-          echo ":TODO: copy AppIcon to ${{ env.TEMP }}"
+          /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
+            --compile ${{ env.PARTS_FOLDER }}
+            --app-icon AppIcon \
+            --platform macosx \
+            --minimum-deployment-target 10.0 \
+            fiiish-rs/Assets.xcassets \
+            --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist          
 
       - name: Add Info.plist
         if: ${{ matrix.os }} == 'macos-11'
         run: |
           echo "Adding Info.plist"
-          cp fiiish-rs/Info.plist ${{ env.TEMP }}/
+          version=$(grep version fiiish-rs/Cargo.toml|cut -d"\"" -f2|head -n 1)
+          exp1="s/<key>CFBundleVersion<\\/key><string>.*<\\/string>/<key>CFBundleVersion<\\/key><string>${{ env.BUILD_NUMBER }}<\\/string>/g"
+          exp2="s/<key>CFBundleShortVersionString<\\/key><string>.*<\\/string>/<key>CFBundleShortVersionString<\\/key><string>${version}<\\/string>/g"
+          cat fiiish-rs/Info.plist|sed ${exp1} |sed ${exp2} > ${{ env.PARTS_FOLDER }}/Info.plist
 
       - name: Add build number
         run: |
           echo "Adding build number"
-          cp build_number.txt ${{ env.TEMP }}/
+          cp build_number.txt ${{ env.PARTS_FOLDER }}/
 
       - name: Add binary
+        if: ${{ matrix.os }} != 'windows-latest'
         run: |
           echo "Adding binary number"
-          cp fiiish-rs/target/${{ matrix.target }}/release/fiiish ${{ env.TEMP }}/
+          cp fiiish-rs/target/${{ matrix.target }}/release/fiiish ${{ env.PARTS_FOLDER }}/
+
+      - name: Add binary .exe
+        if: ${{ matrix.os }} != 'windows-latest'
+        run: |
+          echo "Adding binary number"
+          cp fiiish-rs/target/${{ matrix.target }}/release/fiiish.exe ${{ env.PARTS_FOLDER }}/
 
       - name: List result
         run: |
@@ -120,12 +154,12 @@ jobs:
           echo "run_id         ${{ github.run_id }}"
           # git rev-list --count ${{ github.sha }} # only works with deep clones
           cat build_number.txt
-          # ls -l fiiish-rs/target/${{ matrix.target }}/release/
-          ls -l ${{ env.TEMP }}/
+          ls -l fiiish-rs/target/${{ matrix.target }}/release/
+          ls -l ${{ env.PARTS_FOLDER }}/
           
       - name: Create archive
         run: |
-          cd ${{ env.TEMP }}
+          cd ${{ env.PARTS_FOLDER }}
           tar czf ${{ env.ARCHIVE }} .
           ls -l ${{ env.ARCHIVE }}
 
