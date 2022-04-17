@@ -3,7 +3,13 @@ name: Build Runtime
 on:
   # :TODO: add push
   workflow_dispatch:
-
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+        default: 'latest'
+        type: string
+        
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -49,6 +55,12 @@ jobs:
       
       - name: List result
         run: |
+          echo sha:        ${{ github.sha }}
+          echo ref_name:   ${{ github.ref_name }}
+          echo ref:        ${{ github.ref }}
+          echo ref_type:   ${{ github.ref_type }}
+          echo event_name: ${{ github.event_name }}
+          echo actor:      ${{ github.actor }}
           ls -l fiiish-rs/target/${{ matrix.target }}/release/
           
       - name: Upload Articacts for  ${{ matrix.target }}
@@ -56,5 +68,8 @@ jobs:
         with:
           name: fiiish-rs-VERSION-${{ matrix.target }}
           path: |
-            fiiish-rs/target/${{ matrix.target }}/release/fiiish # :TODO: handle binary extension
+            fiiish-rs/target/${{ matrix.target }}/release/fiiish
+            
+            
+            # :TODO: handle binary extension
           
