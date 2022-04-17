@@ -37,18 +37,29 @@ jobs:
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
 
+### Does not work because github is brain dead
+###   - name: Download runtime
+###     uses: actions/download-artifact@v3
+###     with:
+###       name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
+###       path: runtime
+###       
+###      - name: Download data
+###        uses: actions/download-artifact@v3
+###        with:
+###          name: fiiish-data-${{ env.VERSION }}-${{ matrix.data_variant }}
+###          path: data
+    
+
       - name: Download runtime
-        uses: actions/download-artifact@v3
+        uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: build_runtime.yaml
           name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
           path: runtime
+          search_artifacts: true
+          skip_unpack: false
 
-      - name: Download data
-        uses: actions/download-artifact@v3
-        with:
-          name: fiiish-data-${{ env.VERSION }}-${{ matrix.data_variant }}
-          path: data
-    
       - name: Display structure of downloaded files
         run: |
           ls -R
