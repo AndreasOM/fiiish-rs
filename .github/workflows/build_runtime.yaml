@@ -114,8 +114,8 @@ jobs:
             --app-icon AppIcon \
             --platform macosx \
             --minimum-deployment-target 10.0 \
-            fiiish-rs/Assets.xcassets \
-            --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist          
+            --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
+            fiiish-rs/Assets.xcassets
 
       - name: Add Info.plist
         if: ${{ matrix.os }} == 'macos-11'
