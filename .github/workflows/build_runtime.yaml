@@ -75,7 +75,7 @@ jobs:
         if: ${{ matrix.os }} == 'macos-11'
         run: |
           echo "Adding Info.plist"
-          cp Info.plist fiiish-rs/target/${{ matrix.target }}/release/
+          cp fiiish-rs/Info.plist fiiish-rs/target/${{ matrix.target }}/release/
 
       - name: Add build number
         run: |
