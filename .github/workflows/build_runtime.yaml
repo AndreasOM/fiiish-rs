@@ -79,6 +79,27 @@ jobs:
           echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
           echo "ARCHIVE=${{ runner.temp }}/${runtime_tgz}" >> $GITHUB_ENV
 
+      - name: Build AppIcon
+        if: ${{ matrix.os }} == 'macos-11'
+        run: |
+          echo "Creating AppIcon"
+          /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version
+          echo ${{ env.PARTS_FOLDER }}
+          touch ${{ env.PARTS_FOLDER }}/test.txt
+          ls -lR ${{ env.PARTS_FOLDER }}
+          ls -l fiiish-rs/Assets.xcassets
+          /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
+            --version \
+            --warnings \
+            --errors \
+            --notices \
+            --compile ${{ env.PARTS_FOLDER }}
+            --app-icon AppIcon \
+            --platform macosx \
+            --minimum-deployment-target 10.0 \
+            --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
+            fiiish-rs/Assets.xcassets
+
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -105,24 +126,6 @@ jobs:
           command: build
           args: --verbose --release --manifest-path fiiish-rs/Cargo.toml --target ${{ matrix.target }} --no-default-features --features ${{ matrix.features }}
       
-      - name: Build AppIcon
-        if: ${{ matrix.os }} == 'macos-11'
-        run: |
-          echo "Creating AppIcon"
-          /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version
-          ls -lR ${{ env.PARTS_FOLDER }}
-          ls -l fiiish-rs/Assets.xcassets
-          /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
-            --version \
-            --warnings \
-            --errors \
-            --notices \
-            --compile ${{ env.PARTS_FOLDER }}
-            --app-icon AppIcon \
-            --platform macosx \
-            --minimum-deployment-target 10.0 \
-            --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
-            fiiish-rs/Assets.xcassets
 
       - name: Add Info.plist
         if: ${{ matrix.os }} == 'macos-11'
