@@ -124,6 +124,7 @@ jobs:
         run: |
           cd ${{ env.TEMP }}
           tar czf ${{ env.ARCHIVE }} .
+          ls -l ${{ env.ARCHIVE }}
 
       - name: Sync archive to S3
         run: |
