@@ -190,7 +190,7 @@ jobs:
 
       - name: Copy archive to S3
         run: |
-          aws s3 cp ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.ARCHIVE_FOLDER }}/
+          aws s3 cp ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
