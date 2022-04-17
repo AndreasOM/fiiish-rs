@@ -31,10 +31,20 @@ jobs:
             data_variant: music_mp3
 
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+
       - name: Generate VERSION
         run: |
-          VERSION=${{ github.sha }}
+          #VERSION=${{ github.event.inputs.ref }}
+          VERSION=$(git show -s --format=%H  HEAD)
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
+          echo "DATE=${DATE}" >> $GITHUB_ENV
+          echo "VERSION: ${VERSION}"
+          echo "DATE:    ${DATE}"
 
       - name: Prepare Variables
         run: |
@@ -52,8 +62,9 @@ jobs:
           echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
           echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
           echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
-          build_number=$(cat build_number.txt)
-          echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          # build number will be taken from the parts
+          # build_number=$(cat build_number.txt)
+          # echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
 
       - name: Copy runtime archive from S3
         run: |
