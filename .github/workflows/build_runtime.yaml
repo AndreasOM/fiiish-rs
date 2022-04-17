@@ -46,5 +46,15 @@ jobs:
         with:
           command: build
           args: --verbose --release --manifest-path fiiish-rs/Cargo.toml --target ${{ matrix.target }} --features ${{ matrix.features }}
-
+      
+      - name: List result
+        run: |
+          ls -l fiiish-rs/target/${{ matrix.target }}/release/
+          
+      - name: Upload Articacts for  ${{ matrix.target }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: fiiish-rs-VERSION-${{ matrix.target }}
+          path: |
+            fiiish-rs/target/${{ matrix.target }}/release/fiiish # :TODO: handle binary extension
           
