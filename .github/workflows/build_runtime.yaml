@@ -26,18 +26,18 @@ jobs:
     strategy:
       matrix:
         include:
-###          - os: macos-11
-###            target: x86_64-apple-darwin
-###            features: "audio-apple"
+          - os: macos-11
+            target: x86_64-apple-darwin
+            features: "audio-apple"
           - os: macos-11
             target: aarch64-apple-darwin
             features: "audio-apple"
-###       - os: ubuntu-latest
-###         target: x86_64-unknown-linux-gnu
-###         features: "audio-miniaudio"
-###          - os: windows-latest
-###            target: x86_64-pc-windows-msvc
-###            features: "audio-miniaudio"
+       - os: ubuntu-latest
+         target: x86_64-unknown-linux-gnu
+         features: "audio-miniaudio"
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            features: "audio-miniaudio"
 
     steps:
       - uses: actions/checkout@v3
@@ -90,7 +90,7 @@ jobs:
           echo "macOS"
 
       - name: Build AppIcon
-        if: ${{ matrix.os }} == 'macos-11'
+        if: ${{ matrix.os == 'macos-11' }}
         run: |
           echo "Creating AppIcon"
           /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version
@@ -140,7 +140,7 @@ jobs:
       
 
       - name: Add Info.plist
-        if: ${{ matrix.os }} == 'macos-11'
+        if: ${{ matrix.os == 'macos-11' }}
         run: |
           echo "Adding Info.plist"
           version=$(grep version fiiish-rs/Cargo.toml|cut -d"\"" -f2|head -n 1)
@@ -154,7 +154,7 @@ jobs:
           cp build_number.txt ${{ env.PARTS_FOLDER }}/
 
       - name: Add binary
-        if: ${{ matrix.os }} != 'windows-latest'
+        if: ${{ matrix.os != 'windows-latest' }}
         run: |
           echo "Adding binary number"
           cp fiiish-rs/target/${{ matrix.target }}/release/fiiish ${{ env.PARTS_FOLDER }}/
@@ -192,17 +192,3 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "eu-west-1"        
-
-###      - name: Upload Articacts for  ${{ matrix.target }}
-###        uses: actions/upload-artifact@v3
-###        with:
-###          name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
-###          path: |
-###            fiiish-rs/target/${{ matrix.target }}/release/fiiish
-###            build_number.txt
-###            fiiish-rs/target/${{ matrix.target }}/release/Info.plist
-###            
-            
-            
-            # :TODO: handle binary extension
-          
