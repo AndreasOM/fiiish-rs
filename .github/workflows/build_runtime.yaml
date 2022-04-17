@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.ref }}
-          fetch-depth: 0
+          fetch-depth: 1
 #          lfs: ''
 #          submodules: ''
 
@@ -66,6 +66,22 @@ jobs:
           command: build
           args: --verbose --release --manifest-path fiiish-rs/Cargo.toml --target ${{ matrix.target }} --features ${{ matrix.features }}
       
+      - name: Build AppIcon
+        if: ${{ matrix.os }} == 'macos-11'
+        run: |
+          echo "Creating AppIcon"
+
+      - name: Add Info.plist
+        if: ${{ matrix.os }} == 'macos-11'
+        run: |
+          echo "Adding Info.plist"
+          cp Info.plist fiiish-rs/target/${{ matrix.target }}/release/
+
+      - name: Add build number
+        run: |
+          echo "Adding build number"
+          cp build_number.txt fiiish-rs/target/${{ matrix.target }}/release/
+
       - name: List result
         run: |
           echo "sha:           ${{ github.sha }}"
@@ -76,7 +92,8 @@ jobs:
           echo "actor:         ${{ github.actor }}"
           echo "GITHUB_RUN_ID  ${{ env.GITHUB_RUN_ID }}"
           echo "run_id         ${{ github.run_id }}"
-          git rev-list --count ${{ github.sha }}
+          # git rev-list --count ${{ github.sha }}
+          cat build_number.txt
           ls -l fiiish-rs/target/${{ matrix.target }}/release/
           
       - name: Generate VERSION
@@ -90,6 +107,9 @@ jobs:
           name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
           path: |
             fiiish-rs/target/${{ matrix.target }}/release/fiiish
+            build_number.txt
+            fiiish-rs/target/${{ matrix.target }}/release/Info.plist
+            
             
             
             # :TODO: handle binary extension
