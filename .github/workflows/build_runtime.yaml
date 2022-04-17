@@ -26,7 +26,7 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
-          target: $${{ matrix.target }}
+          target: ${{ matrix.target }}
 
       - name: Cache crates
         uses: actions/cache@v2
