@@ -1,0 +1,88 @@
+name: Pack Fiiish Data
+
+on:
+  # :TODO: add push
+  workflow_dispatch:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - latest
+          - auto
+          - ref
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+        
+jobs:
+  build:
+    runs-on: ubuntu-linux
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+#          lfs: ''
+#          submodules: ''
+
+      # :TODO: setup platform specific dependencies
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Cache crates
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-crates
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('fiiish-rs/Cargo.lock') }}
+
+          # :TODO: technically the above key is wrong
+
+      - name: Install omt
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: omt
+
+      - name: Pack fiiish data
+        run: |
+          ./workflow/helpers/pack_data.sh fiiish-data fiiish-data.omar paklist.txt music_mp3
+
+      - name: List result
+        run: |
+          echo "sha:        ${{ github.sha }}"
+          echo "ref_name:   ${{ github.ref_name }}"
+          echo "ref:        ${{ github.ref }}"
+          echo "ref_type:   ${{ github.ref_type }}"
+          echo "event_name: ${{ github.event_name }}
+          echo "actor:      ${{ github.actor }}"
+          ls -l fiiish-data.omar
+          
+      - name: Generate VERSION
+        run: |
+          VERSION=${{ github.sha }}
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          
+      - name: Upload Articacts for fiiish-data
+        uses: actions/upload-artifact@v3
+        with:
+          name: fiiish-data-${{ env.VERSION }}-music_mp3
+          path: |
+            fiiish-data.omar
+          
