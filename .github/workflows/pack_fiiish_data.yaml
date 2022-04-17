@@ -44,12 +44,13 @@ jobs:
 
       - name: Prepare Variables
         run: |
-          temp=${{ runner.temp }}
+          temp=${{ runner.temp }}/archive/
+          mkdir -p ${temp}
           echo "TEMP=${temp}" >> $GITHUB_ENV
           echo "TEMP=${temp}"
           archive=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
           archive_folder=${{ env.DATE }}/${{ env.VERSION }}
-          echo "ARCHIVE=${archive}" >> $GITHUB_ENV
+          echo "ARCHIVE=${{ runner.temp }}/${archive}" >> $GITHUB_ENV
           echo "ARCHIVE_FOLDER=${archive_folder}" >> $GITHUB_ENV
 
       - uses: actions-rs/toolchain@v1
