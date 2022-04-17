@@ -71,9 +71,9 @@ jobs:
 
       - name: Unpack archives
         run: |
-        cd ${{ env.PARTS_FOLDER }}
-        tar xzf ${{ env.TEMP }}/${{ env.runtime_tgz }}
-        tar xzf ${{ env.TEMP }}/${{ env.fiiish_data_tgz }}
+          cd ${{ env.PARTS_FOLDER }}
+          tar xzf ${{ env.TEMP }}/${{ env.runtime_tgz }}
+          tar xzf ${{ env.TEMP }}/${{ env.fiiish_data_tgz }}
 
       - name: Display temp
         run: |
