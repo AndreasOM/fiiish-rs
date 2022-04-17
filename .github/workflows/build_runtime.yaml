@@ -68,12 +68,13 @@ jobs:
       
       - name: List result
         run: |
-          echo "sha:        ${{ github.sha }}"
-          echo "ref_name:   ${{ github.ref_name }}"
-          echo "ref:        ${{ github.ref }}"
-          echo "ref_type:   ${{ github.ref_type }}"
-          echo "event_name: ${{ github.event_name }}"
-          echo "actor:      ${{ github.actor }}"
+          echo "sha:           ${{ github.sha }}"
+          echo "ref_name:      ${{ github.ref_name }}"
+          echo "ref:           ${{ github.ref }}"
+          echo "ref_type:      ${{ github.ref_type }}"
+          echo "event_name:    ${{ github.event_name }}"
+          echo "actor:         ${{ github.actor }}"
+          echo "GITHUB_RUN_ID" ${{ env.GITHUB_RUN_ID }}"
           ls -l fiiish-rs/target/${{ matrix.target }}/release/
           
       - name: Generate VERSION
