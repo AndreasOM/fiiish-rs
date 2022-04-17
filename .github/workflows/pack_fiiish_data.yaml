@@ -82,7 +82,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: install
-          args: omt
+          args: --force omt
 
       - name: Pack fiiish data
         run: |
