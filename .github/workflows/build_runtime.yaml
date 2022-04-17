@@ -42,7 +42,8 @@ jobs:
 
       - name: Generate VERSION
         run: |
-          VERSION=${{ github.sha }}
+          #VERSION=${{ github.event.inputs.ref }}
+          VERSION=$(git show -s --format=%H  HEAD)
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
           DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
           echo "DATE=${DATE}" >> $GITHUB_ENV
