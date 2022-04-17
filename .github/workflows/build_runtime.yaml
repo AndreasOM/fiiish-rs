@@ -64,7 +64,7 @@ jobs:
 
       - name: Prepare Variables
         run: |
-          if [ "${{matrix.os}}" = "windows-latest"]
+          if [ "${{matrix.os}}" = "windows-latest" ]
           then
             temp=$(pwd)/some_temp
             mkdir ${temp}
