@@ -31,6 +31,10 @@ If things are to hard/big to handle, slice them up.
 - runtime + (optional) fiiish-data + dummy-data -> package (osx, windows, linux, etc)
 
 
+### Structure
+/temp/
+	/parts/
+	/package/
 
 ## TODO
 

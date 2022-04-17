@@ -36,33 +36,47 @@ jobs:
           VERSION=${{ github.sha }}
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
+      - name: Prepare Variables
+        run: |
+          temp=${{ runner.temp }}
+          echo "TEMP=${temp}" >> $GITHUB_ENV
+          parts_folder=${{ runner.temp }}/parts_folder/
+          mkdir -p ${parts_folder}
+          echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
+          package_folder=${{ runner.temp }}/package_folder/
+          mkdir -p ${package_folder}
+          echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
+          runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
+          fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
+          s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
+          echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
+          echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
 
-### Does not work because github is brain dead
-###   - name: Download runtime
-###     uses: actions/download-artifact@v3
-###     with:
-###       name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
-###       path: runtime
-###       
-###      - name: Download data
-###        uses: actions/download-artifact@v3
-###        with:
-###          name: fiiish-data-${{ env.VERSION }}-${{ matrix.data_variant }}
-###          path: data
-    
+      - name: Copy runtime archive from S3
+        run: |
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.ARCHIVE_FOLDER }}/${{ env.RUNTIME_TGZ }} ${{ env.TEMP }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
 
-      - name: Download runtime
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: build_runtime.yaml
-          name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
-          path: runtime
-          search_artifacts: true
-          skip_unpack: false
-          run_id: 2179993883
+      - name: Copy fiiish-data archive from S3
+        run: |
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.ARCHIVE_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} ${{ env.TEMP }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"
 
-      - name: Display structure of downloaded files
+      - name: Unpack archives
+        run: |
+        cd ${{ env.PARTS_FOLDER }}
+        tar xzf ${{ env.TEMP }}/${{ env.runtime_tgz }}
+        tar xzf ${{ env.TEMP }}/${{ env.fiiish_data_tgz }}
+
+      - name: Display temp
         run: |
           ls -R
-#        working-directory: .
+        working-directory: ${{ env.TEMP }}
 
