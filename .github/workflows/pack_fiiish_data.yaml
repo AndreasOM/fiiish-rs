@@ -44,12 +44,7 @@ jobs:
 
       - name: Prepare Variables
         run: |
-          if [ "${{ runner.os }}" = "macos-11" ]
-          then
-            temp=$(mktemp -d temp)
-          else
-            temp=$(mktemp)
-          fi
+          temp=${{ runner.temp }}
           echo "TEMP=${temp}" >> $GITHUB_ENV
           echo "TEMP=${temp}"
           archive=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
