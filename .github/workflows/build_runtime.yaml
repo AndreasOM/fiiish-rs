@@ -63,10 +63,10 @@ jobs:
         run: |
           temp=${{ runner.temp }}
           echo "TEMP=${temp}" >> $GITHUB_ENV
-          parts_folder=${{ runner.temp }}/parts_folder/
+          parts_folder=${{ runner.temp }}/parts_folder
           mkdir -p ${parts_folder}
           echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
-          package_folder=${{ runner.temp }}/package_folder/
+          package_folder=${{ runner.temp }}/package_folder
           mkdir -p ${package_folder}
           echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
           runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
@@ -86,8 +86,10 @@ jobs:
           /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version
           echo ${{ env.PARTS_FOLDER }}
           touch ${{ env.PARTS_FOLDER }}/test.txt
-          ls -lR ${{ env.PARTS_FOLDER }}
+          echo "---"
+          ls -l ${{ env.PARTS_FOLDER }}
           ls -l fiiish-rs/Assets.xcassets
+          echo "---"
           /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
             --version \
             --warnings \
