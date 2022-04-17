@@ -40,6 +40,28 @@ jobs:
 
       # :TODO: setup platform specific dependencies
 
+      - name: Generate VERSION
+        run: |
+          VERSION=${{ github.sha }}
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          DATE=$(git show -s --format=%ci ${{ github.sha }}|cut -b1-10)
+          echo "DATE=${DATE}" >> $GITHUB_ENV
+
+      - name: Prepare Variables
+        run: |
+          if [ "${{ runner.os }}" = "macos-11" ]
+          then
+            temp=$(mktemp -d temp)
+          else
+            temp=$(mktemp)
+          fi
+          echo "TEMP=${temp}" >> $GITHUB_ENV
+          echo "TEMP=${temp}"
+          archive=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
+          archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "ARCHIVE=${archive}" >> $GITHUB_ENV
+          echo "ARCHIVE_FOLDER=${archive_folder}" >> $GITHUB_ENV
+
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -70,17 +92,23 @@ jobs:
         if: ${{ matrix.os }} == 'macos-11'
         run: |
           echo "Creating AppIcon"
+          echo ":TODO: copy AppIcon to ${{ env.TEMP }}"
 
       - name: Add Info.plist
         if: ${{ matrix.os }} == 'macos-11'
         run: |
           echo "Adding Info.plist"
-          cp fiiish-rs/Info.plist fiiish-rs/target/${{ matrix.target }}/release/
+          cp fiiish-rs/Info.plist ${{ env.TEMP }}/
 
       - name: Add build number
         run: |
           echo "Adding build number"
-          cp build_number.txt fiiish-rs/target/${{ matrix.target }}/release/
+          cp build_number.txt ${{ env.TEMP }}/
+
+      - name: Add binary
+        run: |
+          echo "Adding binary number"
+          cp fiiish-rs/target/${{ matrix.target }}/release/fiiish ${{ env.TEMP }}/
 
       - name: List result
         run: |
@@ -90,26 +118,38 @@ jobs:
           echo "ref_type:      ${{ github.ref_type }}"
           echo "event_name:    ${{ github.event_name }}"
           echo "actor:         ${{ github.actor }}"
-          echo "GITHUB_RUN_ID  ${{ env.GITHUB_RUN_ID }}"
           echo "run_id         ${{ github.run_id }}"
-          # git rev-list --count ${{ github.sha }}
+          # git rev-list --count ${{ github.sha }} # only works with deep clones
           cat build_number.txt
-          ls -l fiiish-rs/target/${{ matrix.target }}/release/
+          # ls -l fiiish-rs/target/${{ matrix.target }}/release/
+          ls -l ${{ env.TEMP }}/
           
-      - name: Generate VERSION
+          
+
+      - name: Create archive
         run: |
-          VERSION=${{ github.sha }}
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          
-      - name: Upload Articacts for  ${{ matrix.target }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
-          path: |
-            fiiish-rs/target/${{ matrix.target }}/release/fiiish
-            build_number.txt
-            fiiish-rs/target/${{ matrix.target }}/release/Info.plist
-            
+          cd ${{ env.TEMP }}
+          tar czf ${{ env.ARCHIVE }} .
+
+
+    steps:
+      - name: Sync archive to S3
+        run: |
+          aws s3 sync ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.ARCHIVE_FOLDER }}/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
+
+###      - name: Upload Articacts for  ${{ matrix.target }}
+###        uses: actions/upload-artifact@v3
+###        with:
+###          name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
+###          path: |
+###            fiiish-rs/target/${{ matrix.target }}/release/fiiish
+###            build_number.txt
+###            fiiish-rs/target/${{ matrix.target }}/release/Info.plist
+###            
             
             
             # :TODO: handle binary extension
