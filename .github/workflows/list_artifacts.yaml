@@ -5,8 +5,9 @@ on:
 
 jobs:
   build:
-    runs-on: macos-11
+#    runs-on: macos-11
 #    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: S3 List
