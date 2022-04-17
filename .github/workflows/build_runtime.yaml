@@ -64,7 +64,13 @@ jobs:
 
       - name: Prepare Variables
         run: |
-          temp=${{ runner.temp }}
+          if [ "${{matrix.os}}" = "windows-latest"]
+          then
+            temp=$(pwd)/some_temp
+            mkdir ${temp}
+          else
+            temp=${{ runner.temp }}
+          fi
           echo "TEMP=${temp}" >> $GITHUB_ENV
           parts_folder=${{ runner.temp }}/parts_folder
           mkdir -p ${parts_folder}
