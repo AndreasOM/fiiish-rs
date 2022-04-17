@@ -85,7 +85,7 @@ jobs:
           echo "Not windows"
 
       - name: macOS
-        if: ${{ matrix.os != 'macos-11' }}
+        if: ${{ matrix.os == 'macos-11' }}
         run: |
           echo "macOS"
 
