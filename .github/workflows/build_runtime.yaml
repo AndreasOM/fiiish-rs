@@ -90,17 +90,18 @@ jobs:
           ls -l ${{ env.PARTS_FOLDER }}
           ls -l fiiish-rs/Assets.xcassets
           echo "---"
-          /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
-            --version \
-            --warnings \
-            --errors \
-            --notices \
-            --compile ${{ env.PARTS_FOLDER }}
-            --app-icon AppIcon \
-            --platform macosx \
-            --minimum-deployment-target 10.0 \
-            --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
-            fiiish-rs/Assets.xcassets
+            /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --warnings --errors --notices --compile /Users/runner/work/_temp/parts_folder --app-icon AppIcon --platform macosx --minimum-deployment-target 10.0 --output-partial-info-plist /Users/runner/work/_temp/parts_folder/partial-Info.plist fiiish-rs/Assets.xcassets
+###          /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
+###            --version \
+###            --warnings \
+###            --errors \
+###            --notices \
+###            --compile ${{ env.PARTS_FOLDER }}
+###            --app-icon AppIcon \
+###            --platform macosx \
+###            --minimum-deployment-target 10.0 \
+###            --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
+###            fiiish-rs/Assets.xcassets
 
       - uses: actions-rs/toolchain@v1
         with:
