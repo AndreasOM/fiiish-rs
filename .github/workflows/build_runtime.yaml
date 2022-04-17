@@ -74,7 +74,9 @@ jobs:
           echo "ref_type:      ${{ github.ref_type }}"
           echo "event_name:    ${{ github.event_name }}"
           echo "actor:         ${{ github.actor }}"
-          echo "GITHUB_RUN_ID" ${{ env.GITHUB_RUN_ID }}"
+          echo "GITHUB_RUN_ID  ${{ env.GITHUB_RUN_ID }}"
+          echo "run_id         ${{ github.run_id }}"
+          git rev-list --count ${{ github.sha }}
           ls -l fiiish-rs/target/${{ matrix.target }}/release/
           
       - name: Generate VERSION
