@@ -124,15 +124,11 @@ jobs:
           # ls -l fiiish-rs/target/${{ matrix.target }}/release/
           ls -l ${{ env.TEMP }}/
           
-          
-
       - name: Create archive
         run: |
           cd ${{ env.TEMP }}
           tar czf ${{ env.ARCHIVE }} .
 
-
-    steps:
       - name: Sync archive to S3
         run: |
           aws s3 sync ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.ARCHIVE_FOLDER }}/
