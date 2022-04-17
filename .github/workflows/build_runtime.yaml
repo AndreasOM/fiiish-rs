@@ -79,6 +79,16 @@ jobs:
           echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
           echo "ARCHIVE=${{ runner.temp }}/${runtime_tgz}" >> $GITHUB_ENV
 
+      - name: Not windows
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          echo "Not windows"
+
+      - name: macOS
+        if: ${{ matrix.os != 'macos-11' }}
+        run: |
+          echo "macOS"
+
       - name: Build AppIcon
         if: ${{ matrix.os }} == 'macos-11'
         run: |
@@ -101,17 +111,6 @@ jobs:
               --minimum-deployment-target 10.0 \
               --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
               fiiish-rs/Assets.xcassets
-###          /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
-###            --version \
-###            --warnings \
-###            --errors \
-###            --notices \
-###            --compile ${{ env.PARTS_FOLDER }}
-###            --app-icon AppIcon \
-###            --platform macosx \
-###            --minimum-deployment-target 10.0 \
-###            --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
-###            fiiish-rs/Assets.xcassets
 
       - uses: actions-rs/toolchain@v1
         with:
@@ -161,9 +160,9 @@ jobs:
           cp fiiish-rs/target/${{ matrix.target }}/release/fiiish ${{ env.PARTS_FOLDER }}/
 
       - name: Add binary .exe
-        if: ${{ matrix.os }} != 'windows-latest'
+        if: ${{ matrix.os == 'windows-latest' }}
         run: |
-          echo "Adding binary number"
+          echo "Adding binary .exe"
           cp fiiish-rs/target/${{ matrix.target }}/release/fiiish.exe ${{ env.PARTS_FOLDER }}/
 
       - name: List result
