@@ -72,10 +72,10 @@ jobs:
             temp=${{ runner.temp }}
           fi
           echo "TEMP=${temp}" >> $GITHUB_ENV
-          parts_folder=${{ runner.temp }}/parts_folder
+          parts_folder=${temp}/parts_folder
           mkdir -p ${parts_folder}
           echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
-          package_folder=${{ runner.temp }}/package_folder
+          package_folder=${temp}/package_folder
           mkdir -p ${package_folder}
           echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
           runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
@@ -86,7 +86,7 @@ jobs:
           echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
           build_number=$(cat build_number.txt)
           echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
-          echo "ARCHIVE=${{ runner.temp }}/${runtime_tgz}" >> $GITHUB_ENV
+          echo "ARCHIVE=${temp}/${runtime_tgz}" >> $GITHUB_ENV
 
       - name: Not windows
         if: ${{ matrix.os != 'windows-latest' }}
