@@ -109,7 +109,13 @@ jobs:
         if: ${{ matrix.os }} == 'macos-11'
         run: |
           echo "Creating AppIcon"
+          ls ${{ env.PARTS_FOLDER }}
+          ls fiiish-rs/Assets.xcassets
           /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
+            --version \
+            --warnings \
+            --errors \
+            --notices \
             --compile ${{ env.PARTS_FOLDER }}
             --app-icon AppIcon \
             --platform macosx \
