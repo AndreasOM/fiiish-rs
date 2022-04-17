@@ -1,0 +1,56 @@
+name: Create Packages
+
+on:
+  # :TODO: add push
+  workflow_dispatch:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - latest
+          - auto
+          - ref
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+        
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-11
+            target: x86_64-apple-darwin
+            data_variant: music_mp3
+
+    steps:
+      - name: Generate VERSION
+        run: |
+          VERSION=${{ github.sha }}
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+
+      - name: Download runtime
+        uses: actions/download-artifact@v3
+        with:
+          name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
+          path: runtime
+
+      - name: Download data
+        uses: actions/download-artifact@v3
+        with:
+          name: fiiish-data-${{ env.VERSION }}-${{ matrix.data_variant }}
+          path: data
+    
+      - name: Display structure of downloaded files
+        run: |
+          ls -R
+#        working-directory: .
+
