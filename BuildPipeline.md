@@ -29,3 +29,15 @@ If things are to hard/big to handle, slice them up.
 - dummy-content -> dummy-data
 - [build_runtime] fiiish-rs (source) -> runtime
 - runtime + (optional) fiiish-data + dummy-data -> package (osx, windows, linux, etc)
+
+
+
+## TODO
+
+- [ ] Create macos.app package
+	- [ ] Build number
+	- [ ] Info.plist
+	- [ ] aarch64 binary
+	- [ ] Add AppIcon compilation to build_binary action
+	
+
