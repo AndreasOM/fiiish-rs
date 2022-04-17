@@ -1,0 +1,20 @@
+name: List Artifacts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-11
+
+    steps:
+      - name:
+
+      - name: S3 Sync
+        uses: ItsKarma/aws-cli@v1.70.0
+        with:
+          args: s3 ls s3://artifacts.fiiish-rs.omnimad.net/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
