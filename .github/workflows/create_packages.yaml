@@ -27,7 +27,8 @@ jobs:
       matrix:
         include:
           - os: macos-11
-            target: aarch64-apple-darwin
+#            target: aarch64-apple-darwin
+            target: x86_64-apple-darwin
             data_variant: music_mp3
 
     steps:
