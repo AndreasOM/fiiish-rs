@@ -72,7 +72,7 @@ jobs:
           echo "ref_name:   ${{ github.ref_name }}"
           echo "ref:        ${{ github.ref }}"
           echo "ref_type:   ${{ github.ref_type }}"
-          echo "event_name: ${{ github.event_name }}
+          echo "event_name: ${{ github.event_name }}"
           echo "actor:      ${{ github.actor }}"
           ls -l fiiish-rs/target/${{ matrix.target }}/release/
           
