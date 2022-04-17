@@ -95,11 +95,11 @@ jobs:
               --warnings \
               --errors \
               --notices \
-              --compile /Users/runner/work/_temp/parts_folder \
+              --compile ${{ env.PARTS_FOLDER }} \
               --app-icon AppIcon \
               --platform macosx \
               --minimum-deployment-target 10.0 \
-              --output-partial-info-plist /Users/runner/work/_temp/parts_folder/partial-Info.plist \
+              --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
               fiiish-rs/Assets.xcassets
 ###          /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
 ###            --version \
