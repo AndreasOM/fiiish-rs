@@ -1,0 +1,133 @@
+name: Pack Dummy Data
+
+on:
+  # :TODO: add push
+  workflow_dispatch:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - latest
+          - auto
+          - ref
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+        
+jobs:
+  build:
+#    runs-on: ubuntu-linux
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+#          lfs: ''
+#          submodules: ''
+
+      # :TODO: setup platform specific dependencies
+
+      - name: Generate VERSION
+        run: |
+          #VERSION=${{ github.event.inputs.ref }}
+          VERSION=$(git show -s --format=%H  HEAD)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          # DATE=$(git show -s --format=%ci ${{ github.sha }}|cut -b1-10)
+          DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
+          echo "DATE=${DATE}" >> $GITHUB_ENV
+          echo "VERSION: ${VERSION}"
+          echo "DATE:    ${DATE}"
+
+      - name: Prepare Variables
+        run: |
+          temp=${{ runner.temp }}
+          echo "TEMP=${temp}" >> $GITHUB_ENV
+          parts_folder=${{ runner.temp }}/parts_folder/
+          mkdir -p ${parts_folder}
+          echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
+          package_folder=${{ runner.temp }}/package_folder/
+          mkdir -p ${package_folder}
+          echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
+          runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
+          fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
+          dummy_data_tgz=fiiish-rs-dummy-data-${{ env.VERSION }}.tgz
+          s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
+          echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
+          echo "DUMMY_DATA_TGZ=${dummy_data_tgz}" >> $GITHUB_ENV
+          echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
+          build_number=$(cat build_number.txt)
+          echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          echo "ARCHIVE=${{ runner.temp }}/${dummy_data_tgz}" >> $GITHUB_ENV
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Cache crates
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-crates
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('fiiish-rs/Cargo.lock') }}
+
+          # :TODO: technically the above key is wrong
+
+      - name: Install omt
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --force omt
+
+      - name: Pack fiiish data
+        run: |
+          ./workflow/helpers/pack_data.sh dummy-data dummy-data.omar paklist.txt music_mp3
+
+      - name: Add build number
+        run: |
+          echo "Adding build number"
+          cp build_number.txt ${{ env.PARTS_FOLDER }}/
+
+      - name: Add data
+        run: |
+          echo "Adding data"
+          cp dummy-data.omar ${{ env.PARTS_FOLDER }}/
+
+      - name: List result
+        run: |
+          echo "sha:        ${{ github.sha }}"
+          echo "ref_name:   ${{ github.ref_name }}"
+          echo "ref:        ${{ github.ref }}"
+          echo "ref_type:   ${{ github.ref_type }}"
+          echo "event_name: ${{ github.event_name }}"
+          echo "actor:      ${{ github.actor }}"
+          ls -l ${{ env.PARTS_FOLDER }}/
+          
+      - name: Create archive
+        run: |
+          cd ${{ env.PARTS_FOLDER }}
+          tar czf ${{ env.ARCHIVE }} .
+          
+      - name: Copy archive to S3
+        run: |
+          aws s3 cp ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.ARCHIVE_FOLDER }}/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
+
