@@ -4,10 +4,20 @@ on:
   # :TODO: add push
   workflow_dispatch:
     inputs:
+      # maybe we don't need this
       version:
         description: 'Version'
         required: true
-        default: 'latest'
+        default: 'auto'
+        type: choice
+        options:
+          - latest
+          - auto
+          - ref
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
         type: string
         
 jobs:
@@ -21,9 +31,12 @@ jobs:
             features: "audio-apple"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
+          ref: ${{ github.event.inputs.ref }}
           fetch-depth: 1
+#          lfs: ''
+#          submodules: ''
 
       # :TODO: setup platform specific dependencies
 
@@ -55,18 +68,23 @@ jobs:
       
       - name: List result
         run: |
-          echo sha:        ${{ github.sha }}
-          echo ref_name:   ${{ github.ref_name }}
-          echo ref:        ${{ github.ref }}
-          echo ref_type:   ${{ github.ref_type }}
-          echo event_name: ${{ github.event_name }}
-          echo actor:      ${{ github.actor }}
+          echo "sha:        ${{ github.sha }}"
+          echo "ref_name:   ${{ github.ref_name }}"
+          echo "ref:        ${{ github.ref }}"
+          echo "ref_type:   ${{ github.ref_type }}"
+          echo "event_name: ${{ github.event_name }}
+          echo "actor:      ${{ github.actor }}"
           ls -l fiiish-rs/target/${{ matrix.target }}/release/
+          
+      - name: Generate VERSION
+        run: |
+          VERSION=${{ github.sha }}
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
           
       - name: Upload Articacts for  ${{ matrix.target }}
         uses: actions/upload-artifact@v3
         with:
-          name: fiiish-rs-VERSION-${{ matrix.target }}
+          name: fiiish-rs-${{ env.VERSION }}-${{ matrix.target }}
           path: |
             fiiish-rs/target/${{ matrix.target }}/release/fiiish
             
