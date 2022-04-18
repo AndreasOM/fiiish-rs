@@ -1,0 +1,17 @@
+name: Push to test
+
+on:
+  push:
+    tags:
+      - "*-test"
+
+jobs:
+  release_version:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/release_version.yaml@main
+    with:
+      version: "auto"
+      ref: ${{ github.sha }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ITCHIO_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
