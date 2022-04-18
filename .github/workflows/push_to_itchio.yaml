@@ -33,6 +33,8 @@ jobs:
       matrix:
         include:
           - os: macos-11
+            platform: apple-darwin
+            package_type: .app
             target: x86_64-apple-darwin
             app_package: "fiiish-rs.app"
             channel: "omni-mad/fiiish:osx-test"
