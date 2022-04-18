@@ -87,6 +87,9 @@ jobs:
           build_number=$(cat build_number.txt)
           echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
           echo "ARCHIVE=${temp}/${runtime_tgz}" >> $GITHUB_ENV
+          app_version=$(grep version fiiish-rs/Cargo.toml|cut -d"\"" -f2|head -n 1)
+          echo "APP_VERSION=${app_version}" >> $GITHUB_ENV
+
 
       - name: Not windows
         if: ${{ matrix.os != 'windows-latest' }}
@@ -152,7 +155,7 @@ jobs:
         if: ${{ matrix.os == 'macos-11' }}
         run: |
           echo "Adding Info.plist"
-          version=$(grep version fiiish-rs/Cargo.toml|cut -d"\"" -f2|head -n 1)
+          version=${{ env.APP_VERSION }}
           exp1="s/<key>CFBundleVersion<\\/key><string>.*<\\/string>/<key>CFBundleVersion<\\/key><string>${{ env.BUILD_NUMBER }}<\\/string>/g"
           exp2="s/<key>CFBundleShortVersionString<\\/key><string>.*<\\/string>/<key>CFBundleShortVersionString<\\/key><string>${version}<\\/string>/g"
           cat fiiish-rs/Info.plist|sed ${exp1} |sed ${exp2} > ${{ env.PARTS_FOLDER }}/Info.plist
@@ -161,6 +164,11 @@ jobs:
         run: |
           echo "Adding build number"
           cp build_number.txt ${{ env.PARTS_FOLDER }}/
+
+      - name: Add app version
+        run: |
+          echo "Adding app version"
+          echo "${{ env.APP_VERSION }" ${{ env.PARTS_FOLDER }}/version.txt
 
       - name: Add binary
         if: ${{ matrix.os != 'windows-latest' }}

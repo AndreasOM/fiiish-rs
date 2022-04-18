@@ -6,6 +6,7 @@
 
 ## TODO
 
+- [ ] Use build.rs to write out version to version.txt
 - [ ] Only package needed versions of music for platform
 - [ ] Add UI sounds
 - [ ] Allow disabling sounds

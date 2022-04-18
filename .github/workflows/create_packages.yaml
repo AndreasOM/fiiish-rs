@@ -122,6 +122,9 @@ jobs:
 
       - name: Create Package ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.package_type }}
         run: |
+          # :HACK: always use head version of package helpers
+          git checkout HEAD workflow/helpers/package_app.sh
+          git checkout HEAD workflow/helpers/apple-darwin/package_app_for_apple-darwin_app.sh          
           ./workflow/helpers/package_app.sh ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.package_type }}  ${{ env.PARTS_FOLDER }} ${{ env.PACKAGE_FOLDER }}
 
       - name: Create archive

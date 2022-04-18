@@ -62,6 +62,7 @@ cp ${parts_folder}/runtime-${target}/Assets.car ${app_dir}/Contents/Resources/
 
 echo "Copying in 'extras'"
 cp ${parts_folder}/runtime-${target}/build_number.txt ${app_dir}/Contents/Resources/
+cp ${parts_folder}/runtime-${target}/version.txt ${app_dir}/Contents/Resources/
 
 echo "Adding data"
 cp ${parts_folder}/fiiish-data/fiiish-data.omar ${app_dir}/Contents/Resources/
