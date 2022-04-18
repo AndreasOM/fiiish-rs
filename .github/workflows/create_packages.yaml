@@ -103,11 +103,11 @@ jobs:
 ####      tar xzf \
 ####        ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
 ####        -C fiiish-data
-          mkdir -p dummy-data
+####      mkdir -p dummy-data
 ####      tar xzf \
 ####        ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
 ####        -C dummy-data
-          mkdir -p runtime-${{ matrix.target }}
+####      mkdir -p runtime-${{ matrix.target }}
 ####      tar xzf \
 ####        ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_TGZ }} \
 ####        -C runtime-${{ matrix.target }}
