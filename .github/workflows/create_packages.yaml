@@ -24,20 +24,15 @@ jobs:
   download_data:
     name: Download Data
     runs-on: ubuntu-latest
-      strategy:
-        matrix:
-          include:
-            - platform: apple-darwin
-              package_type: .app
-              target: aarch64-apple-darwin
-###    runs-on: ${{ matrix.os }}
-###    strategy:
-###      matrix:
-###        include:
-###          - os: macos-11
-####            target: aarch64-apple-darwin
-###            target: x86_64-apple-darwin
-###            data_variant: music_mp3
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        include:
+          - platform: apple-darwin
+            package_type: .app
+            target: aarch64-apple-darwin
 
     steps:
       - uses: actions/checkout@v3
