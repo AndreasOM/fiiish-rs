@@ -39,7 +39,7 @@ jobs:
 # external - job level !
 
   create_packages:
-    uses:  AndreasOM/fiiish-rs/.github/workflows/creates_packages.yaml@main
+    uses:  AndreasOM/fiiish-rs/.github/workflows/create_packages.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
       ref: ${{ github.event.inputs.ref }}
