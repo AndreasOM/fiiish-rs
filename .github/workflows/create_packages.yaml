@@ -63,6 +63,7 @@ jobs:
           runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
           fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
           dummy_data_tgz=fiiish-rs-dummy-data-${{ env.VERSION }}.tgz
+          app_tgz=fiiish-rs-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.app_type }}.tgz
           s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
           echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
           echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
@@ -71,6 +72,7 @@ jobs:
           # build number will be taken from the parts
           # build_number=$(cat build_number.txt)
           # echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          echo "ARCHIVE=${temp}/${app_tgz}" >> $GITHUB_ENV
 
       - name: Copy runtime archive from S3
         run: |
@@ -121,3 +123,19 @@ jobs:
       - name: Create Package ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.package_type }}
         run: |
           ./workflow/helpers/package_app.sh ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.package_type }}  ${{ env.PARTS_FOLDER }} ${{ env.PACKAGE_FOLDER }}
+
+      - name: Create archive
+        run: |
+          cd ${{ env.PACKAGE_FOLDER }}
+          tar czf ${{ env.ARCHIVE }} .
+          ls -l ${{ env.ARCHIVE }}
+
+      - name: Copy archive to S3
+        run: |
+          aws s3 cp ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
+
+
