@@ -81,6 +81,7 @@ jobs:
           echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
           echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
           echo "DUMMY_DATA_TGZ=${dummy_data_tgz}" >> $GITHUB_ENV
+          echo "APP_TGZ=${app_tgz}" >> $GITHUB_ENV
           echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
           # build number will be taken from the parts
           # build_number=$(cat build_number.txt)
