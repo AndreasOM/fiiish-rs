@@ -74,7 +74,7 @@ jobs:
 
       - name: Copy runtime archive from S3
         run: |
-          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.RUNTIME_TGZ }} ${{ env.TEMP }}
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.RUNTIME_TGZ }} ${{ env.PARTS_FOLDER }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -99,15 +99,15 @@ jobs:
       - name: Unpack archives
         run: |
           cd ${{ env.PARTS_FOLDER }}
-####      mkdir -p fiiish-data
+          mkdir -p fiiish-data
 ####      tar xzf \
 ####        ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
 ####        -C fiiish-data
-####      mkdir -p dummy-data
+          mkdir -p dummy-data
 ####      tar xzf \
 ####        ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
 ####        -C dummy-data
-####      mkdir -p runtime-${{ matrix.target }}
+          mkdir -p runtime-${{ matrix.target }}
 ####      tar xzf \
 ####        ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_TGZ }} \
 ####        -C runtime-${{ matrix.target }}
@@ -127,4 +127,4 @@ jobs:
 
       - name: Create Package ${{ matrix.platform }} ${{ matrix.package_type }}
         run: |
-          echo ":TODO: Package {{ matrix.platform }} ${{ matrix.package_type }}"
+          echo ":TODO: Package ${{ matrix.platform }} ${{ matrix.package_type }}"
