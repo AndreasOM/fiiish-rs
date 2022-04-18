@@ -19,6 +19,24 @@ on:
         default: ''
         type: string
 
+  workflow_call:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - latest
+          - auto
+          - ref
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+    
 env:
   BUTLER_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
 
