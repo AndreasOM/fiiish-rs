@@ -108,7 +108,7 @@ jobs:
         working-directory: ${{ env.PACKAGE_FOLDER }}
 
 
-      -name: Push to itch.io
+      - name: Push to itch.io
         run: |
           butler push ${{ matrix.app_package }} ${{ matrix.channel }} --userversion-file=${{ matrix.version_file }}
         working-directory: ${{ env.PACKAGE_FOLDER }}
