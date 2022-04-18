@@ -99,19 +99,18 @@ jobs:
       - name: Unpack archives
         run: |
           cd ${{ env.PARTS_FOLDER }}
-#          tar xzf ${{ env.TEMP }}/${{ env.RUNTIME_TGZ }}
-          mkdir -p fiiish-data
-          tar xzf \
-            ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
-            -C fiiish-data
-          mkdir -p dummy-data
-          tar xzf \
-            ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
-            -C dummy-data
-          mkdir -p runtime-${{ matrix.target }}
-          tar xzf \
-            ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_TGZ }} \
-            -C runtime-${{ matrix.target }}
+####      mkdir -p fiiish-data
+####      tar xzf \
+####        ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
+####        -C fiiish-data
+####      mkdir -p dummy-data
+####      tar xzf \
+####        ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
+####        -C dummy-data
+####      mkdir -p runtime-${{ matrix.target }}
+####      tar xzf \
+####        ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_TGZ }} \
+####        -C runtime-${{ matrix.target }}
 
 ##### Note: does not work for us here, since jobs run in different runners
 #####  display_parts:
