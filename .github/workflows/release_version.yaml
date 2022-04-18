@@ -31,16 +31,17 @@ jobs:
       - name: Prepare
         run: |
           echo "Prepare"
-          
+
       # :TODO: add build, pack, package, etc
 #      - name: Push to itch.io
 # internal      
 #        uses: ./.github/workflows/push_to_itchio.yaml
 # external - job level !
 
-  uses:  AndreasOM/fiiish-rs/.github/workflows/push_to_itchio.yaml@main
-  with:
-    version: ${{ github.event.inputs.version }}
-    ref: ${{ github.event.inputs.ref }}
+  push_to_itchio:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/push_to_itchio.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref }}
 
 
