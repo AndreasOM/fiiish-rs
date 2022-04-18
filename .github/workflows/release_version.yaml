@@ -38,7 +38,35 @@ jobs:
 #        uses: ./.github/workflows/push_to_itchio.yaml
 # external - job level !
 
+  build_runtime:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/build_runtime.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  pack_fiiish_data:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/pack_fiiish_data.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  pack_dummy_data:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/pack_dummy_data.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
   create_packages:
+    needs: [build_runtime,pack_fiiish_data,pack_dummy_data]
     uses:  AndreasOM/fiiish-rs/.github/workflows/create_packages.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
