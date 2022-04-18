@@ -38,7 +38,7 @@ fi
 echo ":TODO:"
 ls -R ${parts_folder}
 
-# :TODO: get verison
+# :TODO: get version from version.txt
 version="v0.0.0-test"
 # :TODO decide between macos and apple-darwin
 #app_dir=${output_folder}/${app}-macos-${version}/${app}.app

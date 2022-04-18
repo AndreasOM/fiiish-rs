@@ -168,7 +168,7 @@ jobs:
       - name: Add app version
         run: |
           echo "Adding app version"
-          echo "${{ env.APP_VERSION }}" ${{ env.PARTS_FOLDER }}/version.txt
+          echo "${{ env.APP_VERSION }}" > ${{ env.PARTS_FOLDER }}/version.txt
 
       - name: Add binary
         if: ${{ matrix.os != 'windows-latest' }}
