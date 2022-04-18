@@ -22,6 +22,7 @@ on:
         
 jobs:
   download_data:
+    name: Download Data
     runs-on: ubuntu-latest
 ###    runs-on: ${{ matrix.os }}
 ###    strategy:
@@ -108,10 +109,10 @@ jobs:
 ###            -C dummy-data
 
 
-  display_parts:
-      - name: Display temp
-        run: |
-          pwd
-          ls -R
-        working-directory: ${{ env.PARTS_FOLDER }}
+####  display_parts:
+####      - name: Display temp
+####        run: |
+####          pwd
+####          ls -R
+####        working-directory: ${{ env.PARTS_FOLDER }}
 
