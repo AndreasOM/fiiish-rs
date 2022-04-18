@@ -21,84 +21,84 @@ on:
 
 jobs:
   push:
-    - name: Push
-      runs-on: ubuntu-latest
-      defaults:
-        run:
-          shell: bash
-      strategy:
-        matrix:
-          include:
-            - os: macos-11
-              target: x86_64-apple-darwin
-              channel: omni-mad/fiiish:osx-test
-      steps:
-        - uses: actions/checkout@v3
-          with:
-            ref: ${{ github.event.inputs.ref }}
-            fetch-depth: 1
+    name: Push
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        include:
+          - os: macos-11
+            target: x86_64-apple-darwin
+            channel: omni-mad/fiiish:osx-test
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
 
-        - name: Set up butler
-          uses: jdno/setup-butler@v1
-          with:
-            version: 15.20.0
+      - name: Set up butler
+        uses: jdno/setup-butler@v1
+        with:
+          version: 15.20.0
 
-        - name: Login to butler
-          run: |
-            echo $${{ secrets.ITCHIO_API_KEY }} > butler_creds
-            butler login -i butler_creds
+      - name: Login to butler
+        run: |
+          echo $${{ secrets.ITCHIO_API_KEY }} > butler_creds
+          butler login -i butler_creds
 
-        - name: Generate VERSION
-          run: |
-            #VERSION=${{ github.event.inputs.ref }}
-            VERSION=$(git show -s --format=%H  HEAD)
-            echo "VERSION=${VERSION}" >> $GITHUB_ENV
-            DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
-            echo "DATE=${DATE}" >> $GITHUB_ENV
-            echo "VERSION: ${VERSION}"
-            echo "DATE:    ${DATE}"
+      - name: Generate VERSION
+        run: |
+          #VERSION=${{ github.event.inputs.ref }}
+          VERSION=$(git show -s --format=%H  HEAD)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
+          echo "DATE=${DATE}" >> $GITHUB_ENV
+          echo "VERSION: ${VERSION}"
+          echo "DATE:    ${DATE}"
 
-        - name: Prepare Variables
-          run: |
-            temp=${{ runner.temp }}
-            echo "TEMP=${temp}" >> $GITHUB_ENV
-            parts_folder=${temp}/parts_folder/
-            mkdir -p ${parts_folder}
-            echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
-            package_folder=${temp}/package_folder/
-            mkdir -p ${package_folder}
-            echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
-            runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
-            fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
-            dummy_data_tgz=fiiish-rs-dummy-data-${{ env.VERSION }}.tgz
-            app_tgz=fiiish-rs-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.package_type }}.tgz
-            s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
-            echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
-            echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
-            echo "DUMMY_DATA_TGZ=${dummy_data_tgz}" >> $GITHUB_ENV
-            echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
-            # build number will be taken from the parts
-            # build_number=$(cat build_number.txt)
-            # echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
-            echo "ARCHIVE=${temp}/${app_tgz}" >> $GITHUB_ENV
-                
-        - name: Copy package archive from S3
-          run: |
-            aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.APP_TGZ }} ${{ env.PACKAGE_FOLDER }}
-          env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_DEFAULT_REGION: "eu-west-1"        
+      - name: Prepare Variables
+        run: |
+          temp=${{ runner.temp }}
+          echo "TEMP=${temp}" >> $GITHUB_ENV
+          parts_folder=${temp}/parts_folder/
+          mkdir -p ${parts_folder}
+          echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
+          package_folder=${temp}/package_folder/
+          mkdir -p ${package_folder}
+          echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
+          runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
+          fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
+          dummy_data_tgz=fiiish-rs-dummy-data-${{ env.VERSION }}.tgz
+          app_tgz=fiiish-rs-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.package_type }}.tgz
+          s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
+          echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
+          echo "DUMMY_DATA_TGZ=${dummy_data_tgz}" >> $GITHUB_ENV
+          echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
+          # build number will be taken from the parts
+          # build_number=$(cat build_number.txt)
+          # echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          echo "ARCHIVE=${temp}/${app_tgz}" >> $GITHUB_ENV
+              
+      - name: Copy package archive from S3
+        run: |
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.APP_TGZ }} ${{ env.PACKAGE_FOLDER }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
 
-        - name: Unpack archives
-          run: |
-            cd ${{ env.PACKAGE_FOLDER }}
-            tar xzf \
-              ${{ env.PARTS_FOLDER }}/${{ env.APP_TGZ }}
+      - name: Unpack archives
+        run: |
+          cd ${{ env.PACKAGE_FOLDER }}
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.APP_TGZ }}
 
-        - name: Display packages
-          run: |
-            pwd
-            ls -R
-          working-directory: ${{ env.PACKAGE_FOLDER }}
+      - name: Display packages
+        run: |
+          pwd
+          ls -R
+        working-directory: ${{ env.PACKAGE_FOLDER }}
 
