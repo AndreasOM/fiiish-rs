@@ -63,7 +63,7 @@ jobs:
           runtime_tgz=fiiish-rs-runtime-${{ env.VERSION }}-${{ matrix.target }}.tgz
           fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
           dummy_data_tgz=fiiish-rs-dummy-data-${{ env.VERSION }}.tgz
-          app_tgz=fiiish-rs-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.app_type }}.tgz
+          app_tgz=fiiish-rs-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.package_type }}.tgz
           s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
           echo "RUNTIME_TGZ=${runtime_tgz}" >> $GITHUB_ENV
           echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
