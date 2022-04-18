@@ -100,9 +100,9 @@ jobs:
         run: |
           cd ${{ env.PARTS_FOLDER }}
           mkdir -p fiiish-data
-####      tar xzf \
-####        ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
-####        -C fiiish-data
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
+            -C fiiish-data
 ####      mkdir -p dummy-data
 ####      tar xzf \
 ####        ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
@@ -111,13 +111,6 @@ jobs:
 ####      tar xzf \
 ####        ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_TGZ }} \
 ####        -C runtime-${{ matrix.target }}
-
-##### Note: does not work for us here, since jobs run in different runners
-#####  display_parts:
-#####    name: Display Parts
-#####    needs: [download_data]
-#####    runs-on: ubuntu-latest
-#####    steps:   
 
       - name: Display temp
         run: |
@@ -128,3 +121,4 @@ jobs:
       - name: Create Package ${{ matrix.platform }} ${{ matrix.package_type }}
         run: |
           echo ":TODO: Package ${{ matrix.platform }} ${{ matrix.package_type }}"
+          ./workflow/helpers/package_app.sh ${{ matrix.platform }} ${{ matrix.package_type }} ${{ matrix.target }} ${{ env.PARTS_FOLDER }} ${{ env.PACKAGE_FOLDER }}
