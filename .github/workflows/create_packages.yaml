@@ -111,6 +111,7 @@ jobs:
   display_parts:
     name: Display Parts
     runs-on: ubuntu-latest
+    steps:    
       - name: Display temp
         run: |
           pwd
