@@ -24,6 +24,12 @@ jobs:
   download_data:
     name: Download Data
     runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          include:
+            - platform: apple-darwin
+              package_type: .app
+              target: aarch64-apple-darwin
 ###    runs-on: ${{ matrix.os }}
 ###    strategy:
 ###      matrix:
@@ -71,13 +77,13 @@ jobs:
           # build_number=$(cat build_number.txt)
           # echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
 
-###      - name: Copy runtime archive from S3
-###        run: |
-###          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.RUNTIME_TGZ }} ${{ env.TEMP }}
-###        env:
-###          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-###          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-###          AWS_DEFAULT_REGION: "eu-west-1"        
+      - name: Copy runtime archive from S3
+        run: |
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.RUNTIME_TGZ }} ${{ env.TEMP }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
 
       - name: Copy fiiish-data archive from S3
         run: |
@@ -95,26 +101,36 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "eu-west-1"
 
-###      - name: Unpack archives
-###        run: |
-###          cd ${{ env.PARTS_FOLDER }}
-####          tar xzf ${{ env.TEMP }}/${{ env.RUNTIME_TGZ }}
-###          mkdir -p fiiish-data
-###          tar xzf \
-###            ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
-###            -C fiiish-data
-###          mkdir -p dummy-data
-###          tar xzf \
-###            ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
-###            -C dummy-data
+      - name: Unpack archives
+        run: |
+          cd ${{ env.PARTS_FOLDER }}
+#          tar xzf ${{ env.TEMP }}/${{ env.RUNTIME_TGZ }}
+          mkdir -p fiiish-data
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
+            -C fiiish-data
+          mkdir -p dummy-data
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
+            -C dummy-data
+          mkdir -p runtime-${{ matrix.target }}
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_TGZ }} \
+            -C runtime-${{ matrix.target }}
 
-  display_parts:
-    name: Display Parts
-    runs-on: ubuntu-latest
-    steps:    
+##### Note: does not work for us here, since jobs run in different runners
+#####  display_parts:
+#####    name: Display Parts
+#####    needs: [download_data]
+#####    runs-on: ubuntu-latest
+#####    steps:   
+
       - name: Display temp
         run: |
           pwd
           ls -R
         working-directory: ${{ env.PARTS_FOLDER }}
 
+      - name: Create Package ${{ matrix.platform }} ${{ matrix.package_type }}
+        run: |
+          echo ":TODO: Package {{ matrix.platform }} ${{ matrix.package_type }}"
