@@ -95,24 +95,25 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "eu-west-1"
 
-###      - name: Unpack archives
-###        run: |
-###          cd ${{ env.PARTS_FOLDER }}
-####          tar xzf ${{ env.TEMP }}/${{ env.RUNTIME_TGZ }}
-###          mkdir -p fiiish-data
-###          tar xzf \
-###            ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
-###            -C fiiish-data
-###          mkdir -p dummy-data
-###          tar xzf \
-###            ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
-###            -C dummy-data
+      - name: Unpack archives
+        run: |
+          cd ${{ env.PARTS_FOLDER }}
+#          tar xzf ${{ env.TEMP }}/${{ env.RUNTIME_TGZ }}
+          mkdir -p fiiish-data
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
+            -C fiiish-data
+          mkdir -p dummy-data
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
+            -C dummy-data
 
-
-####  display_parts:
-####      - name: Display temp
-####        run: |
-####          pwd
-####          ls -R
-####        working-directory: ${{ env.PARTS_FOLDER }}
+  display_parts:
+    name: Display Parts
+    runs-on: ubuntu-latest
+      - name: Display temp
+        run: |
+          pwd
+          ls -R
+        working-directory: ${{ env.PARTS_FOLDER }}
 
