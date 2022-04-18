@@ -39,10 +39,16 @@ If things are to hard/big to handle, slice them up.
 ## TODO
 
 - [ ] Create macos.app package
-	- [ ] Build number
-	- [ ] Info.plist
-	- [ ] aarch64 binary
-	- [ ] Add AppIcon compilation to build_binary action
+	- [x] Build number
+	- [x] Info.plist
+	- [x] aarch64 binary
+	- [x] Add AppIcon compilation to build_binary action
+	- [ ] Handle fat binary
+
+- [ ] Create windows package
+- [ ] Create linux package
+
+- [ ] Create alpha, beta, and final releases
 	
 ## Howto
 
