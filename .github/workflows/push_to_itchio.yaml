@@ -34,9 +34,10 @@ jobs:
         include:
           - os: macos-11
             target: x86_64-apple-darwin
-            app_package: fiiish-rs.app
-            channel: omni-mad/fiiish:osx-test
-            version_file: fiiish-rs.app/Contents/Resources/version.txt
+            app_package: "fiiish-rs.app"
+            channel: "omni-mad/fiiish:osx-test"
+            version_file: "fiiish-rs.app/Contents/Resources/version.txt"
+            
     steps:
       - uses: actions/checkout@v3
         with:
