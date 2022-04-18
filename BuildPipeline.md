@@ -44,4 +44,25 @@ If things are to hard/big to handle, slice them up.
 	- [ ] aarch64 binary
 	- [ ] Add AppIcon compilation to build_binary action
 	
+## Howto
+
+```
+gh workflow run build_runtime.yaml -f ref=COMMIT_HASH
+gh workflow run pack_fiiish_data.yaml -f ref=COMMIT_HASH
+gh workflow run pack_dummy_data.yaml -f ref=COMMIT_HASH
+```
+Note: These can run in parallel
+
+Once done
+```
+gh workflow run create_packages.yaml -f ref=COMMIT_HASH
+```
+
+Once done
+```
+gh workflow run push_to_itchio.yaml -f ref=COMMIT_HASH
+```
+
+
+
 

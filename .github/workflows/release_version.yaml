@@ -1,0 +1,33 @@
+name: Release version
+
+on:
+  workflow_dispatch:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - latest
+          - auto
+          - ref
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # :TODO: add build, pack, package, etc
+      - name: Push to itch.io
+        uses: ./.github/workflows/push_to_itchio.yaml
