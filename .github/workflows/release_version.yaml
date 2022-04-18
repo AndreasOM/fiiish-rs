@@ -49,8 +49,6 @@ jobs:
       version: ${{ github.event.inputs.version }}
       ref: ${{ github.event.inputs.ref }}
     secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       ITCHIO_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
 
 
