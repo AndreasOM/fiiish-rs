@@ -35,7 +35,7 @@ jobs:
           - os: macos-11
             platform: apple-darwin
             package_type: .app
-            target: x86_64-apple-darwin
+            target: aarch64-apple-darwin
             app_package: "fiiish-rs.app"
             channel: "omni-mad/fiiish:osx-test"
             version_file: "fiiish-rs.app/Contents/Resources/version.txt"
