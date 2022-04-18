@@ -38,7 +38,7 @@ jobs:
 #        uses: ./.github/workflows/push_to_itchio.yaml
 # external - job level !
 
-  push_to_itchio:
+  create_packages:
     uses:  AndreasOM/fiiish-rs/.github/workflows/creates_packages.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
