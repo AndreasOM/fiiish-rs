@@ -50,9 +50,7 @@ jobs:
 
       - name: Login to butler
         run: |
-          # echo ${{ secrets.ITCHIO_API_KEY }} > butler_creds
           butler login 
-          # -i butler_creds
         working-directory: ${{ env.PACKAGE_FOLDER }}
 
       - name: Generate VERSION
