@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Call release version
         run: |
+          echo {{ github.TOKEN }} | gh auth login --with-token 
           gh workflow run release_version.yaml -f ref=${{ github.sha }}
 
 ###    uses:  AndreasOM/fiiish-rs/.github/workflows/release_version.yaml@main
