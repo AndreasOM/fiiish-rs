@@ -39,6 +39,15 @@ jobs:
 # external - job level !
 
   push_to_itchio:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/creates_packages.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  push_to_itchio:
     uses:  AndreasOM/fiiish-rs/.github/workflows/push_to_itchio.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
