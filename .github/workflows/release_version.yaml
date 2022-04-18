@@ -30,7 +30,10 @@ jobs:
     steps:
       # :TODO: add build, pack, package, etc
       - name: Push to itch.io
-        uses: ./.github/workflows/push_to_itchio.yaml
+# internal      
+#        uses: ./.github/workflows/push_to_itchio.yaml
+# external
+        uses:  AndreasOM/fiiish-rs/.github/workflows/push_to_itchio.yaml@main
         with:
           version: ${{ github.event.inputs.version }}
           ref: ${{ github.event.inputs.ref }}
