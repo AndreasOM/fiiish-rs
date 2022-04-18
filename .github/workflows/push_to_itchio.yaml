@@ -37,7 +37,7 @@ jobs:
             app_package: "fiiish-rs.app"
             channel: "omni-mad/fiiish:osx-test"
             version_file: "fiiish-rs.app/Contents/Resources/version.txt"
-            
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -52,7 +52,6 @@ jobs:
       - name: Login to butler
         run: |
           butler login 
-        working-directory: ${{ env.PACKAGE_FOLDER }}
 
       - name: Generate VERSION
         run: |
