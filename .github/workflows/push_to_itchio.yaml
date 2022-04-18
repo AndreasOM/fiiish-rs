@@ -40,6 +40,9 @@ on:
       AWS_SECRET_ACCESS_KEY:
         required: true
 
+env:
+  BUTLER_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
+
 jobs:
   push:
     name: Push
