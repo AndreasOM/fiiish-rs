@@ -48,6 +48,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   push_to_itchio:
+    needs: create_packages
     uses:  AndreasOM/fiiish-rs/.github/workflows/push_to_itchio.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
