@@ -26,17 +26,13 @@ on:
         description: 'Version'
         required: true
         default: 'auto'
-        type: choice
-        options:
-          - latest
-          - auto
-          - ref
+        type: string
       ref:
         description: 'The branch, tag, or SHA of the commit to build'
         required: false
         default: ''
         type: string
-    
+
 env:
   BUTLER_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
 
