@@ -41,8 +41,8 @@ on:
         
 jobs:
   combine_fat_runtime:
-    name: Download Data
-    runs-on: ubuntu-latest
+    name: Combine FAT runtime
+    runs-on: macos-11
     defaults:
       run:
         shell: bash
