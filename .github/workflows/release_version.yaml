@@ -18,26 +18,6 @@ on:
         required: false
         default: ''
         type: string
-  workflow_call:
-    inputs:
-      # maybe we don't need this
-      version:
-        description: 'Version'
-        required: true
-        default: 'auto'
-        type: string
-      ref:
-        description: 'The branch, tag, or SHA of the commit to build'
-        required: false
-        default: ''
-        type: string
-    secrets:
-      ITCHIO_API_KEY:
-        required: true
-      AWS_ACCESS_KEY_ID:
-        required: true
-      AWS_SECRET_ACCESS_KEY:
-        required: true
 
 jobs:
   release:
@@ -67,6 +47,16 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+  combine_fat_runtime:
+    needs: [build_runtime]
+    uses:  AndreasOM/fiiish-rs/.github/workflows/combine_fat_runtime.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
   pack_fiiish_data:
     uses:  AndreasOM/fiiish-rs/.github/workflows/pack_fiiish_data.yaml@main
     with:
@@ -86,7 +76,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   create_packages:
-    needs: [build_runtime,pack_fiiish_data,pack_dummy_data]
+    needs: [combine_fat_runtime,pack_fiiish_data,pack_dummy_data]
     uses:  AndreasOM/fiiish-rs/.github/workflows/create_packages.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
