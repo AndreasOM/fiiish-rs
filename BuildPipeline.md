@@ -36,20 +36,28 @@ If things are to hard/big to handle, slice them up.
 	/parts/
 	/package/
 
+## In Progress
+
 ## TODO
 
-- [ ] Create macos.app package
-	- [x] Build number
-	- [x] Info.plist
-	- [x] aarch64 binary
-	- [x] Add AppIcon compilation to build_binary action
-	- [ ] Handle fat binary
-
+- [ ] Verify the tag matches the version
+- [ ] Ensure build number has changed
 - [ ] Create windows package
 - [ ] Create linux package
 
 - [ ] Create alpha, beta, and final releases
 	
+
+## DONE
+
+- [x] Create macos.app package
+	- [x] Build number
+	- [x] Info.plist
+	- [x] aarch64 binary
+	- [x] Add AppIcon compilation to build_binary action
+	- [x] Handle fat binary
+
+
 ## Howto
 
 ```
