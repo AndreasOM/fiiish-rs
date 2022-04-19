@@ -51,7 +51,7 @@ jobs:
         include:
           - platform: apple-darwin
             package_type: .app
-            target: aarch64-apple-darwin
+            target: FAT-apple-darwin
 
     steps:
       - uses: actions/checkout@v3
