@@ -1,0 +1,149 @@
+name: Combine FAT runtime
+
+on:
+  # :TODO: add push
+  workflow_dispatch:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - latest
+          - auto
+          - ref
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+
+  workflow_call:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: string
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+        
+jobs:
+  combine_fat_runtime:
+    name: Download Data
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        include:
+          - platform: apple-darwin
+            package_type: .app
+            target: aarch64-apple-darwin
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+
+      - name: Generate VERSION
+        run: |
+          #VERSION=${{ github.event.inputs.ref }}
+          VERSION=$(git show -s --format=%H  HEAD)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
+          echo "DATE=${DATE}" >> $GITHUB_ENV
+          echo "VERSION: ${VERSION}"
+          echo "DATE:    ${DATE}"
+
+      - name: Prepare Variables
+        run: |
+          temp=${{ runner.temp }}
+          echo "TEMP=${temp}" >> $GITHUB_ENV
+          parts_folder=${temp}/parts_folder/
+          mkdir -p ${parts_folder}
+          echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
+          package_folder=${temp}/package_folder/
+          mkdir -p ${package_folder}
+          echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
+          runtime_aarch64_tgz=fiiish-rs-runtime-${{ env.VERSION }}-aarch64-apple-darwin.tgz
+          runtime_x86_64_tgz=fiiish-rs-runtime-${{ env.VERSION }}-x86_64-apple-darwin.tgz
+          runtime_fat_tgz=fiiish-rs-runtime-${{ env.VERSION }}-FAT-apple-darwin.tgz
+          fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
+          dummy_data_tgz=fiiish-rs-dummy-data-${{ env.VERSION }}.tgz
+          app_tgz=fiiish-rs-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.package_type }}.tgz
+          s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "RUNTIME_AARCH64_TGZ=${runtime_aarch64_tgz}" >> $GITHUB_ENV
+          echo "RUNTIME_X86_64_TGZ=${runtime_x86_64_tgz}" >> $GITHUB_ENV
+          echo "RUNTIME_FAT_TGZ=${runtime_fat_tgz}" >> $GITHUB_ENV
+          echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV
+          echo "DUMMY_DATA_TGZ=${dummy_data_tgz}" >> $GITHUB_ENV
+          echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
+          # build number will be taken from the parts
+          # build_number=$(cat build_number.txt)
+          # echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          echo "ARCHIVE=${temp}/${runtime_fat_tgz}" >> $GITHUB_ENV
+
+      - name: Copy runtime archive from S3
+        run: |
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.RUNTIME_AARCH64_TGZ }} ${{ env.PARTS_FOLDER }}
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.RUNTIME_X86_64_TGZ }} ${{ env.PARTS_FOLDER }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
+
+      - name: Unpack archives
+        run: |
+          cd ${{ env.PARTS_FOLDER }}
+          mkdir -p runtime-aarch64
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_AARCH64_TGZ }} \
+            -C runtime-${{ matrix.target }}
+          mkdir -p runtime-x86_64
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_X86_64_TGZ }} \
+            -C runtime-${{ matrix.target }}
+
+      - name: Display temp
+        run: |
+          pwd
+          ls -R
+        working-directory: ${{ env.PARTS_FOLDER }}
+
+      - name: Create FAT runtime
+        run: |
+          cd ${{ env.PARTS_FOLDER }}
+          cp runtime-aarch64/* runtime-fat/
+          lipo -create -output runtime-fat/fiiish \
+            runtime-aarch64/fiiish \
+            runtime-x86_64/fiiish 
+
+      - name: Create archive
+        run: |
+          cd ${{ env.PARTS_FOLDER }}/runtime-fat
+          tar czf ${{ env.ARCHIVE }} .
+          ls -l ${{ env.ARCHIVE }}
+
+      - name: Copy archive to S3
+        run: |
+          aws s3 cp ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
+
+
