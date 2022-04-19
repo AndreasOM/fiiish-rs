@@ -1,0 +1,57 @@
+name: Release version
+
+on:
+  push:
+    tags:
+      - "*-test"
+  workflow_dispatch:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - latest
+          - auto
+          - ref
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Prepare
+        run: |
+          echo "Prepare"
+          if [ "${{ github.event.inputs.ref }}" != "" ]
+          then
+            $COMMIT_SHA=${{ github.event.inputs.ref }}
+            echo "Using provided commit hash: ${COMMIT_SHA}"
+          else
+            echo "Using generated commit hash: ${COMMIT_SHA}"
+          fi
+          echo "COMMIT_SHA=${COMMIT_SHA}" >> $GITHUB_ENV
+
+  dump_commit_hash:
+    name: Release
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Prepare
+        run: |
+          echo ${{ env.COMMIT_SHA }}
+
