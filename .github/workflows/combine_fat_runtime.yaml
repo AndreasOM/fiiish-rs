@@ -127,6 +127,7 @@ jobs:
       - name: Create FAT runtime
         run: |
           cd ${{ env.PARTS_FOLDER }}
+          mkdir -p runtime-fat
           cp runtime-aarch64/* runtime-fat/
           lipo -create -output runtime-fat/fiiish \
             runtime-aarch64/fiiish \
