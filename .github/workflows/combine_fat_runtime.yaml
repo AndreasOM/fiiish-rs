@@ -112,11 +112,11 @@ jobs:
           mkdir -p runtime-aarch64
           tar xzf \
             ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_AARCH64_TGZ }} \
-            -C runtime-${{ matrix.target }}
+            -C runtime-aarch64
           mkdir -p runtime-x86_64
           tar xzf \
             ${{ env.PARTS_FOLDER }}/${{ env.RUNTIME_X86_64_TGZ }} \
-            -C runtime-${{ matrix.target }}
+            -C runtime-x86_64
 
       - name: Display temp
         run: |
