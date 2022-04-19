@@ -34,11 +34,13 @@ jobs:
       - name: Prepare
         run: |
           echo "Prepare"
+          echo "SHA ${{ github.event.inputs.ref || github.sha }}"
           if [ "${{ github.event.inputs.ref }}" != "" ]
           then
-            $COMMIT_SHA=${{ github.event.inputs.ref }}
+            $COMMIT_SHA="${{ github.event.inputs.ref }}"
             echo "Using provided commit hash: ${COMMIT_SHA}"
           else
+            $COMMIT_SHA="${{ github.sha }}
             echo "Using generated commit hash: ${COMMIT_SHA}"
           fi
           echo "COMMIT_SHA=${COMMIT_SHA}" >> $GITHUB_ENV
