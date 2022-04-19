@@ -1,9 +1,9 @@
-name: Release version on push to test
+name: Release version
 
 on:
   push:
     tags:
-      - "*-test"
+      - "*-test"  
   workflow_dispatch:
     inputs:
       # maybe we don't need this
@@ -34,26 +34,63 @@ jobs:
       - name: Prepare
         run: |
           echo "Prepare"
-          echo "SHA ${{ github.event.inputs.ref || github.sha }}"
-          if [ "${{ github.event.inputs.ref }}" != "" ]
-          then
-            $COMMIT_SHA="${{ github.event.inputs.ref }}"
-            echo "Using provided commit hash: ${COMMIT_SHA}"
-          else
-            $COMMIT_SHA="${{ github.sha }}
-            echo "Using generated commit hash: ${COMMIT_SHA}"
-          fi
-          echo "COMMIT_SHA=${COMMIT_SHA}" >> $GITHUB_ENV
 
-  dump_commit_hash:
-    name: Release
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
+  build_runtime:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/build_runtime.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    steps:
-      - name: Prepare
-        run: |
-          echo ${{ env.COMMIT_SHA }}
+  combine_fat_runtime:
+    needs: [build_runtime]
+    uses:  AndreasOM/fiiish-rs/.github/workflows/combine_fat_runtime.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  pack_fiiish_data:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/pack_fiiish_data.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  pack_dummy_data:
+    uses:  AndreasOM/fiiish-rs/.github/workflows/pack_dummy_data.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  create_packages:
+    needs: [combine_fat_runtime,pack_fiiish_data,pack_dummy_data]
+    uses:  AndreasOM/fiiish-rs/.github/workflows/create_packages.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  push_to_itchio:
+    needs: create_packages
+    uses:  AndreasOM/fiiish-rs/.github/workflows/push_to_itchio.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ITCHIO_API_KEY: ${{ secrets.ITCHIO_API_KEY }}
+
 

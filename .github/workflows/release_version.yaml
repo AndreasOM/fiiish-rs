@@ -1,6 +1,9 @@
 name: Release version
 
 on:
+  push:
+    tags:
+      - "*-test"  
   workflow_dispatch:
     inputs:
       # maybe we don't need this
@@ -32,17 +35,11 @@ jobs:
         run: |
           echo "Prepare"
 
-      # :TODO: add build, pack, package, etc
-#      - name: Push to itch.io
-# internal      
-#        uses: ./.github/workflows/push_to_itchio.yaml
-# external - job level !
-
   build_runtime:
     uses:  AndreasOM/fiiish-rs/.github/workflows/build_runtime.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
-      ref: ${{ github.event.inputs.ref }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -52,7 +49,7 @@ jobs:
     uses:  AndreasOM/fiiish-rs/.github/workflows/combine_fat_runtime.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
-      ref: ${{ github.event.inputs.ref }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -61,7 +58,7 @@ jobs:
     uses:  AndreasOM/fiiish-rs/.github/workflows/pack_fiiish_data.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
-      ref: ${{ github.event.inputs.ref }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -70,7 +67,7 @@ jobs:
     uses:  AndreasOM/fiiish-rs/.github/workflows/pack_dummy_data.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
-      ref: ${{ github.event.inputs.ref }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -80,7 +77,7 @@ jobs:
     uses:  AndreasOM/fiiish-rs/.github/workflows/create_packages.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
-      ref: ${{ github.event.inputs.ref }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
