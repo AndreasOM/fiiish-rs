@@ -1,0 +1,219 @@
+name: Build, Package, & Sign macOS
+
+on:
+  workflow_dispatch:
+    input:
+      ref:
+        description: 'The SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  build_package_sign:
+    runs-on: macos-11
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+
+      - name: Generate VERSION
+        VERSION=$(git show -s --format=%H HEAD)
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
+        echo "DATE=${DATE}" >> $GITHUB_ENV
+        echo "VERSION: ${VERSION}"
+        echo "DATE:    ${DATE}"
+
+      - name: Prepare Variables
+        run: |
+          echo "Preparing variables"
+          temp=${{ runner.temp }}
+          echo "TEMP=${temp}" >> $GITHUB_ENV
+          s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
+          fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
+          echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV          
+          dummy_data_tgz=fiiish-rs-dummy-data-${{ env.VERSION }}.tgz
+          echo "DUMMY_DATA_TGZ=${dummy_data_tgz}" >> $GITHUB_ENV
+          parts_folder=${temp}/parts_folder
+          mkdir -p ${parts_folder}
+          echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
+          package_folder=${temp}/package_folder/
+          mkdir -p ${package_folder}
+          echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
+          echo "APP_NAME=fiiish-rs" >> $GITHUB_ENV
+          build_number=$(cat build_number.txt)
+          echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          app_version=$(grep version fiiish-rs/Cargo.toml|cut -d"\"" -f2|head -n 1)
+          echo "APP_VERSION=${app_version}" >> $GITHUB_ENV
+          app_tgz=fiiish-rs-apple-darwin-FAT-.app.tgz
+          echo "ARCHIVE=${temp}/${app_tgz}" >> $GITHUB_ENV
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+          target: aarch64-apple-darwin
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+          target: x86_64-apple-darwin
+
+      - name: Cache crates
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-crates
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: macos-11-cargo-aarch64_and_x86_64-apple-darwin-${{ hashFiles('fiiish-rs/Cargo.lock')}}
+
+      - name: Run cargo build --release for aarch64-apple-darwin
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --verbose --release --manifest-path fiiish-rs/Cargo.toml --target aarch64-apple-darwin --no-default-features --features "audio-apple"
+
+      - name: Run cargo build --release for x86_64-apple-darwin
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --verbose --release --manifest-path fiiish-rs/Cargo.toml --target x86_64-apple-darwin --no-default-features --features "audio-apple"
+
+      - name: Add Info.plist
+        run: |
+          echo "Adding Info.plist"
+          version=${{ env.APP_VERSION }}
+          exp1="s/<key>CFBundleVersion<\\/key><string>.*<\\/string>/<key>CFBundleVersion<\\/key><string>${{ env.BUILD_NUMBER }}<\\/string>/g"
+          exp2="s/<key>CFBundleShortVersionString<\\/key><string>.*<\\/string>/<key>CFBundleShortVersionString<\\/key><string>${version}<\\/string>/g"
+          cat fiiish-rs/Info.plist|sed ${exp1} |sed ${exp2} > ${{ env.PARTS_FOLDER }}/Info.plist
+
+      - name: Add build number
+        run: |
+          echo "Adding build number"
+          cp build_number.txt ${{ env.PARTS_FOLDER }}/
+
+      - name: Add app version
+        run: |
+          echo "Adding app version"
+          echo "${{ env.APP_VERSION }}" > ${{ env.PARTS_FOLDER }}/version.txt
+
+      - name: Add FAT binary
+        run: |
+          echo "Adding FAT binary"
+
+          lipo -create -output ${{ env.PARTS_FOLDER }}/fiiish \
+            fiiish-rs/target/aarch64-apple-darwin/release/fiiish \
+            fiiish-rs/target/x86_64-apple-darwin/release/fiiish 
+
+      - name: Build AppIcon
+        run: |
+          echo "Creating AppIcon"
+          /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version
+          echo ${{ env.PARTS_FOLDER }}
+#          touch ${{ env.PARTS_FOLDER }}/test.txt
+          echo "---"
+          ls -l ${{ env.PARTS_FOLDER }}
+          ls -l fiiish-rs/Assets.xcassets
+          echo "---"
+            /Applications/Xcode.app/Contents/Developer/usr/bin/actool \
+              --version \
+              --warnings \
+              --errors \
+              --notices \
+              --compile ${{ env.PARTS_FOLDER }} \
+              --app-icon AppIcon \
+              --platform macosx \
+              --minimum-deployment-target 10.0 \
+              --output-partial-info-plist ${{ env.PARTS_FOLDER }}/partial-Info.plist \
+              fiiish-rs/Assets.xcassets
+
+      - name: Copy fiiish-data archive from S3
+        run: |
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} ${{ env.PARTS_FOLDER }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"
+
+      - name: Copy dummy-data archive from S3
+        run: |
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} ${{ env.PARTS_FOLDER }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"
+
+      - name: Unpack archives
+        run: |
+          cd ${{ env.PARTS_FOLDER }}
+          mkdir -p fiiish-data
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.FIIISH_DATA_TGZ }} \
+            -C fiiish-data
+          mkdir -p dummy-data
+          tar xzf \
+            ${{ env.PARTS_FOLDER }}/${{ env.DUMMY_DATA_TGZ }} \
+            -C dummy-data
+
+      - name: List result
+        run: |
+          echo "sha:           ${{ github.sha }}"
+          echo "ref_name:      ${{ github.ref_name }}"
+          echo "ref:           ${{ github.ref }}"
+          echo "ref_type:      ${{ github.ref_type }}"
+          echo "event_name:    ${{ github.event_name }}"
+          echo "actor:         ${{ github.actor }}"
+          echo "run_id         ${{ github.run_id }}"
+          # git rev-list --count ${{ github.sha }} # only works with deep clones
+          cat build_number.txt
+          ls -l fiiish-rs/target/aarch64-apple-darwin/release/
+          ls -l fiiish-rs/target/x86_64-apple-darwin/release/
+          ls -l ${{ env.PARTS_FOLDER }}/
+
+      - name: Create .app
+        run: |
+          app_dir=${{ env.PACKAGE_FOLDER}}/${{ env.APP_NAME }}.app
+          mkdir -p ${app_dir}
+          mkdir -p ${app_dir}/Contents/MacOS
+          mkdir -p ${app_dir}/Contents/Resources
+
+          cp ${{ env.PARTS_FOLDER }}/fiiish ${ app_dir}/Contents/MacOS/
+          cp ${{ env.PARTS_FOLDER }}/Info.plist ${ app_dir}/Contents/
+          cp ${{ env.PARTS_FOLDER }}/AppIcon.icns ${ app_dir}/Contents/Resources/
+          cp ${{ env.PARTS_FOLDER }}/Assets.car ${ app_dir}/Contents/Resources/
+
+          cp ${{ env.PARTS_FOLDER }}/build_number.txt ${ app_dir}/Contents/Resources/
+          cp ${{ env.PARTS_FOLDER }}/version.txt ${ app_dir}/Contents/Resources/
+
+          cp ${{ env.PARTS_FOLDER }}/fiiish-data/fiiish-data.omar ${app_dir}/Contents/Resources/
+          cp ${{ env.PARTS_FOLDER }}/dummy-data/dummy-data.omar ${app_dir}/Contents/Resources/
+
+
+      - name: Create archive
+        run: |
+          cd ${{ env.PACKAGE_FOLDER }}
+          tar czf ${{ env.ARCHIVE }} .
+          ls -l ${{ env.ARCHIVE }}
+
+      - name: Copy archive to S3
+        run: |
+          aws s3 cp ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
+
+
+
