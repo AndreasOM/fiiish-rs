@@ -20,12 +20,13 @@ jobs:
           fetch-depth: 1
 
       - name: Generate VERSION
-        VERSION=$(git show -s --format=%H HEAD)
-        echo "VERSION=${VERSION}" >> $GITHUB_ENV
-        DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
-        echo "DATE=${DATE}" >> $GITHUB_ENV
-        echo "VERSION: ${VERSION}"
-        echo "DATE:    ${DATE}"
+        run: |
+          VERSION=$(git show -s --format=%H HEAD)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
+          echo "DATE=${DATE}" >> $GITHUB_ENV
+          echo "VERSION: ${VERSION}"
+          echo "DATE:    ${DATE}"
 
       - name: Prepare Variables
         run: |
