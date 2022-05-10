@@ -2,7 +2,7 @@ name: Build, Package, & Sign macOS
 
 on:
   workflow_dispatch:
-    input:
+    inputs:
       ref:
         description: 'The SHA of the commit to build'
         required: false
