@@ -188,13 +188,13 @@ jobs:
           mkdir -p ${app_dir}/Contents/MacOS
           mkdir -p ${app_dir}/Contents/Resources
           #
-          cp ${{ env.PARTS_FOLDER }}/fiiish ${ app_dir}/Contents/MacOS/
-          cp ${{ env.PARTS_FOLDER }}/Info.plist ${ app_dir}/Contents/
-          cp ${{ env.PARTS_FOLDER }}/AppIcon.icns ${ app_dir}/Contents/Resources/
-          cp ${{ env.PARTS_FOLDER }}/Assets.car ${ app_dir}/Contents/Resources/
+          cp ${{ env.PARTS_FOLDER }}/fiiish ${app_dir}/Contents/MacOS/
+          cp ${{ env.PARTS_FOLDER }}/Info.plist ${app_dir}/Contents/
+          cp ${{ env.PARTS_FOLDER }}/AppIcon.icns ${app_dir}/Contents/Resources/
+          cp ${{ env.PARTS_FOLDER }}/Assets.car ${app_dir}/Contents/Resources/
           #
-          cp ${{ env.PARTS_FOLDER }}/build_number.txt ${ app_dir}/Contents/Resources/
-          cp ${{ env.PARTS_FOLDER }}/version.txt ${ app_dir}/Contents/Resources/
+          cp ${{ env.PARTS_FOLDER }}/build_number.txt ${app_dir}/Contents/Resources/
+          cp ${{ env.PARTS_FOLDER }}/version.txt ${app_dir}/Contents/Resources/
           #
           cp ${{ env.PARTS_FOLDER }}/fiiish-data/fiiish-data.omar ${app_dir}/Contents/Resources/
           cp ${{ env.PARTS_FOLDER }}/dummy-data/dummy-data.omar ${app_dir}/Contents/Resources/
