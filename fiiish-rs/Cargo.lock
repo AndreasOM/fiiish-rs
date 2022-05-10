@@ -677,7 +677,7 @@ dependencies = [
 
 [[package]]
 name = "fiiish-rs"
-version = "0.6.26-test"
+version = "0.6.27-test"
 dependencies = [
  "anyhow",
  "chrono",
