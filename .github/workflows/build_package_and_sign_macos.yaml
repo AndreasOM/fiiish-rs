@@ -199,6 +199,22 @@ jobs:
           cp ${{ env.PARTS_FOLDER }}/fiiish-data/fiiish-data.omar ${app_dir}/Contents/Resources/
           cp ${{ env.PARTS_FOLDER }}/dummy-data/dummy-data.omar ${app_dir}/Contents/Resources/
 
+      - name: Prepare keychain
+        run: |
+          keychain_password="$(openssl rand -hex 32)"
+          security create-keychain -p "${keychain_password}" "the-keychain"
+          echo "${{ secrets.CERT }}" | base64 --decode > cert.p12
+          keychain_db="${HOME}/Library/Keychains/the-keychain-db"
+          security import cert.p12 -k "${keychain_db}" -P "${{ secrets.CERT_PASS }}" -T "$(command -v codesign)"
+          security set-key-partition-list -S "apple-tool:,apple:" -s -k "${keychain_password}" "${keychain_db}"
+          security default-keychain -d "user" -s "${keychain_db}"
+          security find-identity -v
+
+      - name: Sign .app
+        run: |
+          cd ${{ env.PACKAGE_FOLDER}}
+          # codesign -s "FE6A1A6190D5C4614EF7C11196CF507981815294" -f -v --timestamp --options runtime fiiish-rs.app/Contents/MacOS/fiiish
+          codesign -s "FE6A1A6190D5C4614EF7C11196CF507981815294" -f -v --timestamp --options runtime fiiish-rs.app
 
       - name: Create archive
         run: |
