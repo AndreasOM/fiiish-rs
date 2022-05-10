@@ -3,7 +3,7 @@ name: Release version
 on:
   push:
     tags:
-      - "*-test"  
+##      - "*-test"  
   workflow_dispatch:
     inputs:
       # maybe we don't need this

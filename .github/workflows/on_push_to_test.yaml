@@ -3,7 +3,7 @@ name: Push to test
 on:
   push:
     tags:
-      - "*-test"
+##      - "*-test"
   workflow_dispatch:
 
 jobs:
