@@ -50,7 +50,7 @@ jobs:
           echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
           app_version=$(grep version fiiish-rs/Cargo.toml|cut -d"\"" -f2|head -n 1)
           echo "APP_VERSION=${app_version}" >> $GITHUB_ENV
-          app_tgz=fiiish-rs-apple-darwin-FAT-.app.tgz
+          app_tgz=fiiish-rs-apple-darwin-FAT-apple-darwin-.app.tgz
           echo "ARCHIVE=${temp}/${app_tgz}" >> $GITHUB_ENV
 
       - name: Prepare keychain
