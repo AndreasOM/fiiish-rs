@@ -258,7 +258,7 @@ jobs:
 
       - name: Create Summary
         run: |
-          build_number=$(build_number.txt)
+          build_number=$(cat build_number.txt)
           echo "| VERSION      | ${{ env.VERSION }} |" >> $GITHUB_STEP_SUMMARY
           echo "| build_number | ${build_number} |" >> $GITHUB_STEP_SUMMARY
           echo "| APP_VERSION  | ${{ env.APP_VERSION }} |" >> $GITHUB_STEP_SUMMARY
