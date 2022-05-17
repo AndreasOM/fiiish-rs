@@ -54,6 +54,9 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   build_package_and_sign_macos:
+    needs:
+      - pack_dummy_data
+      - pack_fiiish_data
     uses:  AndreasOM/fiiish-rs/.github/workflows/build_package_and_sign_macos.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
@@ -61,6 +64,9 @@ jobs:
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      CODESIGN_CERT: ${{ secrets.CODESIGN_CERT }}
+      CODESIGN_CERT_PASS: ${{ secrets.CODESIGN_CERT_PASS }}
+      CODESIGN_CERT_IDENTITY: ${{ secrets.CODESIGN_CERT_IDENTITY }}
 
   push_to_itchio:
     needs: build_package_and_sign_macos

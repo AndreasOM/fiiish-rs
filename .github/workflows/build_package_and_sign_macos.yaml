@@ -26,6 +26,13 @@ on:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
+      CODESIGN_CERT:
+        required: true
+      CODESIGN_CERT_PASS:
+        required: true
+      CODESIGN_CERT_IDENTITY:
+        required: true
+
 
 jobs:
   build_package_sign:
