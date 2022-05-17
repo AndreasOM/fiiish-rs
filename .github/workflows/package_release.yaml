@@ -6,6 +6,7 @@ on:
 ##      - "*-test"
 #      - "*-alpha"
 #      - "[0-9]+.[0-9]+.[0-9]+"
+      - "*-release"
 
 jobs:
   build:
