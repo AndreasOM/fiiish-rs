@@ -27,6 +27,8 @@ jobs:
           echo "DATE=${DATE}" >> $GITHUB_ENV
           echo "VERSION: ${VERSION}"
           echo "DATE:    ${DATE}"
+          echo "| VERSION | ${VERSION} |" >>$GITHUB_STEP_SUMMARY
+          echo "| :------ | ---------: |" >>$GITHUB_STEP_SUMMARY
 
       - name: Prepare Variables
         run: |
