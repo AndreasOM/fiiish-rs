@@ -19,7 +19,7 @@ audio-apple = [ "oml-audio/use_apple" ]
 audio-miniaudio = [ "oml-audio/use_miniaudio" ]
 
 [dependencies]
-glutin = "0.27.0"
+glutin = "0.28.0"
 anyhow = "1.0"
 chrono = "0.4.19"
 derivative = "2.2.0"
