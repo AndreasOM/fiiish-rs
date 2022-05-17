@@ -259,11 +259,13 @@ jobs:
       - name: Create Summary
         run: |
           build_number=$(cat build_number.txt)
-          echo "| VERSION      | ${{ env.VERSION }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| build_number | ${build_number} |" >> $GITHUB_STEP_SUMMARY
+          echo "| VERSION      | ${{ env.VERSION }}     |" >> $GITHUB_STEP_SUMMARY
+          echo "| :----------- | ---------------------: |" >> $GITHUB_STEP_SUMMARY
+          echo "| build_number | ${build_number}        |" >> $GITHUB_STEP_SUMMARY
+          echo "| :----------- | ---------------------: |" >> $GITHUB_STEP_SUMMARY
           echo "| APP_VERSION  | ${{ env.APP_VERSION }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| :----------- | -----------------: |" >> $GITHUB_STEP_SUMMARY
-          echo "| S3 Archive   | s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.ARCHIVE }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| :----------- | ---------------------: |" >> $GITHUB_STEP_SUMMARY
+          echo "| S3 Archive   | `s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.ARCHIVE }}` |" >> $GITHUB_STEP_SUMMARY
 
 
 
