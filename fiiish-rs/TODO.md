@@ -3,6 +3,8 @@
 
 ## In Progress
 
+- [ ] Create released automatically via github actions
+	- [ ] Ensure build_number.txt is not too old 
 
 ## TODO
 
