@@ -244,7 +244,7 @@ jobs:
           codesign -s ${{ secrets.CODESIGN_CERT_IDENTITY }} -f -v --timestamp --options runtime fiiish-rs.app
 
         timeout-minutes: 10
-        
+
       - name: Create archive
         run: |
           cd ${{ env.PACKAGE_FOLDER }}
@@ -265,10 +265,8 @@ jobs:
           echo "| VERSION      | ${{ env.VERSION }}     |" >> $GITHUB_STEP_SUMMARY
           echo "| :----------- | ---------------------: |" >> $GITHUB_STEP_SUMMARY
           echo "| build_number | ${build_number}        |" >> $GITHUB_STEP_SUMMARY
-          echo "| :----------- | ---------------------: |" >> $GITHUB_STEP_SUMMARY
           echo "| APP_VERSION  | ${{ env.APP_VERSION }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| :----------- | ---------------------: |" >> $GITHUB_STEP_SUMMARY
-          echo "| S3 Archive   | `s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.ARCHIVE }}` |" >> $GITHUB_STEP_SUMMARY
+          echo "| S3 Archive   | \`s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.ARCHIVE }}\` |" >> $GITHUB_STEP_SUMMARY
 
 
 
