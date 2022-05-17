@@ -238,10 +238,13 @@ jobs:
 
       - name: Sign .app
         run: |
+          ping -c 5 time.apple.com
           cd ${{ env.PACKAGE_FOLDER}}
           # codesign -s ${{ secrets.CODESIGN_CERT_IDENTITY }} -f -v --timestamp --options runtime fiiish-rs.app/Contents/MacOS/fiiish
           codesign -s ${{ secrets.CODESIGN_CERT_IDENTITY }} -f -v --timestamp --options runtime fiiish-rs.app
 
+        timeout-minutes: 10
+        
       - name: Create archive
         run: |
           cd ${{ env.PACKAGE_FOLDER }}
