@@ -104,11 +104,22 @@ jobs:
 
           # :TODO: technically the above key is wrong
 
-      - name: Install omt
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: --force omt
+#      - name: Install omt
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: install
+#          args: --force omt
+
+      - name: Install prebuilt omt
+        run: |
+          omt_tag=$(gh release -R andreasom/omt list|grep Latest|cut -f1)
+          echo "| omt_tag      | ${omt_tag}     |" >> $GITHUB_STEP_SUMMARY
+          cd ${{ env.TEMP }}
+          gh release -R andreasom/omt download ${omt_tag} --pattern omt-linux-${omt_tag}.tgz
+          tar xzf omt-linux-${omt_tag}.tgz
+          cp omt-linux/omt-* ${HOME}/.cargo/bin/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pack fiiish data
         run: |
