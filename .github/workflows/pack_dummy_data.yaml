@@ -39,7 +39,7 @@ on:
         required: true
         
 jobs:
-  build:
+  pack:
     runs-on: ubuntu-latest
 #    runs-on: macos-11
     steps:
@@ -120,6 +120,8 @@ jobs:
           gh release -R andreasom/omt download ${omt_tag} --pattern omt-linux-${omt_tag}.tgz
           tar xzf omt-linux-${omt_tag}.tgz
           cp omt-linux/omt-* ${HOME}/.cargo/bin/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pack fiiish data
         run: |
