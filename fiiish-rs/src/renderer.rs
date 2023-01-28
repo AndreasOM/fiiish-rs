@@ -99,6 +99,7 @@ impl Color {
 }
 
 #[derive(Debug,Copy,Clone)]
+#[repr(C)]
 pub struct Vertex {
 	pos: [f32;3],
 	tex_coords: [f32;2],
