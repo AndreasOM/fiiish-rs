@@ -3,8 +3,8 @@ use std::sync::Mutex;
 
 use lazy_static::lazy_static;
 
-use crate::math::Matrix22;
-use crate::math::Vector2;
+use oml_game::math::Matrix22;
+use oml_game::math::Vector2;
 
 use crate::renderer::{
 	Color,

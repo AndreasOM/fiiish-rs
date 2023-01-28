@@ -2,7 +2,7 @@
 use std::cell::RefCell;
 
 use crate::fiiish::{ Shape, SubShape };
-use crate::math::{
+use oml_game::math::{
 	Matrix22,
 	Vector2
 };

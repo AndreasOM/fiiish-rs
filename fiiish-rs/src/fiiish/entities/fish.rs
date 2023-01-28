@@ -6,7 +6,7 @@ use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::entities::EntityData;
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::entities::EntityType;
-use crate::math::Matrix22;
+use oml_game::math::Matrix22;
 use crate::math::Vector2;
 use crate::renderer::{
 	AnimatedTexture,

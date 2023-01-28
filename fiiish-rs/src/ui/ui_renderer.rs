@@ -1,5 +1,5 @@
 
-use crate::math::{
+use oml_game::math::{
 	Matrix32,
 	Vector2,
 };

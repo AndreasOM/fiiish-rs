@@ -2,8 +2,8 @@ use std::rc::Rc;
 use std::cell::RefCell;
 use crate::DebugRenderer;
 
-use crate::math::Vector2;
-use crate::math::Matrix22;
+use oml_game::math::Vector2;
+use oml_game::math::Matrix22;
 
 use crate::system::System;
 //use crate::system::filesystem_stream::FilesystemStream;

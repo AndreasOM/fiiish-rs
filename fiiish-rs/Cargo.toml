@@ -42,7 +42,7 @@ features = []
 
 [dependencies.oml-game]
 path = "../../oml-game"
-version = "0.32.1-dev"
+version = "0.32.2-dev"
 #git = "https://github.com/AndreasOM/oml-game"
 #branch = "episode-0031"
 
