@@ -15,7 +15,7 @@ use crate::fiiish::SettingsDialog;
 use crate::fiiish::game::Game;
 use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
-use crate::math::Vector2;
+use oml_game::math::Vector2;
 use crate::renderer::{
 	Color,
 	Renderer,

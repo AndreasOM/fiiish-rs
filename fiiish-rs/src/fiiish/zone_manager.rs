@@ -13,7 +13,7 @@ use crate::fiiish::entities::{
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::Zone;
-use crate::math::Vector2;
+use oml_game::math::Vector2;
 use crate::system::System;
 
 #[derive(Debug)]

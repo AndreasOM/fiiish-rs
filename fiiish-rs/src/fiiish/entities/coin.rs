@@ -8,7 +8,7 @@ use crate::fiiish::entities::EntityState;
 use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::EntityUpdateContext;
-use crate::math::Vector2;
+use oml_game::math::Vector2;
 use crate::renderer::{
 	AnimatedTexture,
 	Color,

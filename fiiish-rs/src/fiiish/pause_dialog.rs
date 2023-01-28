@@ -3,7 +3,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 use crate::fiiish::game::Game;
-use crate::math::Vector2;
+use oml_game::math::Vector2;
 
 use crate::ui::{
 	UiElement,

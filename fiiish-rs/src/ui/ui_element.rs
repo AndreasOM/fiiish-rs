@@ -2,7 +2,7 @@
 use std::sync::mpsc::Sender;
 
 use crate::DebugRenderer;
-use crate::math::Vector2;
+use oml_game::math::Vector2;
 use crate::renderer::Color;
 use crate::ui::{
 	UiElementBase,

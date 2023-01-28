@@ -5,7 +5,7 @@ use std::cell::RefCell;
 use std::sync::mpsc::Sender;
 
 use crate::fiiish::game::Game;
-use crate::math::Vector2;
+use oml_game::math::Vector2;
 use crate::renderer::Color;
 use crate::ui::{
 	UiBlock,

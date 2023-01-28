@@ -1,5 +1,5 @@
 
-use crate::math::Vector2;
+use oml_game::math::Vector2;
 
 #[derive(Debug)]
 pub enum UiEvent {

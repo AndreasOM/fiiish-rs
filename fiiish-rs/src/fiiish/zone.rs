@@ -1,5 +1,5 @@
 
-use crate::math::Vector2;
+use oml_game::math::Vector2;
 use crate::system::System;
 use oml_game::system::filesystem_stream::FilesystemStream;
 
