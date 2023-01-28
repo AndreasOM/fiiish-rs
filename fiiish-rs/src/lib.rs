@@ -2,7 +2,6 @@
 
 
 // App generic
-pub mod audio;
 pub mod ui;
 
 mod overlap_checker;

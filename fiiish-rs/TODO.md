@@ -11,6 +11,7 @@
 		- [x] Get rid of renderer -> oml_game::renderer
 		- [x] Get rid of debug_renderer -> oml_game::debug_renderer
 		- [x] Get rid of window* -> oml_game::window*
+		- [x] Get rid of audio -> oml_audio
 	- [ ] Switch to release (alpha) version of oml-game.
 
 ## TODO

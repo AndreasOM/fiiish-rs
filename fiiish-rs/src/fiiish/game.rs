@@ -1,3 +1,4 @@
+use oml_audio::AudioBackend;
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -118,7 +119,7 @@ pub struct Game {
 	distance_transfer:	TimedTransfer,
 
 
-	audio:				Audio,
+	audio:				Box<dyn AudioBackend<oml_game::system::System>>,
 }
 
 impl Game {
@@ -141,7 +142,7 @@ impl Game {
 			player:							Player::new(),
 			coin_transfer:					TimedTransfer::new( 1.0, 2.0 ),
 			distance_transfer:				TimedTransfer::new( 2.0, 3.0 ),
-			audio:							Audio::new(),
+			audio:							Audio::create_default(),
 		}
 	}
 
@@ -158,19 +159,17 @@ impl Game {
 		// :TODO: actually load from a file
 		self.entity_configuration_manager.load( system, "entity_config.whatever" );
 
-		/* :TODO: :S02E01:
+		tracing::info!("Audio Backend: {}", self.audio.backend_type() );
+
 		if !self.audio.load_music_native( system, "theme-00" ) {
 			println!("Error loading music");
 		}
-		*/
 
 		// load sounds
 //		self.sound.load( system, "picked_coin", 10 );
 //		self.sound.load( system, "fiish_death", 1 );
 
-		/* :TODO: :S02E01:
 		self.audio.load_sound_bank( system, "default.omsb" );
-		*/
 
 		// load texture
 

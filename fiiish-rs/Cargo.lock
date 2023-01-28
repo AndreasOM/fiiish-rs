@@ -699,7 +699,7 @@ dependencies = [
  "image",
  "lazy_static",
  "objc",
- "oml-audio 0.6.5-alpha",
+ "oml-audio",
  "oml-game",
  "rand",
  "regex",
@@ -1517,26 +1517,12 @@ dependencies = [
 
 [[package]]
 name = "om-fork-miniaudio"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34723e06b0a4873bf5759bb314445b6a8f33002cf65e4afd2d85e78ffd64e79b"
+checksum = "d72818d7af1f69f57feab66567363298d218dbf96bdddbae86d8223554ba0c72"
 dependencies = [
  "bitflags",
  "om-fork-ep-miniaudio-sys",
-]
-
-[[package]]
-name = "oml-audio"
-version = "0.6.5-alpha"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "169e7c9e0a91239d1f3541aa9d8e85e6712cb6342e183856e6662610723b0ac5"
-dependencies = [
- "cfg_aliases",
- "lewton",
- "objc",
- "om-fork-ep-miniaudio-sys",
- "om-fork-miniaudio",
- "ringbuf",
 ]
 
 [[package]]
@@ -1546,7 +1532,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3734fe7dfc6bfc570c85f24e4bc8c7efddf2a38b1f7a71c6669b947508786dbd"
 dependencies = [
  "cfg_aliases",
+ "lewton",
  "objc",
+ "om-fork-ep-miniaudio-sys",
+ "om-fork-miniaudio",
  "ringbuf",
 ]
 
@@ -1564,7 +1553,7 @@ dependencies = [
  "gl_generator",
  "glutin 0.29.1",
  "image",
- "oml-audio 0.8.6-alpha",
+ "oml-audio",
  "once_cell",
  "regex",
  "serde",
