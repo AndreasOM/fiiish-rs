@@ -1,0 +1,15 @@
+version:        0.5.0
+tool:           "omt-atlas"
+command:        "combine"
+output:         "gui-atlas-%d"
+combine-inputs: true
+input:
+  - "mini_icon_*.png"
+  - "buttons/*.png"
+  - "screen_frame_2.png"
+  - "screen_frame.png"
+parameters: {
+
+}
+
+cmd_line: "${tool} ${command} --border 1 --size 2048 --output ${data_directory}/${output} --input ${input} --reference-path ${data_directory}"

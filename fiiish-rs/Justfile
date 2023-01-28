@@ -17,11 +17,10 @@ clippy:
 	RUSTFLAGS=-Awarnings cargo clippy -- -Aclippy::all -Fclippy::correctness
 
 cook:
-	echo :TODO: cook && exit 0
-	cd .. && ./cook.sh; cd -
+	cd .. && ./workflow/helpers/cook.sh; cd -
 
 pack:
-	echo :TODO: cook && exit 0
+	echo :TODO: pack && exit 0
 	cd .. && ./workflow/helpers/pack_data.sh data/base base.omar paklist.txt music_mp3 && cp base.omar rar-rs/; cd -
 
 test-noisy:

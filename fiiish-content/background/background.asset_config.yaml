@@ -1,0 +1,5 @@
+tool:    "$asset"
+command: "copy"
+output:  "${input}"
+input:
+  - "*.png"

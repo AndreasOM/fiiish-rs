@@ -1,0 +1,20 @@
+version: 0.5.0
+tool:    "omt-soundbank"
+command: "build"
+## output:  "background-atlas-0"
+## output:  "${input:basename .png}"
+output:  "default.omsb"
+combine-inputs: false
+input:
+  - "default.soundbank"
+parameters: {
+}
+cmd_line: "${tool} ${command} --use-version 3 --output ${output} --input ${input}"
+
+--- 
+# :TODO: move to entities, and combine as needed
+tool:    "$asset"
+command: "copy"
+output:  "${input}"
+input:
+  - "*.wav"

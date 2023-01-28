@@ -32,54 +32,61 @@ else
 	echo "${ogg} is new enough"
 fi
 
+# cook
+cd .. && ./workflow/helpers/cook.sh; cd -
+## Note: This is being cooked via omt-asset now
 # copy sound :TODO: convert sound if needed
-cp ../fiiish-content/sound/*.wav ../fiiish-data
+### cp ../fiiish-content/sound/*.wav ../fiiish-data
 
 ## copy individual images
 ## cp ../fiiish-content/fish/fish_*.png ../fiiish-data/
 
+## Note: This is being cooked via omt-asset now
 # no need to put background into atlas since it uses it's own shader anyway
-cp ../fiiish-content/background/*.png ../fiiish-data/
+### cp ../fiiish-content/background/*.png ../fiiish-data/
 
+## Note: This is being cooked via omt-asset now
 ## combine images ... needs omt-atlas in path
-omt-atlas combine --border 1 --size 2048 \
-	--output ../fiiish-data/game-atlas-%d \
-	--input \
-		../fiiish-content/fish/fish_*.png \
-		../fiiish-content/pickups/coin/coin_*.png \
-		../fiiish-content/pickups/coin_green/coin_green_*.png \
-		../fiiish-content/pickups/coin_blue/coin_blue_*.png \
-		../fiiish-content/pickups/magnet/magnet_*.png \
-		../fiiish-content/obstacles/rocks/rock-?.png \
-		../fiiish-content/obstacles/seaweed/seaweed-*.png \
-		../fiiish-content/decorations/*.png \
-		../fiiish-content/obstacles/blocks/block-*.png
+### omt-atlas combine --border 1 --size 2048 \
+### 	--output ../fiiish-data/game-atlas-%d \
+### 	--input \
+### 		../fiiish-content/fish/fish_*.png \
+### 		../fiiish-content/pickups/coin/coin_*.png \
+### 		../fiiish-content/pickups/coin_green/coin_green_*.png \
+### 		../fiiish-content/pickups/coin_blue/coin_blue_*.png \
+### 		../fiiish-content/pickups/magnet/magnet_*.png \
+### 		../fiiish-content/obstacles/rocks/rock-?.png \
+### 		../fiiish-content/obstacles/seaweed/seaweed-*.png \
+### 		../fiiish-content/decorations/*.png \
+### 		../fiiish-content/obstacles/blocks/block-*.png
+### 
+### omt-atlas combine --border 1 --size 2048 \
+### 	--output ../fiiish-data/gui-atlas-%d \
+### 	--input \
+### 		../fiiish-content/gui/mini_icon_*.png		\
+### 		../fiiish-content/gui/buttons/*.png			\
+### 		../fiiish-content/gui/screen_frame_2.png	\
+### 		../fiiish-content/gui/screen_frame.png
 
-omt-atlas combine --border 1 --size 2048 \
-	--output ../fiiish-data/gui-atlas-%d \
-	--input \
-		../fiiish-content/gui/mini_icon_*.png		\
-		../fiiish-content/gui/buttons/*.png			\
-		../fiiish-content/gui/screen_frame_2.png	\
-		../fiiish-content/gui/screen_frame.png
+## Note: This is being cooked via omt-asset now
+### omt-font create --border 2									\
+### 	--texsize 1024 --size 52 								\
+### 	--output ../fiiish-data/pink							\
+### 	--distancefield-max-distance 4 --distancefield-scale 4	\
+### 	--input ../fiiish-content/fonts/all_things_pink.ttf
 
-omt-font create --border 2									\
-	--texsize 1024 --size 52 								\
-	--output ../fiiish-data/pink							\
-	--distancefield-max-distance 4 --distancefield-scale 4	\
-	--input ../fiiish-content/fonts/all_things_pink.ttf
+## Note: This is being cooked via omt-asset now
+### omt-font create --border 2									\
+### 	--texsize 1024 --size 104 								\
+### 	--output ../fiiish-data/pink_huge						\
+### 	--distancefield-max-distance 4 --distancefield-scale 4	\
+### 	--input ../fiiish-content/fonts/all_things_pink.ttf
 
-omt-font create --border 2									\
-	--texsize 1024 --size 104 								\
-	--output ../fiiish-data/pink_huge						\
-	--distancefield-max-distance 4 --distancefield-scale 4	\
-	--input ../fiiish-content/fonts/all_things_pink.ttf
-
-
-omt-soundbank build \
-	--use-version 3 \
-	--output ../fiiish-data/default.omsb	\
-	--input ../fiiish-content/sound/default.soundbank
+## Note: This is being cooked via omt-asset now
+### omt-soundbank build \
+### 	--use-version 3 \
+### 	--output ../fiiish-data/default.omsb	\
+### 	--input ../fiiish-content/sound/default.soundbank
 
 ## now create the archives
 # :TODO: fix for non unix systems
