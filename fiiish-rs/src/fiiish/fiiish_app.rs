@@ -1,11 +1,13 @@
 
+use oml_game::App;
 use std::rc::Rc;
 use std::cell::RefCell;
 
 use super::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::font_ids::FontId;
-use crate::math::{ Matrix44, Vector2 };
+//use crate::math::{ Matrix44, Vector2 };
+use oml_game::math::{Matrix44, Vector2};
 use crate::renderer::{
 	Color,
 	Effect,
@@ -13,17 +15,18 @@ use crate::renderer::{
 	Texture,
 	TextureAtlas,
 };
-use crate::system::System;
-use crate::system::filesystem::Filesystem;
-use crate::system::filesystem_archive::FilesystemArchive;
-use crate::system::filesystem_disk::FilesystemDisk;
-use crate::system::filesystem_layered::FilesystemLayered;
-use crate::system::filesystem_memory::FilesystemMemory;
+use oml_game::system::System;
+use oml_game::system::filesystem::Filesystem;
+use oml_game::system::filesystem_archive::FilesystemArchive;
+use oml_game::system::filesystem_disk::FilesystemDisk;
+use oml_game::system::filesystem_layered::FilesystemLayered;
+use oml_game::system::filesystem_memory::FilesystemMemory;
 
 use crate::fiiish::app_update_context::AppUpdateContext;
 
-use crate::window::Window;
-use crate::window_update_context::WindowUpdateContext;
+//use crate::window::Window;
+//use crate::window_update_context::WindowUpdateContext;
+use oml_game::window::{Window, WindowUpdateContext};
 
 use crate::fiiish::game::Game;
 use crate::fiiish::GameUi;
@@ -169,7 +172,21 @@ impl FiiishApp {
 		include_bytes!("../../dummy-data.omar")
 	}
 
-	pub fn setup( &mut self, window: &mut Window ) -> anyhow::Result<()> {
+
+
+
+
+
+}
+
+impl App for FiiishApp {
+	fn remember_window_layout(&self) -> bool {
+		true
+	}
+	fn app_name(&self) -> &str {
+		"Fiiish RS"
+	}
+	fn setup( &mut self, window: &mut Window ) -> anyhow::Result<()> {
 		// :TODO: make configurable via command line, or environment
 
 		// new filesytem based on linked in data
@@ -256,8 +273,7 @@ impl FiiishApp {
 		self.renderer = Some( renderer );
 		Ok(())
 	}
-
-	pub fn teardown( &mut self ) {
+	fn teardown( &mut self ) {
 		// Note: teardown is currently not called
 		// implement Drop if you really need cleanup, or just do it before returning true from is_done
 
@@ -268,13 +284,12 @@ impl FiiishApp {
 		self.game.borrow_mut().teardown( &mut self.system );
 		self.renderer = None;
 	}
-
-	pub fn is_done( &self ) -> bool {
+	fn is_done( &self ) -> bool {
 //		println!("is_done {} <= 0", &self.count );
 		self.is_done
 	}
 
-	pub fn update( &mut self, wuc: &mut WindowUpdateContext ) {
+	fn update( &mut self, wuc: &mut WindowUpdateContext ) -> anyhow::Result<()> {
 //		println!("Update {}", &wuc.time_step );
 		if wuc.was_key_pressed( 'i' as u8 ) {
 			if self.debug_renderer.is_none() {
@@ -348,7 +363,7 @@ impl FiiishApp {
 			println!("fps: {}", fps);
 		}
 
-		if wuc.is_escaped_pressed { //|| wuc.is_space_pressed {
+		if wuc.is_escape_pressed { //|| wuc.is_space_pressed {
 			self.is_done = true;
 		}
 
@@ -374,10 +389,10 @@ impl FiiishApp {
 			let mut debug_renderer = debug_renderer.borrow_mut();
 			debug_renderer.end_frame();
 		}
-
+		Ok(())
 	}
 
-	pub fn render( &mut self ) {
+	fn render( &mut self ) {
 //		println!("Render {}", &self.count );
 //		std::thread::sleep( std::time::Duration::new(0, 5_000_000)); // 1_000_000_000 ns in 1s
 

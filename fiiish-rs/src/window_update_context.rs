@@ -1,4 +1,6 @@
 
+pub use oml_game::window::WindowUpdateContext;
+/*
 use crate::math::Vector2;
 
 #[derive(Debug,Copy,Clone)]
@@ -53,3 +55,4 @@ impl WindowUpdateContext {
 		self.time_step
 	}
 }
+*/

@@ -1,7 +1,7 @@
 
 use crate::math::Vector2;
 use crate::system::System;
-use crate::system::filesystem_stream::FilesystemStream;
+use oml_game::system::filesystem_stream::FilesystemStream;
 
 #[derive(Debug)]
 pub struct Object {

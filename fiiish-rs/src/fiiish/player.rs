@@ -1,5 +1,5 @@
-use crate::system::{ Serializer, System };
-
+use crate::system::{ System };
+use oml_game::system::Serializer;
 const SERIALIZED_VERSION: u16 = 0x0003;
 const OLDEST_SERIALIZED_VERSION: u16 = 0x0001;
 

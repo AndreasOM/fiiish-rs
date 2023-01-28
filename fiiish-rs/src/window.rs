@@ -138,7 +138,7 @@ impl Window {
                     	..
                 	} => match (virtual_code, state) {
                 		( VirtualKeyCode::Escape, state ) => {
-                			window_update_context.is_escaped_pressed = state == ElementState::Pressed;
+                			window_update_context.is_escape_pressed = state == ElementState::Pressed;
 //                			println!("Escape {:?}", &state );
                 		},
                 		( VirtualKeyCode::Space, state ) => {

@@ -1,4 +1,11 @@
+pub use oml_game::renderer::Renderer;
+pub use oml_game::renderer::Color;
+pub use oml_game::renderer::Texture;
+pub use oml_game::renderer::AnimatedTexture;
+pub use oml_game::renderer::TextureAtlas;
+pub use oml_game::renderer::Effect;
 
+/*
 use std::collections::HashMap;
 
 use crate::debug_renderer;
@@ -893,3 +900,4 @@ mod texture_atlas;
 mod uniform;
 	pub use uniform::Uniform as Uniform;
 
+*/

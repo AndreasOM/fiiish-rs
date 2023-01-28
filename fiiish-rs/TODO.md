@@ -3,10 +3,13 @@
 
 ## In Progress
 
-- [ ] Create released automatically via github actions
-	- [ ] Ensure build_number.txt is not too old 
+- [ ] Switch to using oml-game
+	- [ ] Fix music & sound
 
 ## TODO
+
+- [ ] Create released automatically via github actions
+	- [ ] Ensure build_number.txt is not too old 
 
 - [ ] Use build.rs to write out version to version.txt
 - [ ] Only package needed versions of music for platform

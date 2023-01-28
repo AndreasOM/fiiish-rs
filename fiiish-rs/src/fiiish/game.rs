@@ -5,7 +5,8 @@ use oml_audio::{
 	Audio,
 };
 
-use crate::audio::audio_fileloader_system::*;
+pub use oml_audio::fileloader::{FileLoader, FileLoaderFile};
+//use crate::audio::audio_fileloader_system::*;
 
 use crate::math::Vector2;
 use crate::renderer::{
@@ -155,16 +156,19 @@ impl Game {
 		// :TODO: actually load from a file
 		self.entity_configuration_manager.load( system, "entity_config.whatever" );
 
+		/* :TODO: :S02E01:
 		if !self.audio.load_music_native( system, "theme-00" ) {
 			println!("Error loading music");
 		}
+		*/
 
 		// load sounds
 //		self.sound.load( system, "picked_coin", 10 );
 //		self.sound.load( system, "fiish_death", 1 );
 
+		/* :TODO: :S02E01:
 		self.audio.load_sound_bank( system, "default.omsb" );
-
+		*/
 
 		// load texture
 

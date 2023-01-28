@@ -8,7 +8,8 @@ use crate::system::System;
 use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::entity_ids::*;
 
-
+pub use oml_game::renderer::AnimatedTextureConfiguration;
+/*
 #[derive(Debug)]
 pub struct AnimatedTextureConfiguration {
 	pub prefix: String,
@@ -41,6 +42,8 @@ impl From< ( &str, i8, u16, u16, f32 ) > for AnimatedTextureConfiguration {
 		}
 	}
 }
+
+*/
 
 #[derive(Debug)]
 pub struct EntityConfiguration {

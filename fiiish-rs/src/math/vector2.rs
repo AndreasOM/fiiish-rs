@@ -1,5 +1,6 @@
 
-
+pub use oml_game::math::Vector2;
+/*
 #[derive(Copy,Clone)]
 pub struct Vector2 {
 	pub x: f32,
@@ -96,3 +97,4 @@ impl std::fmt::Debug for Vector2 {
 		)
 	}
 }
+*/

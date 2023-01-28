@@ -1,12 +1,32 @@
-use chrono::prelude::*;
 
+use oml_game::Game;
 use fiiish_rs::fiiish::fiiish_app::FiiishApp;
-use fiiish_rs::window::Window;
-//use fiiish_rs::window_update_context::WindowUpdateContext;
+
+use tracing::*;
+use tracing_subscriber::FmtSubscriber;
 
 fn main() -> anyhow::Result<()>{
 	println!("Fiiish!");
+	let use_ansi = atty::is(atty::Stream::Stdout);
 
+	let subscriber = FmtSubscriber::builder()
+		.with_max_level(Level::TRACE)
+		.with_ansi(use_ansi) // sublime console doesn't like it :(
+		.finish();
+
+	tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+
+	let app = FiiishApp::new();
+
+	match Game::run(app) {
+		Ok(_) => {},
+		Err(e) => {
+			error!("Game returned {}", &e)
+		},
+	}
+
+	Ok(())
+/*
 	// handle command line arguments
 
 	// create App
@@ -53,5 +73,6 @@ fn main() -> anyhow::Result<()>{
 	window.teardown();
 
 	Ok(())
+*/
 }
 
