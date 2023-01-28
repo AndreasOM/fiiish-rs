@@ -106,10 +106,10 @@ impl EntityConfigurationManager {
 		self.add_config( ( EntityId::BLOCK1X1, EntityType::Decoration, ( 128.0, 128.0 ).into(), ( "block-1x1", 0, 0, 0, 25.0 ).into() ).into() );
 
 		// pickups
-		self.add_config( ( EntityId::PICKUPCOIN, EntityType::Pickup, ( 32.0,  32.0 ).into(), ( "coin_", 2, 1, 32, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::PICKUPRAIN, EntityType::Pickup, ( 32.0,  32.0 ).into(), ( "coin_blue_", 2, 1, 32, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::PICKUPEXPLOSION, EntityType::Pickup, ( 32.0,  32.0 ).into(), ( "coin_green_", 2, 1, 32, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::PICKUPMAGNET, EntityType::Pickup, ( 32.0,  32.0 ).into(), ( "magnet_", 2, 1, 32, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::PICKUPCOIN, EntityType::Pickup, ( 32.0,  32.0 ).into(), ( "coin_%02d", 0, 1, 32, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::PICKUPRAIN, EntityType::Pickup, ( 32.0,  32.0 ).into(), ( "coin_blue_%02d", 0, 1, 32, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::PICKUPEXPLOSION, EntityType::Pickup, ( 32.0,  32.0 ).into(), ( "coin_green_%02d", 0, 1, 32, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::PICKUPMAGNET, EntityType::Pickup, ( 32.0,  32.0 ).into(), ( "magnet_%02d", 0, 1, 32, 25.0 ).into() ).into() );
 
 		// obstacles
 		self.add_config( ( EntityId::ROCKA, EntityType::Obstacle, ( 150.0,  89.0 ).into(), ( "rock-a", 0, 0, 0, 25.0 ).into() ).into() );
@@ -118,13 +118,13 @@ impl EntityConfigurationManager {
 		self.add_config( ( EntityId::ROCKD, EntityType::Obstacle, ( 197.0, 436.0 ).into(), ( "rock-d", 0, 0, 0, 25.0 ).into() ).into() );
 		self.add_config( ( EntityId::ROCKE, EntityType::Obstacle, ( 175.0, 556.0 ).into(), ( "rock-e", 0, 0, 0, 25.0 ).into() ).into() );
 		self.add_config( ( EntityId::ROCKF, EntityType::Obstacle, ( 413.0, 538.0 ).into(), ( "rock-f", 0, 0, 0, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::SEAWEEDA, EntityType::Obstacle, ( 63.0, 114.0 ).into(), ( "seaweed-a-", -2, 1, 48, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::SEAWEEDB, EntityType::Obstacle, ( 62.0, 181.0 ).into(), ( "seaweed-b-", -2, 1, 48, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::SEAWEEDC, EntityType::Obstacle, ( 72.0, 238.0 ).into(), ( "seaweed-c-", -2, 1, 48, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::SEAWEEDD, EntityType::Obstacle, ( 78.0, 296.0 ).into(), ( "seaweed-d-", -2, 1, 48, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::SEAWEEDE, EntityType::Obstacle, ( 98.0, 330.0 ).into(), ( "seaweed-e-", -2, 1, 48, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::SEAWEEDF, EntityType::Obstacle, ( 113.0, 375.0 ).into(), ( "seaweed-f-", -2, 1, 48, 25.0 ).into() ).into() );
-		self.add_config( ( EntityId::SEAWEEDG, EntityType::Obstacle, ( 115.0, 404.0 ).into(), ( "seaweed-g-", -2, 1, 48, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::SEAWEEDA, EntityType::Obstacle, ( 63.0, 114.0 ).into(), ( "seaweed-a-%d", 0, 1, 48, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::SEAWEEDB, EntityType::Obstacle, ( 62.0, 181.0 ).into(), ( "seaweed-b-%d", 0, 1, 48, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::SEAWEEDC, EntityType::Obstacle, ( 72.0, 238.0 ).into(), ( "seaweed-c-%d", 0, 1, 48, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::SEAWEEDD, EntityType::Obstacle, ( 78.0, 296.0 ).into(), ( "seaweed-d-%d", 0, 1, 48, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::SEAWEEDE, EntityType::Obstacle, ( 98.0, 330.0 ).into(), ( "seaweed-e-%d", 0, 1, 48, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::SEAWEEDF, EntityType::Obstacle, ( 113.0, 375.0 ).into(), ( "seaweed-f-%d", 0, 1, 48, 25.0 ).into() ).into() );
+		self.add_config( ( EntityId::SEAWEEDG, EntityType::Obstacle, ( 115.0, 404.0 ).into(), ( "seaweed-g-%d", 0, 1, 48, 25.0 ).into() ).into() );
 		self.add_config( ( EntityId::FERRIS, EntityType::Decoration, ( 55.0, 41.0 ).into(), ( "ferris", 0, 0, 0, 25.0 ).into() ).into() );
 		self.add_config( ( EntityId::HEART, EntityType::Decoration, ( 64.0, 64.0 ).into(), ( "heart", 0, 0, 0, 25.0 ).into() ).into() );
 		self.add_config( ( EntityId::FIIISH, EntityType::Decoration, ( 64.0, 64.0 ).into(), ( "fiiish", 0, 0, 0, 25.0 ).into() ).into() );

@@ -41,8 +41,9 @@ features = []
 # features = [ "apple" ]
 
 [dependencies.oml-game]
-#path = "../../oml-game"
-version = "0.32.1-alpha"
+path = "../../oml-game"
+version = "0.32.2-dev"
+#version = "0.32.1-alpha"
 #git = "https://github.com/AndreasOM/oml-game"
 #branch = "episode-0031"
 
