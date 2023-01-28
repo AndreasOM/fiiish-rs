@@ -3,7 +3,7 @@ use std::cell::{ Ref, RefCell, RefMut };
 
 use std::sync::mpsc::Sender;
 
-use crate::DebugRenderer;
+use oml_game::renderer::debug_renderer::DebugRenderer;
 use oml_game::math::Vector2;
 use oml_game::renderer::Color;
 use crate::ui::{

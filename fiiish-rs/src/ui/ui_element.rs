@@ -1,7 +1,7 @@
 
 use std::sync::mpsc::Sender;
 
-use crate::DebugRenderer;
+use oml_game::renderer::debug_renderer::DebugRenderer;
 use oml_game::math::Vector2;
 
 use crate::ui::*;

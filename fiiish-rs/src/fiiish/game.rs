@@ -38,7 +38,8 @@ use crate::fiiish::Player;
 use crate::fiiish::ShapeCache;
 use crate::fiiish::ZoneManager;
 
-use crate::DebugRenderer;
+use oml_game::renderer::debug_renderer::DebugRenderer;
+
 use crate::{
 	OverlapChecker,
 	OverlapCheckerItem,

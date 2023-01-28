@@ -1,6 +1,6 @@
 
 use std::cell::RefCell;
-use crate::DebugRenderer;
+use oml_game::renderer::debug_renderer::DebugRenderer;
 
 use oml_game::math::Vector2;
 use oml_game::math::Matrix22;

@@ -31,9 +31,8 @@ use oml_game::window::{Window, WindowUpdateContext};
 use crate::fiiish::game::Game;
 use crate::fiiish::GameUi;
 
-use crate::DebugRenderer;
-
-use crate::debug_renderer;
+use oml_game::renderer::debug_renderer;
+use oml_game::renderer::debug_renderer::DebugRenderer;
 
 use super::demo::Demo;
 use super::mixel::Mixel;

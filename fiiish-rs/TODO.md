@@ -9,6 +9,7 @@
 		- [x] Get rid of math -> oml_game::math
 		- [x] Get rid of system -> oml_game::system
 		- [x] Get rid of renderer -> oml_game::renderer
+		- [x] Get rid of debug_renderer -> oml_game::debug_renderer
 	- [ ] Switch to release (alpha) version of oml-game.
 
 ## TODO

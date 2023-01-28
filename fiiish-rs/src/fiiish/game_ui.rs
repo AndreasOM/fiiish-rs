@@ -7,7 +7,8 @@ use std::sync::mpsc::{
 	Receiver,
 };
 
-use crate::DebugRenderer;
+use oml_game::renderer::debug_renderer::DebugRenderer;
+
 use crate::fiiish::CounterDialog;
 use crate::fiiish::PauseDialog;
 use crate::fiiish::ResultDialog;

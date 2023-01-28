@@ -6,7 +6,7 @@ use oml_game::math::Vector2;
 
 use crate::fiiish::game::GameState;
 
-use crate::DebugRenderer;
+use oml_game::renderer::debug_renderer::DebugRenderer;
 
 #[derive(Debug)]
 pub struct EntityUpdateContext {
