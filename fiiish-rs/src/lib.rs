@@ -4,6 +4,7 @@
 // App generic
 pub mod audio;
 pub mod renderer;
+#[deprecated(since = "2.1.0", note = "Please use oml_game!")]
 pub mod system;
 pub mod ui;
 pub mod window;
