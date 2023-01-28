@@ -7,7 +7,7 @@ use crate::renderer::{
 	Renderer,
 	Texture,
 };
-use crate::system::System;
+use oml_game::system::System;
 
 use crate::window_update_context::WindowUpdateContext;
 use super::effect_ids::EffectId;

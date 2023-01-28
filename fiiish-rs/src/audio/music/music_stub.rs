@@ -1,5 +1,5 @@
 /*
-use crate::system::System;
+use oml_game::system::System;
 
 #[derive(Debug)]
 pub struct MusicStub {

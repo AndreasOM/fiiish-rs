@@ -1,5 +1,5 @@
 /*
-use crate::system::System;
+use oml_game::system::System;
 
 use std::collections::{
 	HashMap,

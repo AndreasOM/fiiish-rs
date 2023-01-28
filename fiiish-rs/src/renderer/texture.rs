@@ -6,7 +6,7 @@ use crate::renderer::{
 	Debug,
 	gl,
 };
-use crate::system::System;
+use oml_game::system::System;
 
 #[derive(Derivative)]
 #[derivative(Debug)]

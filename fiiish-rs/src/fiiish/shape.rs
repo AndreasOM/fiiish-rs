@@ -5,7 +5,7 @@ use crate::DebugRenderer;
 use oml_game::math::Vector2;
 use oml_game::math::Matrix22;
 
-use crate::system::System;
+use oml_game::system::System;
 //use crate::system::filesystem_stream::FilesystemStream;
 
 use crate::renderer::Color;

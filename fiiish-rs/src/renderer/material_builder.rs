@@ -3,7 +3,7 @@
 todo!("remove");
 
 use crate::renderer::Material;
-use crate::system::System;
+use oml_game::system::System;
 
 pub struct MaterialBuilder {
 	name: String,

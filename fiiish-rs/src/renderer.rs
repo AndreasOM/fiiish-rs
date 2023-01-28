@@ -17,7 +17,7 @@ use crate::math::{
 	Matrix44,
 	Vector2
 };
-use crate::system::System;
+use oml_game::system::System;
 use crate::window::Window;
 
 

@@ -4,7 +4,7 @@ use crate::renderer::{
 	Renderer,
 	Texture,
 };
-use crate::system::System;
+use oml_game::system::System;
 
 use crate::fiiish::entities::AnimatedTextureConfiguration;
 

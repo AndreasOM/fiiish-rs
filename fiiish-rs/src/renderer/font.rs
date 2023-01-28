@@ -1,6 +1,6 @@
 
 
-use crate::system::System;
+use oml_game::system::System;
 
 #[derive(Debug,Copy,Clone)]
 pub struct Glyph {

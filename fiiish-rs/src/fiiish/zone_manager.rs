@@ -14,7 +14,7 @@ use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::Zone;
 use oml_game::math::Vector2;
-use crate::system::System;
+use oml_game::system::System;
 
 #[derive(Debug)]
 pub struct ZoneManager {

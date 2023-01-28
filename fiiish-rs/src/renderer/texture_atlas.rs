@@ -7,7 +7,7 @@ use crate::renderer::{
 	Renderer,
 	Texture,
 };
-use crate::system::System;
+use oml_game::system::System;
 use crate::system::filesystem_stream::FilesystemStream;
 
 #[derive(Debug)]

@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 use crate::fiiish::Shape;
 use crate::fiiish::entities::EntityId;
-use crate::system::System;
+use oml_game::system::System;
 
 #[derive(Debug)]
 pub struct ShapeCache {

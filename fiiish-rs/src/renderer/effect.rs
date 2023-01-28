@@ -6,7 +6,7 @@ use crate::renderer::{
 	Program,
 	ShaderType,
 };
-use crate::system::System;
+use oml_game::system::System;
 
 
 #[derive(Debug)]

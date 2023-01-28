@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use oml_game::math::Vector2;
 
-use crate::system::System;
+use oml_game::system::System;
 
 use crate::fiiish::entities::EntityType;
 use crate::fiiish::entities::entity_ids::*;

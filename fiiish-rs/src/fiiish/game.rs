@@ -15,7 +15,7 @@ use crate::renderer::{
 	Renderer,
 	Texture,
 };
-use crate::system::System;
+use oml_game::system::System;
 use crate::window_update_context::WindowUpdateContext;
 use crate::fiiish::app_update_context::AppUpdateContext;
 
