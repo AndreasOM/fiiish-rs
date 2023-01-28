@@ -9,7 +9,7 @@ use oml_game::renderer::{
 };
 use oml_game::system::System;
 
-use crate::window_update_context::WindowUpdateContext;
+use oml_game::window::window_update_context::WindowUpdateContext;
 use super::effect_ids::EffectId;
 
 

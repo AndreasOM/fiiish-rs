@@ -4,8 +4,6 @@
 // App generic
 pub mod audio;
 pub mod ui;
-pub mod window;
-pub mod window_update_context;
 
 mod overlap_checker;
 	pub use overlap_checker::OverlapChecker as OverlapChecker;

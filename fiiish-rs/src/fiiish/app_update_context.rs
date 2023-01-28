@@ -1,7 +1,7 @@
 
 use oml_game::math::Vector2;
 
-use crate::window_update_context::WindowUpdateContext;
+use oml_game::window::window_update_context::WindowUpdateContext;
 
 #[derive(Debug,Copy,Clone)]
 pub struct AppUpdateContext {

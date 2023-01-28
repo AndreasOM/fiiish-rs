@@ -24,7 +24,7 @@ use oml_game::system::System;
 
 use crate::ui::*;
 
-use crate::window_update_context::WindowUpdateContext;
+use oml_game::window::window_update_context::WindowUpdateContext;
 use crate::fiiish::app_update_context::AppUpdateContext;
 
 #[derive(Debug)]
