@@ -1,6 +1,6 @@
 
 use oml_game::math::Vector2;
-use crate::renderer::{
+use oml_game::renderer::{
 	Color,
 };
 

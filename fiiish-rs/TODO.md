@@ -7,7 +7,8 @@
 	- [ ] Fix music & sound
 	- [ ] Get rid of proxy stubs
 		- [x] Get rid of math -> oml_game::math
-		- [ ] Get rid of system -> oml_game::system
+		- [x] Get rid of system -> oml_game::system
+		- [x] Get rid of renderer -> oml_game::renderer
 	- [ ] Switch to release (alpha) version of oml-game.
 
 ## TODO

@@ -8,7 +8,7 @@ use oml_game::math::Matrix22;
 use oml_game::system::System;
 //use crate::system::filesystem_stream::FilesystemStream;
 
-use crate::renderer::Color;
+use oml_game::renderer::Color;
 
 #[derive(Debug)]
 pub struct SubShape {	

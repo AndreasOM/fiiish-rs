@@ -9,7 +9,7 @@ pub use oml_audio::fileloader::{FileLoader, FileLoaderFile};
 //use crate::audio::audio_fileloader_system::*;
 
 use oml_game::math::Vector2;
-use crate::renderer::{
+use oml_game::renderer::{
 //	AnimatedTexture,
 	Color,
 	Renderer,

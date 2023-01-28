@@ -3,7 +3,7 @@
 use crate::fiiish::EntityUpdateContext;
 use crate::fiiish::entities::EntityConfiguration;
 use crate::fiiish::entities::EntityType;
-use crate::renderer::Renderer;
+use oml_game::renderer::Renderer;
 
 #[derive(Debug)]
 pub enum EntityState {

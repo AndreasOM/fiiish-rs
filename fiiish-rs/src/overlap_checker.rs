@@ -6,7 +6,7 @@ use oml_game::math::{
 	Matrix22,
 	Vector2
 };
-use crate::renderer::Color;
+use oml_game::renderer::Color;
 use crate::DebugRenderer;
 
 #[derive(Debug)]

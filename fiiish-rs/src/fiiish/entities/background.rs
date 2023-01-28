@@ -13,7 +13,7 @@ use oml_game::math::{
 	Matrix32,
 	Vector2
 };
-use crate::renderer::{
+use oml_game::renderer::{
 	Renderer
 };
 

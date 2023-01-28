@@ -3,7 +3,6 @@
 
 // App generic
 pub mod audio;
-pub mod renderer;
 pub mod ui;
 pub mod window;
 pub mod window_update_context;

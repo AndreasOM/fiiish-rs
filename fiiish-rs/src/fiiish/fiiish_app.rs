@@ -8,7 +8,7 @@ use crate::fiiish::layer_ids::LayerId;
 use crate::fiiish::font_ids::FontId;
 //use crate::math::{ Matrix44, Vector2 };
 use oml_game::math::{Matrix44, Vector2};
-use crate::renderer::{
+use oml_game::renderer::{
 	Color,
 	Effect,
 	Renderer,

@@ -6,7 +6,7 @@ use std::cell::RefCell;
 
 use crate::fiiish::game::Game;
 use oml_game::math::Vector2;
-use crate::renderer::Color;
+use oml_game::renderer::Color;
 use crate::ui::*;
 
 #[derive(Debug)]

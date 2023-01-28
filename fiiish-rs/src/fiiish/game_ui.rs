@@ -16,7 +16,7 @@ use crate::fiiish::game::Game;
 use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 use oml_game::math::Vector2;
-use crate::renderer::{
+use oml_game::renderer::{
 	Renderer,
 };
 use oml_game::system::System;
