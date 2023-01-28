@@ -1,6 +1,4 @@
-
-
-#[derive(Debug,Eq,PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum EntityType {
 	None,
 	Player,

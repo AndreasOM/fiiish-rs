@@ -1,6 +1,4 @@
-
 use oml_game::math::Vector2;
-
 
 use crate::ui::*;
 
@@ -10,17 +8,14 @@ pub struct UiVbox {
 }
 
 impl UiVbox {
-	pub fn new( ) -> Self {
-		Self {
-			padding: 0.0,
-		}
+	pub fn new() -> Self {
+		Self { padding: 0.0 }
 	}
 
-	pub fn set_padding( &mut self, padding: f32 ) {
+	pub fn set_padding(&mut self, padding: f32) {
 		self.padding = padding;
-//		self.recalculate_size(); // :TODO:
+		//		self.recalculate_size(); // :TODO:
 	}
-
 }
 
 impl UiElement for UiVbox {
@@ -30,7 +25,7 @@ impl UiElement for UiVbox {
 	fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
 		self
 	}
-	fn recalculate_size( &mut self, container: &mut UiElementContainerData ) {
+	fn recalculate_size(&mut self, container: &mut UiElementContainerData) {
 		let mut total_size = Vector2::zero();
 
 		for c in container.borrow_children().iter() {
@@ -43,11 +38,10 @@ impl UiElement for UiVbox {
 		}
 		total_size.y -= self.padding;
 
-		container.set_size( &total_size );
+		container.set_size(&total_size);
 	}
 
-
-	fn layout( &mut self, container: &mut UiElementContainerData, pos: &Vector2 ) {
+	fn layout(&mut self, container: &mut UiElementContainerData, pos: &Vector2) {
 		let mut total_size = Vector2::zero();
 		let mut c_positions_y = Vec::new();
 		let padding = self.padding;
@@ -63,23 +57,22 @@ impl UiElement for UiVbox {
 			}
 			w0 = w1;
 			w1 = 0.5 * cs.y;
-			c_positions_y.push( w0 +  w1 );
+			c_positions_y.push(w0 + w1);
 		}
 		total_size.y -= padding;
 
-		c_positions_y.push( 0.0 );
+		c_positions_y.push(0.0);
 
-//		let mut cpos = Vector2::new( 0.0, -0.5*total_size.y - self.padding );
-		let mut cpos = Vector2::new( 0.0,  0.5*total_size.y + self.padding );
+		//		let mut cpos = Vector2::new( 0.0, -0.5*total_size.y - self.padding );
+		let mut cpos = Vector2::new(0.0, 0.5 * total_size.y + self.padding);
 
-		for (i, c ) in container.borrow_children_mut().iter_mut().enumerate() {
-			let y = c_positions_y[ i ];
+		for (i, c) in container.borrow_children_mut().iter_mut().enumerate() {
+			let y = c_positions_y[i];
 			cpos.y -= y + padding;
-			c.borrow_mut().layout( &cpos );
+			c.borrow_mut().layout(&cpos);
 		}
 
-		container.set_pos( pos );
-		container.set_size( &total_size );
+		container.set_pos(pos);
+		container.set_size(&total_size);
 	}
-
 }
