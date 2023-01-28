@@ -28,7 +28,6 @@ test-noisy:
 	cargo test -- --nocapture
 
 update-build-number:
-	echo :TODO: cook && exit 0
 	../workflow/helpers/update_build_number.sh
 
 release-test:
