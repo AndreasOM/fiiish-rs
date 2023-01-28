@@ -5,19 +5,7 @@ use std::cell::RefCell;
 use crate::fiiish::game::Game;
 use oml_game::math::Vector2;
 
-use crate::ui::{
-	UiElement,
-	UiElementContainer,
-	UiElementContainerData,
-	UiElementContainerHandle,
-	UiEvent,
-	UiEventResponse,
-	UiEventResponseButtonClicked,
-	UiButton,
-	UiImage,
-	UiHbox,
-	UiToggleButton,
-};
+use crate::ui::*;
 
 
 #[derive(Debug)]

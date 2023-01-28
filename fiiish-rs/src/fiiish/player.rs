@@ -34,7 +34,7 @@ impl Player {
 	}
 	pub fn load( &mut self, system: &mut System ) -> bool {
 		let filename = format!("{}{}", "default", ".fiiishsave" );
-		let mut f = system.savegame_filesystem_mut().open( &filename );
+		let f = system.savegame_filesystem_mut().open( &filename );
 		if !f.is_valid() {
 			println!("Not loading player. File not found {}", &filename );
 			return false;
@@ -54,7 +54,7 @@ impl Player {
 	pub fn save( &mut self, system: &mut System ) -> bool {
 		println!("Saving player {:?}", self );
 		let filename = format!("{}{}", "default", ".fiiishsave" );
-		let mut f = system.savegame_filesystem_mut().create( &filename, true );
+		let f = system.savegame_filesystem_mut().create( &filename, true );
 		dbg!(&f);
 		if !f.is_valid() {
 			println!("Not saving player. Couldn't create {}", &filename );

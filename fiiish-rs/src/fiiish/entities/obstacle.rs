@@ -20,7 +20,7 @@ use crate::renderer::{
 #[derive(Debug)]
 pub struct Obstacle {
 	name: String,
-	crc: u32,
+	// crc: u32,
 	pos: Vector2,
 	size: Vector2,
 	rotation: f32,
@@ -32,11 +32,11 @@ pub struct Obstacle {
 
 // rock-f 413 x 538
 impl Obstacle {
-	pub fn new( pos: &Vector2, crc: u32 ) -> Self {
+	pub fn new( pos: &Vector2, _crc: u32 ) -> Self {
 		Self {
 			name: "obstacle".to_string(),
 			pos: *pos, //Vector2::zero(),
-			crc: crc,
+			// crc: crc,
 			size: Vector2::new( 413.0, 538.0 ),
 			rotation: 0.0,
 			animated_texture: AnimatedTexture::new(),

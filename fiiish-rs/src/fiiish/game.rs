@@ -303,12 +303,14 @@ impl Game {
 									let offset = o.size().scaled( -0.5 );
 									let rot = o.rotation();
 									obstacle_shape.debug_render( &*self.debug_renderer, &offset, &op, rot );
+									/*
 									let a = OverlapCheckerItem {
 										shape: &fish_shape,
 										pos: &fp,
 										offset: &Vector2::new( -64.0, -64.0 ),
 										rotation: 0.0,
 									};
+									*/
 									let a = OverlapCheckerItem {
 										shape: &fish_shape,
 										pos: &fp,

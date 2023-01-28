@@ -18,24 +18,24 @@ use crate::renderer::{
 #[derive(Debug)]
 pub struct Coin {
 	name: String,
-	crc: u32,
+	// crc: u32,
 	pos: Vector2,
 	size: Vector2,
 	animated_texture: AnimatedTexture,
-	animation_offset: u16,
+	// animation_offset: u16,
 	alive: bool,
 	entity_data: EntityData,
 }
 
 impl Coin {
-	pub fn new(pos: &Vector2, animation_offset: u16, crc: u32 ) -> Self {
+	pub fn new(pos: &Vector2, _animation_offset: u16, _crc: u32 ) -> Self {
 		let mut s = Self {
 			name: String::new(),
-			crc: crc,
+			// crc: crc,
 			pos: *pos, //Vector2::zero(),
 			size: Vector2::new( 32.0, 32.0 ),
 			animated_texture: AnimatedTexture::new(),
-			animation_offset,
+			// animation_offset,
 			alive: true,
 			entity_data: EntityData::default(),
 		};

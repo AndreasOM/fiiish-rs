@@ -147,7 +147,7 @@ impl UiElementContainer {
 		}
 	}
 
-	pub fn new_from_element( mut element: impl UiElement + 'static ) -> Self {
+	pub fn new_from_element( element: impl UiElement + 'static ) -> Self {
 		UiElementContainer::new( Box::new( element ) )
 	}
 
@@ -358,6 +358,7 @@ impl UiElementContainer {
 	}
 
 	pub fn handle_ui_event( &mut self, event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Option< Box < dyn UiEventResponse > > {
+		#[allow(unreachable_patterns)]
 		match event {
 			UiEvent::MouseClick{ pos, button } => {
 				let pos = pos.sub( self.pos() );

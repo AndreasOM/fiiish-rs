@@ -104,7 +104,7 @@ impl OverlapChecker {
 	}
 
 	// :TODO: fix name to "is any point in a on the same side of all segments in b"" ... or something like that
-	fn any_points_in_polygon( points_a: &Vec< Segment >, polygon_b: &Vec< Segment >, debug_renderer: &Option < RefCell< DebugRenderer >  > ) -> bool {
+	fn any_points_in_polygon( points_a: &Vec< Segment >, polygon_b: &Vec< Segment >, _debug_renderer: &Option < RefCell< DebugRenderer >  > ) -> bool {
 		let mut any_inside = false;
 
 		for sa in points_a.iter() {

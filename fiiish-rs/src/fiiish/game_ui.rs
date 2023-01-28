@@ -17,29 +17,11 @@ use crate::fiiish::effect_ids::EffectId;
 use crate::fiiish::layer_ids::LayerId;
 use oml_game::math::Vector2;
 use crate::renderer::{
-	Color,
 	Renderer,
-	Texture,
 };
 use crate::system::System;
 
-use crate::ui::{
-	UiElement,
-	UiElementContainer,
-	UiElementContainerHandle,
-	UiElementFadeState,
-	UiEvent,
-	UiEventResponse,
-	UiEventResponseButtonClicked,
-
-	UiButton,
-	UiGravityBox,
-	UiHbox,
-	UiImage,
-	UiRenderer,
-	UiToggleButton,
-	UiVbox,
-};
+use crate::ui::*;
 
 use crate::window_update_context::WindowUpdateContext;
 use crate::fiiish::app_update_context::AppUpdateContext;
@@ -50,7 +32,7 @@ pub struct GameUi {
 	root: Option< UiElementContainer >,
 	size: Vector2,
 
-	pause_togglebutton: Option< UiElementContainerHandle >,
+	// pause_togglebutton: Option< UiElementContainerHandle >,
 
 	debug_renderer: Rc < Option < RefCell< DebugRenderer >  > >,
 
@@ -66,7 +48,7 @@ impl GameUi {
 		Self {
 			root: None,
 			size: Vector2::zero(),
-			pause_togglebutton: None,
+			// pause_togglebutton: None,
 			debug_renderer:	Rc::new( None ),
 			event_response_sender: tx,
 			event_response_receiver: rx,
@@ -82,7 +64,7 @@ impl GameUi {
 		self.debug_renderer = Rc::new( None );
 	}
 
-	pub fn setup(&mut self, system: &mut System, renderer: &mut Renderer, game: &mut Rc< RefCell< Game > > ) {
+	pub fn setup(&mut self, _system: &mut System, _renderer: &mut Renderer, game: &mut Rc< RefCell< Game > > ) {
 		self.game = Some( game.clone() );
 
 		let mut root = UiGravityBox::new( );
@@ -246,8 +228,8 @@ impl GameUi {
 		}
 
 		// handle pending event responses
-		if let Some( game ) = &mut self.game.clone() {
-			let mut game = game.borrow_mut();
+		if let Some( _game ) = &mut self.game.clone() {
+			// let mut game = game.borrow_mut();
 			let events: Vec< Box< dyn UiEventResponse > > = self.event_response_receiver.try_iter().collect();
 			for ev in events {
 	//			while let Some( ev ) =  ev_iter.next() {

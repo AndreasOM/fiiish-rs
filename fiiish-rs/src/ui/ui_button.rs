@@ -2,16 +2,7 @@
 use std::sync::mpsc::Sender;
 
 use oml_game::math::Vector2;
-use crate::ui::{
-	UiElement,
-	UiElementContainer,
-	UiElementContainerData,
-	UiElementContainerHandle,
-	UiEvent,
-	UiEventResponse,
-	UiEventResponseButtonClicked,
-	UiImage,
-};
+use crate::ui::*;
 
 #[derive(Debug)]
 pub struct UiButton {
@@ -41,7 +32,7 @@ impl UiElement for UiButton {
 		let image = container.add_child_element( UiImage::new( &self.imagename, &self.imagesize ) );
 		self.image = Some( image );
 	}
-	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Option< Box < dyn UiEventResponse > > {
+	fn handle_ui_event( &mut self, container: &mut UiElementContainerData, _event: &UiEvent, _event_sender: &Sender< Box< dyn UiEventResponse > > ) -> Option< Box < dyn UiEventResponse > > {
 		println!("Button clicked");
 //		let mut r = Vec::new();
 //		let ev = Box::new( UiEventResponseButtonClicked{ button_name: container.name.clone() } );

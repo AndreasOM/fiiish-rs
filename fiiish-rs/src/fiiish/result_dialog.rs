@@ -2,28 +2,12 @@
 use std::rc::Rc;
 use std::cell::RefCell;
 
-use std::sync::mpsc::Sender;
+
 
 use crate::fiiish::game::Game;
 use oml_game::math::Vector2;
 use crate::renderer::Color;
-use crate::ui::{
-//	UiBlock,
-	UiButton,
-	UiElement,
-	UiElementContainer,
-	UiElementContainerData,
-	UiElementContainerHandle,
-	UiEvent,
-	UiEventResponse,
-	UiEventResponseButtonClicked,
-	UiImage,
-	UiHbox,
-	UiLabel,
-	UiSpacer,
-	UiToggleButton,
-	UiVbox,
-};
+use crate::ui::*;
 
 
 const RESULTINDEX_COINS:			usize = 0;
@@ -86,28 +70,28 @@ impl UiElement for ResultDialog {
 
 		{
 			let mut parent = background.borrow_mut();
-			let mut vbox = UiVbox::new();
+			let vbox = UiVbox::new();
 			// hbox.set_padding( 0.0 );
-			let mut vbox = parent.add_child_element( vbox );
+			let vbox = parent.add_child_element( vbox );
 			{
 				let mut parent = vbox.borrow_mut();
 
 				parent.add_child_element( UiSpacer::new( &Vector2::new( 16.0, 240.0 ), &Color::from_rgba( 0.2, 0.6, 0.8, 0.5 ) ) ); // top space
 
-				let mut hbox = UiHbox::new();
+				let hbox = UiHbox::new();
 				// hbox.set_padding( 0.0 );
-				let mut hbox = parent.add_child_element( hbox );
+				let hbox = parent.add_child_element( hbox );
 				// center box with actual results
 				{
 					let mut parent = hbox.borrow_mut();
 					parent.add_child_element( UiSpacer::new( &Vector2::new( 350.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.8, 0.5 ) ) ); // left space
 					{
-						let mut table_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 520.0, 412.0 ), &Color::from_rgba( 0.2, 0.2, 0.8, 0.5 ) ) ); // placeholder
+						let table_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 520.0, 412.0 ), &Color::from_rgba( 0.2, 0.2, 0.8, 0.5 ) ) ); // placeholder
 
 						let mut parent = table_space.borrow_mut();
 						let mut vbox = UiVbox::new();
 						vbox.set_padding( 32.0 );
-						let mut vbox = parent.add_child_element( vbox );
+						let vbox = parent.add_child_element( vbox );
 						{
 							let mut parent = vbox.borrow_mut();
 
@@ -115,7 +99,7 @@ impl UiElement for ResultDialog {
 							{
 								let mut hbox = UiHbox::new();
 								hbox.set_padding( 20.0 );
-								let mut hbox = parent.add_child_element( hbox );
+								let hbox = parent.add_child_element( hbox );
 
 								{
 									let mut parent = hbox.borrow_mut();
@@ -138,23 +122,23 @@ impl UiElement for ResultDialog {
 				{
 					// button row
 
-					let mut hbox = UiHbox::new();
+					let hbox = UiHbox::new();
 					// hbox.set_padding( 0.0 );
-					let mut hbox = parent.add_child_element( hbox );
+					let hbox = parent.add_child_element( hbox );
 					{
 						let mut parent = hbox.borrow_mut();
 						parent.add_child_element( UiSpacer::new( &Vector2::new( 128.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.8, 0.5 ) ) ); // left space
 						{
-							let mut button_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 384.0, 128.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // placeholder for buttons
+							let button_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 384.0, 128.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // placeholder for buttons
 
 							{
 								let mut parent = button_space.borrow_mut();
-								let mut hbox = UiHbox::new();
+								let hbox = UiHbox::new();
 								// hbox.set_padding( 0.0 );
-								let mut hbox = parent.add_child_element( hbox );
+								let hbox = parent.add_child_element( hbox );
 								{
 									let mut parent = hbox.borrow_mut();
-									let mut play_button = parent.add_child_element( UiButton::new( "button_play", &Vector2::new( 128.0, 128.0 ) ) );
+									let play_button = parent.add_child_element( UiButton::new( "button_play", &Vector2::new( 128.0, 128.0 ) ) );
 									play_button.borrow_mut().set_name( "PlayButton" );
 									self.play_button = Some( play_button.clone() );
 									parent.add_child_element( UiSpacer::new( &Vector2::new( 256.0, 16.0 ), &Color::from_rgba( 0.8, 0.6, 0.2, 0.5 ) ) ); // right space
@@ -171,12 +155,12 @@ impl UiElement for ResultDialog {
 	}
 
 	fn update( &mut self, _container: &UiElementContainerData, _time_step: f64 ) {
-		let mut distance = 0;
-		let mut coins = 0;
-		let mut player_coins = 0;
-		let mut last_distance = 0;
-		let mut best_distance = 0;
-		let mut total_distance = 0;
+		let distance;// = 0;
+		let coins;// = 0;
+		let player_coins;// = 0;
+		let last_distance;// = 0;
+		let best_distance;// = 0;
+		let total_distance;// = 0;
 		{
 			let game = self.game.borrow_mut();
 			distance = game.distance();

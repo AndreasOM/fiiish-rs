@@ -47,6 +47,7 @@ pub fn debug_renderer_toggle( layer_id: u8, effect_id: u16 ) {
 	}	
 }
 
+#[allow(dead_code)]
 pub fn debug_renderer_add_line( start: &Vector2, end: &Vector2, width: f32, color: &Color ) {
 	let mut lock = DEFAULT_DEBUGRENDERER.try_lock();
 	if let Ok(ref mut dr) = lock {
@@ -55,6 +56,8 @@ pub fn debug_renderer_add_line( start: &Vector2, end: &Vector2, width: f32, colo
 		}		
 	}
 }
+
+#[allow(dead_code)]
 pub fn debug_renderer_add_frame( pos: &Vector2, size: &Vector2, width: f32, color: &Color ) {
 	let mut lock = DEFAULT_DEBUGRENDERER.try_lock();
 	if let Ok(ref mut dr) = lock {

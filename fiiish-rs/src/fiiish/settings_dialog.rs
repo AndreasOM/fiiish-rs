@@ -2,28 +2,12 @@
 use std::rc::Rc;
 use std::cell::RefCell;
 
-use std::sync::mpsc::Sender;
+
 
 use crate::fiiish::game::Game;
 use oml_game::math::Vector2;
 use crate::renderer::Color;
-use crate::ui::{
-//	UiBlock,
-	UiButton,
-	UiElement,
-	UiElementContainer,
-	UiElementContainerData,
-	UiElementContainerHandle,
-	UiEvent,
-	UiEventResponse,
-	UiEventResponseButtonClicked,
-	UiImage,
-	UiHbox,
-	UiLabel,
-	UiSpacer,
-	UiToggleButton,
-	UiVbox,
-};
+use crate::ui::*;
 
 #[derive(Debug)]
 pub struct SettingsDialog {
@@ -56,38 +40,38 @@ impl UiElement for SettingsDialog {
 
 		{
 			let mut parent = background.borrow_mut();
-			let mut vbox = UiVbox::new();
+			let vbox = UiVbox::new();
 			// hbox.set_padding( 0.0 );
-			let mut vbox = parent.add_child_element( vbox );
+			let vbox = parent.add_child_element( vbox );
 			{
 				let mut parent = vbox.borrow_mut();
 
 				parent.add_child_element( UiSpacer::new( &Vector2::new( 16.0, 240.0 ), &Color::from_rgba( 0.2, 0.6, 0.8, 0.5 ) ) ); // top space
 
-				let mut hbox = UiHbox::new();
+				let hbox = UiHbox::new();
 				// hbox.set_padding( 0.0 );
-				let mut hbox = parent.add_child_element( hbox );
+				let hbox = parent.add_child_element( hbox );
 				// center box with actual results
 				{
 					let mut parent = hbox.borrow_mut();
 					parent.add_child_element( UiSpacer::new( &Vector2::new( 250.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.8, 0.5 ) ) ); // left space
 					{
-						let mut table_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 620.0, 412.0 ), &Color::from_rgba( 0.2, 0.2, 0.8, 0.5 ) ) ); // placeholder
+						let table_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 620.0, 412.0 ), &Color::from_rgba( 0.2, 0.2, 0.8, 0.5 ) ) ); // placeholder
 
 						let mut parent = table_space.borrow_mut();
 						let mut vbox = UiVbox::new();
 						vbox.set_padding( 0.0 );
-						let mut vbox = parent.add_child_element( vbox );
+						let vbox = parent.add_child_element( vbox );
 						{
 							let mut parent = vbox.borrow_mut();
 							{
-								let mut text_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 620.0, 284.0 ), &Color::from_rgba( 0.2, 0.2, 0.8, 0.5 ) ) ); // placeholder
+								let text_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 620.0, 284.0 ), &Color::from_rgba( 0.2, 0.2, 0.8, 0.5 ) ) ); // placeholder
 								// 284
 
 								let mut parent = text_space.borrow_mut();
 								let mut vbox = UiVbox::new();
 								vbox.set_padding( 0.0 );
-								let mut vbox = parent.add_child_element( vbox );
+								let vbox = parent.add_child_element( vbox );
 								{
 									let mut text_box = vbox.borrow_mut();
 									let mut l = UiLabel::new( &Vector2::new( 620.0, 64.0 ), "Fiiish! RS" );
@@ -128,20 +112,20 @@ impl UiElement for SettingsDialog {
 				{
 					// button row
 
-					let mut hbox = UiHbox::new();
+					let hbox = UiHbox::new();
 					// hbox.set_padding( 0.0 );
-					let mut hbox = parent.add_child_element( hbox );
+					let hbox = parent.add_child_element( hbox );
 					{
 						let mut parent = hbox.borrow_mut();
 						parent.add_child_element( UiSpacer::new( &Vector2::new( 128.0, 16.0 ), &Color::from_rgba( 0.8, 0.2, 0.8, 0.5 ) ) ); // left space
 						{
-							let mut button_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 384.0, 128.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // placeholder for buttons
+							let button_space = parent.add_child_element( UiSpacer::new( &Vector2::new( 384.0, 128.0 ), &Color::from_rgba( 0.5, 0.5, 0.5, 0.5 ) ) ); // placeholder for buttons
 
 							{
 								let mut parent = button_space.borrow_mut();
-								let mut hbox = UiHbox::new();
+								let hbox = UiHbox::new();
 								// hbox.set_padding( 0.0 );
-								let mut hbox = parent.add_child_element( hbox );
+								let _hbox = parent.add_child_element( hbox );
 								/*
 								{
 									let mut parent = hbox.borrow_mut();

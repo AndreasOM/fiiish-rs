@@ -1,18 +1,8 @@
 
 use oml_game::math::Vector2;
-use crate::renderer::{
-//	Color,
-	Renderer,
-//	Texture,
-};
 
-use crate::ui::{
-	UiElement,
-	UiElementContainer,
-	UiElementContainerData,
-	UiElementFadeState,
-	UiRenderer,
-};
+
+use crate::ui::*;
 
 #[derive(Debug)]
 pub struct UiHbox {
@@ -63,7 +53,7 @@ impl UiElement for UiHbox {
 		let padding = self.padding;
 
 		let mut w1 = 0.0;
-		let mut w0 = 0.0;
+		let mut w0; // = 0.0;
 
 		for c in container.borrow_children().iter() {
 			let c = c.borrow();

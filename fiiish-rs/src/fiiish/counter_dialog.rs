@@ -7,22 +7,7 @@ use std::sync::mpsc::Sender;
 use crate::fiiish::game::Game;
 use oml_game::math::Vector2;
 use crate::renderer::Color;
-use crate::ui::{
-	UiBlock,
-	UiButton,
-	UiElement,
-	UiElementContainer,
-	UiElementContainerData,
-	UiElementContainerHandle,
-	UiEvent,
-	UiEventResponse,
-	UiEventResponseButtonClicked,
-	UiImage,
-	UiHbox,
-	UiLabel,
-	UiToggleButton,
-	UiVbox,
-};
+use crate::ui::*;
 
 #[derive(Debug)]
 pub struct CounterDialog {
