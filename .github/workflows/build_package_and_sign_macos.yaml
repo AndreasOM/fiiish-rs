@@ -78,18 +78,6 @@ jobs:
           app_tgz=fiiish-rs-apple-darwin-FAT-apple-darwin-.app.tgz
           echo "ARCHIVE=${temp}/${app_tgz}" >> $GITHUB_ENV
 
-      - name: Prepare keychain
-        run: |
-          keychain_password="$(openssl rand -hex 32)"
-          security create-keychain -p "${keychain_password}" "the-keychain"
-          echo "${{ secrets.CODESIGN_CERT }}" | base64 --decode > cert.p12
-          md5 < cert.p12
-          keychain_db="${HOME}/Library/Keychains/the-keychain-db"
-          security import cert.p12 -k "${keychain_db}" -P "${{ secrets.CODESIGN_CERT_PASS }}" -T "$(command -v codesign)"
-          security set-key-partition-list -S "apple-tool:,apple:" -s -k "${keychain_password}" "${keychain_db}"
-          security default-keychain -d "user" -s "${keychain_db}"
-          security find-identity -v
-
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -236,14 +224,49 @@ jobs:
           cp ${{ env.PARTS_FOLDER }}/fiiish-data/fiiish-data.omar ${app_dir}/Contents/Resources/
           cp ${{ env.PARTS_FOLDER }}/dummy-data/dummy-data.omar ${app_dir}/Contents/Resources/
 
+      - name: Prepare keychain
+        run: |
+          keychain_password="$(openssl rand -hex 32)"
+          security create-keychain -p "${keychain_password}" "the-keychain"
+          echo "${{ secrets.CODESIGN_CERT }}" | base64 --decode > cert.p12
+          md5 < cert.p12
+          keychain_db="${HOME}/Library/Keychains/the-keychain-db"
+          security import cert.p12 -k "${keychain_db}" -P "${{ secrets.CODESIGN_CERT_PASS }}" -T "$(command -v codesign)"
+          security set-key-partition-list -S "apple-tool:,apple:" -s -k "${keychain_password}" "${keychain_db}"
+          security default-keychain -d "user" -s "${keychain_db}"
+          security find-identity -v
+
       - name: Sign .app
+        id: sign0
+        continue-on-error: true
         run: |
           ping -c 5 time.apple.com
           cd ${{ env.PACKAGE_FOLDER}}
-          # codesign -s ${{ secrets.CODESIGN_CERT_IDENTITY }} -f -v --timestamp --options runtime fiiish-rs.app/Contents/MacOS/fiiish
           codesign -s ${{ secrets.CODESIGN_CERT_IDENTITY }} -f -v --timestamp --options runtime fiiish-rs.app
 
         timeout-minutes: 10
+
+      - name: Sign .app (2nd try)
+        id: sign1
+        continue-on-error: true
+        if: steps.sign0.outcome=='failure'
+        run: |
+          sleep 60
+          ping -c 5 time.apple.com
+          cd ${{ env.PACKAGE_FOLDER}}
+          codesign -s ${{ secrets.CODESIGN_CERT_IDENTITY }} -f -v --timestamp --options runtime fiiish-rs.app
+
+        timeout-minutes: 10
+
+      - name: Set Sign status
+        if: always()
+        run: |
+          if ${{ steps.sign0.outcome=='success' || steps.sign1.outcome=='success' }}; then
+             echo "Successfully signed!"
+          else
+            echo "Failed signing even after retry"
+             exit 1
+          fi
 
       - name: Create archive
         run: |
