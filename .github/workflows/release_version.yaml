@@ -53,11 +53,25 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  build_package_and_sign_macos:
+  build_and_package_macos:
     needs:
       - pack_dummy_data
       - pack_fiiish_data
-    uses:  AndreasOM/fiiish-rs/.github/workflows/build_package_and_sign_macos.yaml@main
+    uses:  AndreasOM/fiiish-rs/.github/workflows/build_and_package_macos.yaml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref: ${{ github.event.inputs.ref || github.sha }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      CODESIGN_CERT: ${{ secrets.CODESIGN_CERT }}
+      CODESIGN_CERT_PASS: ${{ secrets.CODESIGN_CERT_PASS }}
+      CODESIGN_CERT_IDENTITY: ${{ secrets.CODESIGN_CERT_IDENTITY }}
+
+  sign_macos:
+    needs:
+      - build_and_package_macos
+    uses:  AndreasOM/fiiish-rs/.github/workflows/sign_macos.yaml@main
     with:
       version: ${{ github.event.inputs.version }}
       ref: ${{ github.event.inputs.ref || github.sha }}
@@ -69,7 +83,7 @@ jobs:
       CODESIGN_CERT_IDENTITY: ${{ secrets.CODESIGN_CERT_IDENTITY }}
 
   push_to_itchio:
-    needs: build_package_and_sign_macos
+    needs: sign_macos
     uses:  AndreasOM/fiiish-rs/.github/workflows/push_to_itchio.yaml@main
     with:
       version: ${{ github.event.inputs.version }}

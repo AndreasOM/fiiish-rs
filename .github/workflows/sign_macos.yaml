@@ -1,0 +1,167 @@
+name: Build, Package, & Sign macOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'The SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+  workflow_call:
+    inputs:
+      # maybe we don't need this
+      version:
+        description: 'Version'
+        required: true
+        default: 'auto'
+        type: string
+      ref:
+        description: 'The branch, tag, or SHA of the commit to build'
+        required: false
+        default: ''
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      CODESIGN_CERT:
+        required: true
+      CODESIGN_CERT_PASS:
+        required: true
+      CODESIGN_CERT_IDENTITY:
+        required: true
+
+
+jobs:
+  build_package_sign:
+    runs-on: macos-11
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 1
+
+      - name: Generate VERSION
+        run: |
+          VERSION=$(git show -s --format=%H HEAD)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          DATE=$(git show -s --format=%ci HEAD|cut -b1-10)
+          echo "DATE=${DATE}" >> $GITHUB_ENV
+          echo "VERSION: ${VERSION}"
+          echo "DATE:    ${DATE}"
+
+      - name: Prepare Variables
+        run: |
+          echo "Preparing variables"
+          temp=${{ runner.temp }}
+          echo "TEMP=${temp}" >> $GITHUB_ENV
+          s3_archive_folder=${{ env.DATE }}/${{ env.VERSION }}
+          echo "S3_ARCHIVE_FOLDER=${s3_archive_folder}" >> $GITHUB_ENV
+          fiiish_data_tgz=fiiish-rs-fiiish-data-${{ env.VERSION }}.tgz
+          echo "FIIISH_DATA_TGZ=${fiiish_data_tgz}" >> $GITHUB_ENV          
+          dummy_data_tgz=fiiish-rs-dummy-data-${{ env.VERSION }}.tgz
+          echo "DUMMY_DATA_TGZ=${dummy_data_tgz}" >> $GITHUB_ENV
+          parts_folder=${temp}/parts_folder
+          mkdir -p ${parts_folder}
+          echo "PARTS_FOLDER=${parts_folder}" >> $GITHUB_ENV
+          package_folder=${temp}/package_folder/
+          mkdir -p ${package_folder}
+          echo "PACKAGE_FOLDER=${package_folder}" >> $GITHUB_ENV
+          echo "APP_NAME=fiiish-rs" >> $GITHUB_ENV
+          build_number=$(cat build_number.txt)
+          echo "BUILD_NUMBER=${build_number}" >> $GITHUB_ENV
+          app_version=$(grep version fiiish-rs/Cargo.toml|cut -d"\"" -f2|head -n 1)
+          echo "APP_VERSION=${app_version}" >> $GITHUB_ENV
+          app_tgz=fiiish-rs-apple-darwin-FAT-apple-darwin-.app.tgz
+          echo "ARCHIVE=${temp}/${app_tgz}" >> $GITHUB_ENV
+          unsigned_app_tgz=fiiish-rs-apple-darwin-FAT-apple-darwin-UNSIGNED.app.tgz
+          echo "UNSIGNED_APP_TGZ=${unsigned_app_tgz}" >> $GITHUB_ENV          
+          echo "UNSIGNED_ARCHIVE=${temp}/${unsigned_app_tgz}" >> $GITHUB_ENV
+
+      - name: Copy unsigned package archive from S3
+        run: |
+          aws s3 cp s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.UNSIGNED_APP_TGZ }}  ${{ env.UNSIGNED_ARCHIVE }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"
+
+      - name: Unpack archives
+        run: |
+          cd ${{ env.PACKAGE_FOLDER }}
+          tar xzf ${{ env.UNSIGNED_APP_TGZ }} .
+          ls -l .
+
+      - name: Prepare keychain
+        run: |
+          keychain_password="$(openssl rand -hex 32)"
+          security create-keychain -p "${keychain_password}" "the-keychain"
+          echo "${{ secrets.CODESIGN_CERT }}" | base64 --decode > cert.p12
+          md5 < cert.p12
+          keychain_db="${HOME}/Library/Keychains/the-keychain-db"
+          security import cert.p12 -k "${keychain_db}" -P "${{ secrets.CODESIGN_CERT_PASS }}" -T "$(command -v codesign)"
+          security set-key-partition-list -S "apple-tool:,apple:" -s -k "${keychain_password}" "${keychain_db}"
+          security default-keychain -d "user" -s "${keychain_db}"
+          security find-identity -v
+
+      - name: Sign .app
+        id: sign0
+        continue-on-error: true
+        run: |
+          ping -c 5 time.apple.com
+          cd ${{ env.PACKAGE_FOLDER}}
+          codesign -s ${{ secrets.CODESIGN_CERT_IDENTITY }} -f -v --timestamp --options runtime fiiish-rs.app
+
+        timeout-minutes: 10
+
+      - name: Sign .app (2nd try)
+        id: sign1
+        continue-on-error: true
+        if: steps.sign0.outcome=='failure'
+        run: |
+          sleep 60
+          ping -c 5 time.apple.com
+          cd ${{ env.PACKAGE_FOLDER}}
+          codesign -s ${{ secrets.CODESIGN_CERT_IDENTITY }} -f -v --timestamp --options runtime fiiish-rs.app
+
+        timeout-minutes: 10
+
+      - name: Set Sign status
+        if: always()
+        run: |
+          if ${{ steps.sign0.outcome=='success' || steps.sign1.outcome=='success' }}; then
+             echo "Successfully signed!"
+          else
+            echo "Failed signing even after retry"
+             exit 1
+          fi
+
+      - name: Create archive
+        run: |
+          cd ${{ env.PACKAGE_FOLDER }}
+          tar czf ${{ env.ARCHIVE }} .
+          ls -l ${{ env.ARCHIVE }}
+
+      - name: Copy archive to S3
+        run: |
+          aws s3 cp ${{ env.ARCHIVE }} s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "eu-west-1"        
+
+      - name: Create Summary
+        run: |
+          build_number=$(cat build_number.txt)
+          echo "| VERSION      | ${{ env.VERSION }}     |" >> $GITHUB_STEP_SUMMARY
+          echo "| :----------- | ---------------------: |" >> $GITHUB_STEP_SUMMARY
+          echo "| build_number | ${build_number}        |" >> $GITHUB_STEP_SUMMARY
+          echo "| APP_VERSION  | ${{ env.APP_VERSION }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| S3 Archive   | \`s3://artifacts.fiiish-rs.omnimad.net/${{ env.S3_ARCHIVE_FOLDER }}/${{ env.ARCHIVE }}\` |" >> $GITHUB_STEP_SUMMARY
+
+
+
+
