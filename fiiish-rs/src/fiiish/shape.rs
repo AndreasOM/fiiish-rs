@@ -1,18 +1,15 @@
-use std::rc::Rc;
 use std::cell::RefCell;
-use crate::DebugRenderer;
 
-use crate::math::Vector2;
-use crate::math::Matrix22;
-
-use crate::system::System;
+use oml_game::math::Matrix22;
+use oml_game::math::Vector2;
+use oml_game::renderer::debug_renderer::DebugRenderer;
 //use crate::system::filesystem_stream::FilesystemStream;
-
-use crate::renderer::Color;
+use oml_game::renderer::Color;
+use oml_game::system::System;
 
 #[derive(Debug)]
-pub struct SubShape {	
-	pub vertices: Vec< Vector2 >,
+pub struct SubShape {
+	pub vertices: Vec<Vector2>,
 }
 
 impl SubShape {
@@ -25,27 +22,27 @@ impl SubShape {
 
 #[derive(Debug)]
 pub struct Shape {
-	name: String,
-	offset: Vector2,
-	sub_shapes: Vec< SubShape >
+	name:       String,
+	offset:     Vector2,
+	sub_shapes: Vec<SubShape>,
 }
 
 impl Shape {
 	pub fn new() -> Self {
 		Self {
-			name: String::new(),
-			offset: Vector2::zero(),
+			name:       String::new(),
+			offset:     Vector2::zero(),
 			sub_shapes: Vec::new(),
 		}
 	}
 
-	pub fn name( &self ) -> &str {
+	pub fn name(&self) -> &str {
 		&self.name
 	}
 
 	pub fn load(&mut self, system: &mut System, name: &str) -> bool {
 		let filename = format!("{}.shp", name);
-		let mut f = system.default_filesystem_mut().open( &filename );
+		let mut f = system.default_filesystem_mut().open(&filename);
 		if !f.is_valid() {
 			println!("Error: Couldn't open shape {}", &filename);
 			return false;
@@ -56,7 +53,7 @@ impl Shape {
 		let so_magic = f.read_u16();
 		if so_magic != 0x4f53 {
 			println!("Got broken magic expected 0x4f53 got {:X}", so_magic);
-			return false
+			return false;
 		}
 
 		let so_version = f.read_u16();
@@ -65,8 +62,7 @@ impl Shape {
 			return false;
 		}
 
-
-		let chunk_magic = [ 0x46u8, 0x49, 0x53, 0x48, 0x53, 0x48, 0x50 ]; //0x46u8, 0x49, 0x53, 0x48, 0x4e, 0x5a, 0x4e, ];
+		let chunk_magic = [0x46u8, 0x49, 0x53, 0x48, 0x53, 0x48, 0x50]; //0x46u8, 0x49, 0x53, 0x48, 0x4e, 0x5a, 0x4e, ];
 		for m in &chunk_magic {
 			let b = f.read_u8();
 			if b != *m {
@@ -103,7 +99,7 @@ impl Shape {
 			let x = f.read_f32();
 			let y = f.read_f32();
 
-			vertices.push( Vector2::new( x, y ) );
+			vertices.push(Vector2::new(x, y));
 		}
 
 		let shape_count = f.read_u8();
@@ -111,60 +107,65 @@ impl Shape {
 		let mut offsets = Vec::new();
 		for _i in 0..shape_count {
 			let o = f.read_u16();
-			offsets.push( o );
+			offsets.push(o);
 		}
 
 		let mut lengths = Vec::new();
 		for _i in 0..shape_count {
 			let l = f.read_u16();
-			lengths.push( l );
+			lengths.push(l);
 		}
 
 		self.sub_shapes.clear();
 
 		for i in 0..shape_count.into() {
-			let o = offsets[ i ];
-			let l = lengths[ i ];
-			let e = o+l;
+			let o = offsets[i];
+			let l = lengths[i];
+			let e = o + l;
 
 			let mut sub_shape = SubShape::new();
 
 			for j in o..e {
-				sub_shape.vertices.push( vertices[ j as usize ] );
+				sub_shape.vertices.push(vertices[j as usize]);
 			}
 
-			self.sub_shapes.push( sub_shape );
-
+			self.sub_shapes.push(sub_shape);
 		}
 
 		true
 	}
 
-	pub fn sub_shape_iter( &self ) -> std::slice::Iter<'_, SubShape> {
+	pub fn sub_shape_iter(&self) -> std::slice::Iter<'_, SubShape> {
 		self.sub_shapes.iter()
 	}
 
-	pub fn debug_render( &self, debug_renderer: &Option < RefCell< DebugRenderer >  >, offset: &Vector2, pos: &Vector2, rotation: f32 ) {
-		if let Some( dr ) = debug_renderer {
+	pub fn debug_render(
+		&self,
+		debug_renderer: &Option<RefCell<DebugRenderer>>,
+		offset: &Vector2,
+		pos: &Vector2,
+		rotation: f32,
+	) {
+		if let Some(dr) = debug_renderer {
 			let mut debug_renderer = dr.borrow_mut();
-			let color = Color::from_rgba( 0.9, 0.5, 0.5, 0.8 );
+			let color = Color::from_rgba(0.9, 0.5, 0.5, 0.8);
 			for ss in self.sub_shapes.iter() {
 				for i in 0..ss.vertices.len() {
-					let v0 = ss.vertices[ i ];
-					let v1 = ss.vertices[ ( i+1 ) % ss.vertices.len() ];
+					let v0 = ss.vertices[i];
+					let v1 = ss.vertices[(i + 1) % ss.vertices.len()];
 
-					let v0 = v0.add( &offset );
-					let v1 = v1.add( &offset );
-					
-					let mtx = Matrix22::z_rotation( rotation * 0.0174 );
+					let v0 = v0.add(&offset);
+					let v1 = v1.add(&offset);
 
-					let v0 = mtx.mul_vector2( &v0 );
-					let v1 = mtx.mul_vector2( &v1 );
+					let mtx = Matrix22::z_rotation(rotation * 0.0174);
 
-					let v0 = pos.add( &v0 );
-					let v1 = pos.add( &v1 );
+					let v0 = mtx.mul_vector2(&v0);
+					let v1 = mtx.mul_vector2(&v1);
+
+					let v0 = pos.add(&v0);
+					let v1 = pos.add(&v1);
 					// :TODO: might want to add the offset & position
-					debug_renderer.add_line( &v0, &v1, 3.0, &color );
+					debug_renderer.add_line(&v0, &v1, 3.0, &color);
 				}
 			}
 		}

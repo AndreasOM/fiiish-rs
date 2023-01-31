@@ -3,10 +3,13 @@
 
 ## In Progress
 
-- [ ] Create released automatically via github actions
-	- [ ] Ensure build_number.txt is not too old 
+
+- [ ] Fix formatting! ;)
 
 ## TODO
+
+- [ ] Create released automatically via github actions
+	- [ ] Ensure build_number.txt is not too old 
 
 - [ ] Use build.rs to write out version to version.txt
 - [ ] Only package needed versions of music for platform
@@ -94,6 +97,9 @@
 - [x] Update crates to newer versions
 - [x] Bump OMT to allow bumping regex crate
 
+## Season 02
+### S02E01 - 3.0h
+- [x] Switch to using oml-game
 
 ## Released
 

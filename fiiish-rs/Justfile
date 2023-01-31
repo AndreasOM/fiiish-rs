@@ -1,4 +1,35 @@
+r:
+	cargo run --release
 
-udeps:
-	RUSTC_BOOTSTRAP=1 cargo udeps --all-targets --backend depinfo
+d:
+	cargo run
 
+cr:
+	cargo check --release
+
+c:
+	cargo check
+	
+fmt:
+	cargo +nightly fmt
+
+clippy:
+	RUSTFLAGS=-Awarnings cargo clippy -- -Aclippy::all -Fclippy::correctness
+
+cook:
+	cd .. && ./workflow/helpers/cook.sh; cd -
+
+pack:
+	echo :TODO: pack && exit 0
+	cd .. && ./workflow/helpers/pack_data.sh data/base base.omar paklist.txt music_mp3 && cp base.omar rar-rs/; cd -
+
+test-noisy:
+	cargo test -- --nocapture
+
+update-build-number:
+	../workflow/helpers/update_build_number.sh
+
+release-test:
+	echo :TODO: cook && exit 0
+	# :TODO: ../workflow/helpers/update_build_number.sh
+	omr-bumper -b patch -r test

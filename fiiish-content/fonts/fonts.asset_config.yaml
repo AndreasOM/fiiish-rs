@@ -1,0 +1,23 @@
+version: 0.5.0
+tool:    "omt-font"
+command: "create"
+output:  "pink"
+combine-inputs: false
+input:
+  - "all_things_pink.ttf"
+parameters: {
+}
+cmd_line: "${tool} ${command} --border 2 --texsize 1024 --size 52 --output ${data_directory}/${output} --distancefield-max-distance 4 --distancefield-scale 4 --input ${input}"
+
+---
+
+version: 0.5.0
+tool:    "omt-font"
+command: "create"
+output:  "pink_huge"
+combine-inputs: false
+input:
+  - "all_things_pink.ttf"
+parameters: {
+}
+cmd_line: "${tool} ${command} --texsize 1024 --size 104 --output ${data_directory}/${output} --distancefield-max-distance 4 --distancefield-scale 4 --input ${input}"

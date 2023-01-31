@@ -1,0 +1,20 @@
+version:        0.8.2
+tool:           "omt-atlas"
+command:        "combine"
+output:         "game-atlas-%d"
+combine-inputs: true
+input:
+  - "fish/fish_*.png"
+  - "pickups/coin/coin_*.png"
+  - "pickups/coin_green/coin_green_*.png"
+  - "pickups/coin_blue/coin_blue_*.png"
+  - "pickups/magnet/magnet_*.png"
+  - "obstacles/rocks/rock-?.png"
+  - "obstacles/seaweed/seaweed-*.png"
+  - "decorations/*.png"
+  - "obstacles/blocks/block-*.png"
+parameters: {
+
+}
+
+cmd_line: "${tool} ${command} --border 1 --maximum-size 2048 --output ${data_directory}/${output} --input ${input} --reference-path ${data_directory}"
