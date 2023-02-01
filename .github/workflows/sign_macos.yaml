@@ -92,7 +92,7 @@ jobs:
       - name: Unpack archives
         run: |
           cd ${{ env.PACKAGE_FOLDER }}
-          tar xzf ${{ env.UNSIGNED_APP_TGZ }} .
+          tar xzf ${{ env.UNSIGNED_APP_TGZ }}
           ls -l .
 
       - name: Prepare keychain
